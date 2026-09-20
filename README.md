@@ -1,70 +1,88 @@
-# Troy’s Game Community Bot — 2.4.7
+# Troy’s Game Community Bot — persoonlijke versie 2.4.8
 
 Discord-bot met tickets, moderatie, XP/levels, economy, verjaardagen, selfrollen,
-counting, YouTube-agenda en optionele AI-chat via Ollama. Instellingen en gegevens
-worden per Discord-server in SQLite opgeslagen.
+counting, agenda en optionele AI-chat. Deze persoonlijke variant bevat de
+instellingen voor Troy’s Game Community en is bedoeld voor je eigen host.
 
-## Installatie
+## Nieuw in 2.4.8
 
-1. Gebruik Node.js 24 en voer `npm ci` uit in deze map.
-2. Kopieer `.env.example` naar `.env`. Vul `TOKEN` en `CLIENT_ID` in.
-3. Schakel in het Discord Developer Portal **Server Members Intent** en
-   **Message Content Intent** in. Zonder berichtinhoud kun je
-   `MESSAGE_CONTENT_INTENT=false` instellen, maar berichtafhankelijke functies
-   zoals counting en AI-chat werken dan beperkt of niet.
-4. Nodig de bot uit met scopes `bot` en `applications.commands`. Geef de rechten
-   die jouw functies nodig hebben: kanalen lezen, berichten/embeds/bijlagen
-   verzenden, geschiedenis lezen, rollen beheren, en voor tickets kanalen en
-   threads beheren. Voor moderatie zijn de bijbehorende moderatierechten nodig.
-   Zet de botrol boven de rollen die hij moet beheren.
-5. Start met `npm start`. Commands registreren automatisch in de aangesloten
-   servers. De database en benodigde gegevensmappen worden aangemaakt.
-6. Stel als servereigenaar via `/config hulp` en `/config instellen` je kanalen
-   en rollen in. De openbare standaardconfiguratie bevat geen eigen Discord-ID’s.
+Alleen Troy’s Game Community gebruikt `config/defaults.js` als actieve
+serverconfiguratie. De server wordt geselecteerd met `DefaultsGuildId` in
+`config/settingsSource.js`; jouw server staat daar al ingevuld.
 
-Voorbeelden:
+Andere Discord-servers blijven hun eigen opgeslagen database-instellingen gebruiken.
+De bestaande databaseconfiguratie van jouw server wordt genegeerd, maar niet gewist.
+XP, economy, gebruikers, verjaardagen, tickets, selfrolpanelen en andere botdata
+blijven gewoon in de database.
 
-```text
-/config instellen instelling:Logging.Channel waarde:JOUW_LOGKANAAL_ID
-/config instellen instelling:Birthday.Role waarde:JOUW_VERJAARDAGSROL_ID
-/config instellen instelling:Birthday.Channel waarde:JOUW_VERJAARDAGSKANAAL_ID
-/config instellen instelling:Counting.Channel waarde:JOUW_TELKANAAL_ID
+## Instellingen voor jouw server aanpassen
+
+1. Pas de gewenste waarden aan in `config/defaults.js`.
+2. Sla het bestand op en herstart de bot.
+3. Controleer de wijziging met `/config bekijken` of `/config exporteren`.
+
+`/config instellen`, `/config herstellen` en `/config resetten` verwijzen op jouw
+server naar het bestand. Op andere servers blijven deze commands werken.
+Ook het staffrolkeuzemenu kan jouw bestandsinstellingen niet overschrijven.
+
+Let op: waarden in defaults.js bepalen nu ook of functies aanstaan. Controleer
+bijvoorbeeld `Tickets.Enabled`, `AIChat.Enabled` en `AIChat.Channels` als je die
+eerder alleen via Discord had ingesteld.
+
+De Bot-opstartcontrole gebruikt `StartupReport.Enabled` en `StartupReport.Channel`.
+De automatische changelogmelding gebruikt `Logging.Enabled` en `Logging.Channel`.
+Dit zijn afzonderlijke instellingen.
+
+## Terug naar database-instellingen
+
+Zet in `config/settingsSource.js`:
+
+```js
+module.exports = {
+    DefaultsGuildId: ""
+};
 ```
 
-Globale botbeheerders staan als gebruikers-ID’s in `OWNER_IDS` en
-`DEVELOPER_IDS` in `.env`; VIP-rol-ID’s in `VIP_ROLE_IDS`. Scheid meerdere ID’s
-met komma’s. De servereigenaar kan zijn server ook zonder globale owner instellen.
-De verjaardagsbonus gebruikt `Birthday.Role`. Bonussen stapelen niet.
+Herstart de bot. De eerder opgeslagen serverinstellingen worden weer actief;
+de bestandsinstellingen worden niet automatisch naar de database gekopieerd.
 
-AI-chat staat standaard uit. Stel lokaal Ollama in via `.env` en configureer
-`AIChat.Enabled` en `AIChat.Channels` in Discord. Een externe verbinding vereist
-een eigen compatibele HTTPS-bridge met `/health` en `/api/chat` plus een gedeelde
-sleutel; die bridge zit niet in dit project.
+## Update installeren
 
-## Updates en GitHub
+Dit 2.4.8-updatepakket bevat alleen nieuwe of gewijzigde bestanden en vereist een
+bestaande 2.4.7-installatie. Stop de bot en maak eerst een privébackup. Pak de update
+uit in `/home/container` en voeg de mappen samen. Bewaar je huidige `.env`,
+`config/defaults.js` en databasebestanden. Die worden niet meegeleverd of vervangen.
+Gebruik de persoonlijke defaults uit de eerdere Troy-instellingen-versie.
+Er zijn geen nieuwe dependencies nodig. Herstart daarna de bot.
 
-Vul de openbare repositorylink in `config/updates.js` bij `Repository` in.
-De checker controleert bij opstarten en iedere zes uur de Latest-release en
-meldt een nieuwere stabiele versie met downloadlink in de console. Hij installeert
-niets automatisch. Zonder link blijft de controle uit. Geen GitHub-token nodig.
+Zie [INSTALLATIE-2.4.8.md](INSTALLATIE-2.4.8.md) en [CHANGELOG.md](CHANGELOG.md).
 
-De bestaande changelogfunctie meldt de geïnstalleerde versie per server in
-`Logging.Channel` wanneer logging is ingeschakeld. Dit is een andere melding dan
-de GitHub-updatecontrole. Nieuwe versiehoofdstukken staan in [CHANGELOG.md](CHANGELOG.md).
+## GitHub-versiechecker
 
-Lees [GITHUB-INSTALLATIE.md](GITHUB-INSTALLATIE.md) vóór bijwerken of publiceren.
-Gebruik `npm run prepare:github` om een aparte publicatiemap te maken.
-Upload nooit je draaiende botmap, database of `.env` rechtstreeks.
+De repositorylink staat in `config/updates.js`:
+https://github.com/troyscripts/troy-s_game_community_app
 
-## Controle en beheer
+De bot controleert bij opstarten en iedere zes uur op een nieuwere stabiele
+Latest-release. Een melding met downloadlink verschijnt in de console.
+Updates worden niet automatisch geïnstalleerd. Een eventuele lokale waarde van
+`GITHUB_REPOSITORY` in `.env` heeft voorrang op de link in het bestand.
 
-- `npm run check`: syntax, commandnamen en vereiste bestanden.
+De geïnstalleerde versie komt uit `package.json`. De automatische changelogfunctie
+meldt 2.4.8 in het ingestelde logkanaal als logging aanstaat en het kanaal bereikbaar is.
+
+Deze persoonlijke variant niet rechtstreeks openbaar uploaden: er staan eigen
+Discord-ID’s in defaults.js en settingsSource.js. Gebruik voor GitHub een
+opgeschoonde kopie, maak `DefaultsGuildId` daarin leeg en volg de publicatie-uitleg
+in `GITHUB-INSTALLATIE.md`. De exportcontrole weigert persoonlijke ID’s bewust.
+
+## Starten en controleren
+
+- `npm start`: bot starten.
+- `npm run check`: syntax, commandnamen en vereiste bestanden controleren.
 - `npm run test:updates`: offline tests voor de GitHub-versiechecker.
-- `npm run deploy`: optioneel handmatig commands registreren.
-- `node herstel-serverconfig.cjs JOUW_SERVER_ID`: herstel uitsluitend overtollige
-  komma’s in opgeslagen serverconfiguratie, met databasebackup; stop de bot eerst.
-- [UPGRADE-2.4.6.md](UPGRADE-2.4.6.md): bediening van selfrolpanelen.
-- [INSTALLATIE-CHANGELOG.md](INSTALLATIE-CHANGELOG.md): automatische changelogmeldingen.
 
-Bewaar `.env` en je database bij updates. Er is geen hergebruiklicentie gekozen;
-een openbare repository betekent op zichzelf geen toestemming voor vrij hergebruik.
+Bij een nieuwe installatie zijn dependencies (`npm ci`) en een eigen ingevulde
+`.env` nodig. Bewaar bij een bestaande installatie altijd je huidige `.env` en database.
+
+Deze update is lokaal gecontroleerd op serverafscheiding, behoud van opgeslagen
+instellingen en terugschakelen. Er is geen live Discord-test uitgevoerd.
