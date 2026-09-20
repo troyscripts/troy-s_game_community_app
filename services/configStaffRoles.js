@@ -9,6 +9,9 @@ async function deny(interaction) {
 }
 async function open(interaction) {
     if (!isAllowed(interaction)) return deny(interaction);
+    if (settings.usesDefaults(interaction.guild.id)) {
+        return interaction.reply({ content: 'Deze server gebruikt config/defaults.js. Wijzig StaffRoles in dat bestand en herstart de bot.', flags: MessageFlags.Ephemeral });
+    }
     await interaction.deferReply({ flags: MessageFlags.Ephemeral });
     const roles = await interaction.guild.roles.fetch();
     const current = settings.exportGuild(interaction.guild.id).StaffRoles || [];

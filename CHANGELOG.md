@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.4.8 — 20 september 2026
+
+- Per geselecteerde server instellingen rechtstreeks uit config/defaults.js gebruiken.
+- Andere servers blijven hun eigen databaseconfiguratie gebruiken.
+- Opgeslagen instellingen van de geselecteerde server blijven behouden voor terugschakelen.
+- /config bekijken en exporteren tonen de actieve bestandsinstellingen; wijzigen en resetten verwijzen naar het bestand.
+- XP, economy, tickets, selfrolpanelen en verjaardagen blijven in de database.
+
+# Changelog
+
 ## 2.4.7 — 20 september 2026
 
 - GitHub-versiechecker bij opstarten en elke zes uur, met updatelink in de console.

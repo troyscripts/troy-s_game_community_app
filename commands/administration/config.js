@@ -112,6 +112,12 @@ module.exports = {
 
         const subcommand = interaction.options.getSubcommand();
         const guildId = interaction.guild.id;
+        if (settings.usesDefaults(guildId) && ["instellen", "herstellen", "resetten", "hulp"].includes(subcommand)) {
+            return interaction.reply({
+                content: "⚙️ Deze server gebruikt **config/defaults.js**. Wijzig de instellingen in dat bestand en herstart de bot. `/config bekijken` en `/config exporteren` tonen de actieve instellingen. Je eerdere databaseconfiguratie blijft bewaard; andere servers blijven via Discord instelbaar.",
+                flags: MessageFlags.Ephemeral
+            });
+        }
 
         if (subcommand === "hulp") {
             return interaction.reply({
