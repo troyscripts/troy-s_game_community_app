@@ -7,6 +7,7 @@ const { startBirthdayScheduler } = require("../services/birthdayScheduler");
 const startupReporter = require("../services/startupReporter");
 const { startVersionReporter } = require("../services/versionReporter");
 const guildSettings = require("../database/guildSettings");
+const { startConnectionMonitor } = require("../services/connectionMonitor");
 
 const { registerAllGuilds } = require("../services/commandRegistration");
 
@@ -40,6 +41,7 @@ module.exports = {
         });
 
         startVersionReporter(client);
+        startConnectionMonitor(client);
         require("../services/updateChecker").startUpdateChecker();
 
         await registerAllGuilds(client);

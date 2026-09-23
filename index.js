@@ -95,6 +95,7 @@ async function shutdown(signal) {
         require("./services/birthdayScheduler").stopBirthdayScheduler();
         require("./services/updateChecker").stopUpdateChecker();
         require("./services/versionReporter").stopVersionReporter();
+        require("./services/connectionMonitor").stopConnectionMonitor();
         client.destroy();
         databaseManager?.close();
     } catch (error) {

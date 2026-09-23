@@ -1,5 +1,17 @@
 # Changelog
 
+## 2.4.9 — 23 september 2026
+
+### Discord Connection Monitor
+
+- Nieuwe interne monitor meet elke 60 seconden de Discord Gateway/WebSocket-latency en bewaart maximaal 24 uur aan metingen in het geheugen.
+- `/ping` toont nu botlatency, actuele Gateway-ping, gemiddelde, minimum, maximum, status, uptime, aantal metingen en Gateway-events.
+- Verbindingsstatussen: normaal (<150 ms), verhoogd (150–249 ms), hoog (250–499 ms) en kritiek (500+ ms).
+- Statuswijzigingen, disconnects, reconnects en hervatte Gateway-sessies worden in de bestaande logger vastgelegd zonder Discord-spam.
+- Discord-clienttimeouts en clientfouten worden tijdens de huidige botsessie geteld.
+- Geen nieuwe dependency, databasewijziging of configuratiewijziging nodig. Bestaande instellingen en database blijven behouden.
+- Versie verhoogd naar 2.4.9; de bestaande automatische changelogmelding kan deze release na de update melden.
+
 ## 2.4.8 — 20 september 2026
 
 - Per geselecteerde server instellingen rechtstreeks uit config/defaults.js gebruiken.
