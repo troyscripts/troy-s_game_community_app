@@ -1,5 +1,17 @@
 # Changelog
 
+## 2.4.9A — 24 september 2026
+
+### Discord Connection Monitor — diagnose-update
+
+- Statusflapping rond 150 ms opgelost met hysterese: vanuit Normaal pas Verhoogd vanaf 175 ms en pas terug naar Normaal onder 150 ms.
+- Ook de hogere statussen gebruiken aparte in- en uitschakelgrenzen om onnodig heen-en-weer schakelen te beperken.
+- Gateway-reconnects loggen nu extra diagnosegegevens: actuele Gateway-ping, tijd sinds de vorige reconnect, event-loopvertraging, heap-/RSS-geheugen en botuptime.
+- Gateway-disconnects loggen waar beschikbaar ook de WebSocket-closecode en reden.
+- `/ping` blijft dezelfde compacte weergave gebruiken; de status volgt nu de gestabiliseerde monitorstatus.
+- Geen database-, dependency- of configuratiewijziging nodig.
+- Dit is diagnose-revisie **A** van 2.4.9; de npm/packageversie blijft bewust 2.4.9 zodat semver en de GitHub-versiechecker geldig blijven.
+
 ## 2.4.9 — 23 september 2026
 
 ### Discord Connection Monitor
