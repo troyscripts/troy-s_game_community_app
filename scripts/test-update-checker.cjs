@@ -23,7 +23,7 @@ test('GitHub response handling uses timeout, no auth, validated URL', async () =
         assert.equal(options.headers.Authorization,undefined);
         return {ok:true,json:async()=>({tag_name:'v2.4.8',html_url:'https://evil.example'})};
     };
-    const result = await checkForUpdate({repo:'example/bot',fetchImpl});
+    const result = await checkForUpdate({repo:'example/bot',version:'2.4.7',fetchImpl});
     assert.equal(result.status,'update');
     assert.equal(result.url,'https://github.com/example/bot/releases/tag/v2.4.8');
     for (const [status, expected] of [[404,'missing'],[403,'limited'],[429,'limited']]) {

@@ -1,11 +1,13 @@
 const logger = require('../utils/logger');
-const config = require('../config/config');
+const settings = require('../database/guildSettings');
 const users = require('../database/users');
 const { eventEmbed, sendEmbed, sendLog } = require('../utils/eventEmbeds');
+const { renderWelcome } = require('../utils/welcomeMessage');
 
 module.exports = {
     name: 'guildMemberAdd',
     async execute(_client, member) {
+        const config = settings.getGuildConfig(member.guild.id);
         try { users.createUser(member.user, member.guild); }
         catch (error) { logger.error(error); }
         logger.event(`${member.user.tag} is de server binnengekomen.`);
@@ -19,9 +21,7 @@ module.exports = {
             }
         }
         const embed = eventEmbed('Lid toegetreden', 0x57F287,
-            `👋 Welkom <@${member.id}> bij **${config.Bot.Name}**!\n\n` +
-            `**Aantal leden:** ${member.guild.memberCount}\n` +
-            'Lees eerst de regels en verifieer jezelf om toegang te krijgen.',
+            renderWelcome(config.Welcome?.Message, member),
             `Gebruiker-ID: ${member.id} | Server-ID: ${member.guild.id}`);
         let delivered;
         if (config.Welcome?.Enabled) {

@@ -119,7 +119,8 @@ module.exports = {
     Welcome: {
         Enabled: true,
         Channel: "",
-        AutoRole: ""
+        AutoRole: "",
+        Message: "👋 Welkom {gebruiker} bij **{server}**!\n\n**Aantal leden:** {ledenaantal}\nLees eerst de regels en verifieer jezelf om toegang te krijgen."
     },
 
     Leave: { Enabled: true, Channel: "" },

@@ -1,5 +1,28 @@
 # Changelog
 
+## 2.5.0 — 27 september 2026
+
+### Herstel welkomsttekst (zelfde versie)
+
+- Het echte toetredingsbericht haalt de actieve configuratie rechtstreeks op met de server-ID, net als het welkomstcommando.
+- Het herstelpakket bevat ook het toetredingsevent en het welkomstcommando, zodat alle bijbehorende bestanden gezamenlijk bijgewerkt worden.
+
+- Herstelt de fout `Cannot read properties of undefined (reading 'replace')` bij een ontbrekende `Welcome.Message`.
+- Welkomstvoorbeeld en toetredingsberichten gebruiken automatisch een ingebouwde standaardtekst bij een ontbrekende, lege of ongeldige tekst.
+- Welkomsttekst instellen werkt ook op databasegestuurde servers met een oude defaults-configuratie.
+- Je hoeft `config/defaults.js` niet aan te passen; bestaande kanalen en rollen blijven behouden.
+
+### GitHub-pakket
+
+- Volledige openbare export met gebruikershandleiding en actuele installatie-uitleg.
+- De bestaande versiecheckertest gebruikt een vaste testversie, zodat een nieuwe botversie de test niet onterecht laat mislukken.
+
+### Welkomstcommando
+
+- `/welkomstbericht instellen` slaat de welkomsttekst per server op; `/welkomstbericht voorbeeld` toont invulvelden en een voorbeeld.
+- Variabelen voor gebruiker, gebruikersnaam, server, ledenaantal en Discord-ID’s worden bij binnenkomst ingevuld.
+- Ook een server met `DefaultsGuildId` kan de welkomsttekst via Discord aanpassen; de overige instellingen blijven via defaults lopen.
+
 ## 2.4.9A — 24 september 2026
 
 ### Discord Connection Monitor — diagnose-update

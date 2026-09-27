@@ -1,88 +1,57 @@
-# Troy’s Game Community Bot — persoonlijke versie 2.4.8
+# Troy’s Game Community Bot — 2.5.0
 
-Discord-bot met tickets, moderatie, XP/levels, economy, verjaardagen, selfrollen,
-counting, agenda en optionele AI-chat. Deze persoonlijke variant bevat de
-instellingen voor Troy’s Game Community en is bedoeld voor je eigen host.
+Complete Discord-bot met tickets, moderatie, XP/levels, economy, verjaardagen, selfrollen, counting, agenda, AI-chat en instelbare welkomstberichten.
 
-## Nieuw in 2.4.8
+## Handleiding
 
-Alleen Troy’s Game Community gebruikt `config/defaults.js` als actieve
-serverconfiguratie. De server wordt geselecteerd met `DefaultsGuildId` in
-`config/settingsSource.js`; jouw server staat daar al ingevuld.
+[HANDLEIDING.md](HANDLEIDING.md) bevat de 50 slashcommando’s, instellingen en voorbeelden voor leden en beheerders. [CHANGELOG.md](CHANGELOG.md) beschrijft de wijzigingen.
 
-Andere Discord-servers blijven hun eigen opgeslagen database-instellingen gebruiken.
-De bestaande databaseconfiguratie van jouw server wordt genegeerd, maar niet gewist.
-XP, economy, gebruikers, verjaardagen, tickets, selfrolpanelen en andere botdata
-blijven gewoon in de database.
+## Nieuw in 2.5.0
 
-## Instellingen voor jouw server aanpassen
+- `/welkomstbericht instellen`: wijzig de welkomsttekst voor deze server.
+- `/welkomstbericht voorbeeld`: bekijk de invulvelden en de actieve tekst.
+- Invulvelden: `{gebruiker}`, `{gebruikersnaam}`, `{server}`, `{ledenaantal}`, `{gebruikersid}` en `{serverid}`.
+- Beide herstelupdates zijn inbegrepen: een ontbrekende tekst veroorzaakt geen fout en het toetredingsbericht haalt de opgeslagen tekst rechtstreeks voor de juiste server op.
+- De versie blijft 2.5.0, inclusief de herstelupdates.
 
-1. Pas de gewenste waarden aan in `config/defaults.js`.
-2. Sla het bestand op en herstart de bot.
-3. Controleer de wijziging met `/config bekijken` of `/config exporteren`.
+## Nieuwe installatie
 
-`/config instellen`, `/config herstellen` en `/config resetten` verwijzen op jouw
-server naar het bestand. Op andere servers blijven deze commands werken.
-Ook het staffrolkeuzemenu kan jouw bestandsinstellingen niet overschrijven.
+1. Gebruik Node.js 20 of hoger.
+2. Kopieer `.env.example` naar `.env` en vul je eigen Discord-botgegevens in.
+3. Installeer de dependencies met `npm ci`.
+4. Vul voor een eerste installatie ook `GUILD_ID` in `.env` in en registreer de slashcommando’s met `npm run deploy`. De bot moet al aan die server zijn toegevoegd.
+5. Start de bot met `npm start`.
+6. Stel de server in via `/config`. De servereigenaar en ingestelde owners/developers hebben toegang.
 
-Let op: waarden in defaults.js bepalen nu ook of functies aanstaan. Controleer
-bijvoorbeeld `Tickets.Enabled`, `AIChat.Enabled` en `AIChat.Channels` als je die
-eerder alleen via Discord had ingesteld.
+Voor welkomstberichten stel je `Welcome.Enabled` in op `ja` en `Welcome.Channel` op het gewenste kanaal. Gebruik daarna `/welkomstbericht instellen`. De bot heeft toegang tot dat kanaal nodig, inclusief Berichten verzenden en Links insluiten. Schakel de benodigde Discord-intents in overeenkomstig je botinstellingen; zie ook de opstartcontrole van de bot.
 
-De Bot-opstartcontrole gebruikt `StartupReport.Enabled` en `StartupReport.Channel`.
-De automatische changelogmelding gebruikt `Logging.Enabled` en `Logging.Channel`.
-Dit zijn afzonderlijke instellingen.
+## Bestaande installatie bijwerken
 
-## Terug naar database-instellingen
+Stop de bot en maak een back-up. Voeg de bronbestanden samen met de bestaande botmap. **Behoud je eigen `.env`, database en aangepaste configuratiebestanden, met name `config/defaults.js` en `config/settingsSource.js`.** De openbare bestanden hebben lege kanaal-/rol-ID’s en een lege `DefaultsGuildId`.
 
-Zet in `config/settingsSource.js`:
+Deze versie werkt ook als `Welcome.Message` in je bestaande defaults ontbreekt. Neem de nieuwe JavaScript-bestanden van de welkomstfunctie allemaal over. Registreer nieuwe slashcommando’s met `npm run deploy` en start de bot opnieuw. Voor de stap van 2.4.9 naar 2.5.0 zijn geen nieuwe dependencies toegevoegd.
 
-```js
-module.exports = {
-    DefaultsGuildId: ""
-};
-```
+## Instellingen en gegevens
 
-Herstart de bot. De eerder opgeslagen serverinstellingen worden weer actief;
-de bestandsinstellingen worden niet automatisch naar de database gekopieerd.
+Standaard is `DefaultsGuildId` leeg en beheert iedere server de eigen instellingen via Discord. Wie één server vanuit `config/defaults.js` wil beheren, kan die server-ID lokaal invullen in `config/settingsSource.js`.
 
-## Update installeren
+De welkomsttekst blijft ook dan via `/welkomstbericht instellen` wijzigbaar en heeft voorrang op de bestandstekst. `/welkomstbericht voorbeeld` toont de actieve tekst. `/config bekijken` en `/config exporteren` tonen in bestandsmodus de defaults-instellingen.
 
-Dit 2.4.8-updatepakket bevat alleen nieuwe of gewijzigde bestanden en vereist een
-bestaande 2.4.7-installatie. Stop de bot en maak eerst een privébackup. Pak de update
-uit in `/home/container` en voeg de mappen samen. Bewaar je huidige `.env`,
-`config/defaults.js` en databasebestanden. Die worden niet meegeleverd of vervangen.
-Gebruik de persoonlijke defaults uit de eerdere Troy-instellingen-versie.
-Er zijn geen nieuwe dependencies nodig. Herstart daarna de bot.
+Instellingen, XP, economy, verjaardagen en tickets worden opgeslagen in de database. Verwijder deze niet bij een update.
 
-Zie [INSTALLATIE-2.4.8.md](INSTALLATIE-2.4.8.md) en [CHANGELOG.md](CHANGELOG.md).
+## Updates en GitHub
 
-## GitHub-versiechecker
-
-De repositorylink staat in `config/updates.js`:
+De versiechecker gebruikt `package.json` en de repository in `config/updates.js`:
 https://github.com/troyscripts/troy-s_game_community_app
 
-De bot controleert bij opstarten en iedere zes uur op een nieuwere stabiele
-Latest-release. Een melding met downloadlink verschijnt in de console.
-Updates worden niet automatisch geïnstalleerd. Een eventuele lokale waarde van
-`GITHUB_REPOSITORY` in `.env` heeft voorrang op de link in het bestand.
+De bot controleert bij opstarten en iedere zes uur op een nieuwere stabiele Latest-release. Updates worden niet automatisch geïnstalleerd. De automatische Discord-changelog gebruikt `Logging.Enabled` en `Logging.Channel` en verstuurt iedere versie eenmaal nadat afleveren is gelukt.
 
-De geïnstalleerde versie komt uit `package.json`. De automatische changelogfunctie
-meldt 2.4.8 in het ingestelde logkanaal als logging aanstaat en het kanaal bereikbaar is.
+Publicatie-instructies staan in [GITHUB-INSTALLATIE.md](GITHUB-INSTALLATIE.md).
 
-Deze persoonlijke variant niet rechtstreeks openbaar uploaden: er staan eigen
-Discord-ID’s in defaults.js en settingsSource.js. Gebruik voor GitHub een
-opgeschoonde kopie, maak `DefaultsGuildId` daarin leeg en volg de publicatie-uitleg
-in `GITHUB-INSTALLATIE.md`. De exportcontrole weigert persoonlijke ID’s bewust.
+## Controles
 
-## Starten en controleren
+- `npm run check`: controle van syntax, commandnamen en vereiste bestanden.
+- `npm run test:updates`: tests voor de versiechecker.
+- `npm run prepare:github`: maak een openbare export zonder lokale botdata.
 
-- `npm start`: bot starten.
-- `npm run check`: syntax, commandnamen en vereiste bestanden controleren.
-- `npm run test:updates`: offline tests voor de GitHub-versiechecker.
-
-Bij een nieuwe installatie zijn dependencies (`npm ci`) en een eigen ingevulde
-`.env` nodig. Bewaar bij een bestaande installatie altijd je huidige `.env` en database.
-
-Deze update is lokaal gecontroleerd op serverafscheiding, behoud van opgeslagen
-instellingen en terugschakelen. Er is geen live Discord-test uitgevoerd.
+Deze broncode is lokaal gecontroleerd. Er is geen live Discord-test uitgevoerd.

@@ -27,6 +27,7 @@ const EDITABLE_ROOTS = [
 
 const GLOBAL_PATHS = ["Version", "Owners", "Developers", "Database", "Bot.Status"];
 const cache = new Map();
+const { getWelcomeTemplate } = require("../utils/welcomeMessage");
 
 function usesDefaults(guildId) {
     const id = String(settingsSource.DefaultsGuildId || "").trim();
@@ -92,6 +93,7 @@ function pickEditable(source) {
     const editable = Object.fromEntries(
         EDITABLE_ROOTS.map((key) => [key, clone(source[key])])
     );
+    editable.Welcome.Message = getWelcomeTemplate(editable.Welcome.Message);
     delete editable.Bot.Status;
     return editable;
 }
@@ -252,7 +254,12 @@ function getServerConfig(guildId) {
 }
 
 function getGuildConfig(guildId) {
-    if (usesDefaults(guildId)) return mergeWithGlobals(pickEditable(defaults));
+    if (usesDefaults(guildId)) {
+        const result = mergeWithGlobals(pickEditable(defaults));
+        const saved = readStored(guildId);
+        if (typeof saved?.Welcome?.Message === "string") result.Welcome.Message = saved.Welcome.Message;
+        return result;
+    }
     const key = String(guildId);
     if (!cache.has(key)) {
         cache.set(key, mergeWithGlobals(getServerConfig(key)));
@@ -327,6 +334,9 @@ function parseValue(path, rawValue, currentValue) {
     const raw = String(rawValue).trim();
     if (path === "AIChat.Mode" && !["all", "mention"].includes(raw)) {
         throw new Error("Gebruik all (alle berichten) of mention (alleen @bot).");
+    }
+    if (path === "Welcome.Message" && (!raw || raw.length > 4000)) {
+        throw new Error("Gebruik een tekst van 1 tot 4000 tekens.");
     }
     if (path === "AIChat.Personality" && raw.length > 2000) {
         throw new Error("Gebruik maximaal 2000 tekens voor de persoonlijkheid.");
@@ -473,6 +483,28 @@ function exportGuild(guildId) {
     return clone(getServerConfig(guildId));
 }
 
+
+function setWelcomeMessage(guildId, message) {
+    const value = String(message || "").replace(/\r\n?/g, "\n").replaceAll("\\n", "\n").trim();
+    if (!value || value.length > 4000) throw new Error("Gebruik een tekst van 1 tot 4000 tekens.");
+    if (usesDefaults(guildId)) {
+        const current = readStored(guildId) || {};
+        current.Welcome = { ...current.Welcome, Message: value };
+        db.prepare(`
+            INSERT INTO settings (guild_id, prefix, config_json, config_source, updated_at)
+            VALUES (?, ?, ?, ?, ?)
+            ON CONFLICT(guild_id) DO UPDATE SET
+                config_json = excluded.config_json,
+                config_source = excluded.config_source,
+                updated_at = excluded.updated_at
+        `).run(String(guildId), String(defaults.Prefix || "!"), JSON.stringify(current), "discord", Math.floor(Date.now() / 1000));
+    } else {
+        updateValue(guildId, "Welcome.Message", value);
+    }
+    cache.delete(String(guildId));
+    return value;
+}
+
 module.exports = {
     GLOBAL_PATHS,
     usesDefaults,
@@ -484,6 +516,7 @@ module.exports = {
     getEditablePaths,
     getPath,
     updateValue,
+    setWelcomeMessage,
     resetValue,
     resetGuild,
     exportGuild,
