@@ -2,6 +2,11 @@
 
 ## 2.5.0 — 27 september 2026
 
+### Herstel fetchReply-waarschuwing (zelfde versie)
+
+- `/ping` gebruikt `withResponse` in plaats van de verouderde optie `fetchReply: true`.
+- De botlatency blijft gebaseerd op het tijdstip van het antwoordbericht; alleen als het bericht ontbreekt in de response wordt het apart opgehaald.
+
 ### Herstel welkomsttekst (zelfde versie)
 
 - Het echte toetredingsbericht haalt de actieve configuratie rechtstreeks op met de server-ID, net als het welkomstcommando.

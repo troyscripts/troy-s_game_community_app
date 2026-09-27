@@ -37,7 +37,8 @@ module.exports = {
     guildOnly: false,
 
     async execute(client, interaction) {
-        const sent = await interaction.reply({ content: "🏓 Ping meten...", fetchReply: true });
+        const response = await interaction.reply({ content: "🏓 Ping meten...", withResponse: true });
+        const sent = response.resource?.message ?? await interaction.fetchReply();
         const botPing = sent.createdTimestamp - interaction.createdTimestamp;
         const stats = getSnapshot(client);
 
