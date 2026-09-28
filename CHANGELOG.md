@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.5.1 — 28 september 2026
+
+- Vaste serverconfiguratie verwijderd: iedere server gebruikt weer de opgeslagen instellingen via `/config`, inclusief staffrollen en welkomsttekst.
+- Nieuw: `/reset-voortgang bevestigen:Ja` reset in één command alle XP, levels, berichtentellers, wallet- en banksaldi van de huidige server. Alleen toegankelijk met Owner-/Developer-roltoegang, net als `/config`.
+- XP- en economy-cooldowns worden gereset; openstaande rekeningen worden geannuleerd. Alles wordt samen in één databasetransactie verwerkt.
+- Andere servers, instellingen, tickets en verjaardagen blijven behouden. Discord-rollen blijven staan.
+- Verwijder `config/settingsSource.js` en de verouderde `INSTALLATIE-2.4.8.md`.
+
 ## 2.5.0 — 27 september 2026
 
 ### Herstel fetchReply-waarschuwing (zelfde versie)

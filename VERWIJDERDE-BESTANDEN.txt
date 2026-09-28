@@ -1,0 +1,10 @@
+Verwijder deze 2 bestanden uit de botmap EN uit je GitHub-repository:
+
+config/settingsSource.js
+INSTALLATIE-2.4.8.md
+
+settingsSource.js hoort bij de verwijderde vaste-configmodus.
+INSTALLATIE-2.4.8.md bevat de verouderde instructies voor die modus.
+
+Verwijder config/defaults.js NIET: de bot gebruikt dit nog voor basiswaarden
+zoals de database-instellingen en globale botinstellingen.

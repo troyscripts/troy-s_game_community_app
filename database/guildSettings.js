@@ -1,6 +1,5 @@
 const config = require("../config/config");
 const defaults = require("../config/defaults");
-const settingsSource = require("../config/settingsSource");
 const logger = require("../utils/logger");
 const { db } = require("./database");
 
@@ -28,17 +27,6 @@ const EDITABLE_ROOTS = [
 const GLOBAL_PATHS = ["Version", "Owners", "Developers", "Database", "Bot.Status"];
 const cache = new Map();
 const { getWelcomeTemplate } = require("../utils/welcomeMessage");
-
-function usesDefaults(guildId) {
-    const id = String(settingsSource.DefaultsGuildId || "").trim();
-    return /^\d{17,20}$/.test(id) && String(guildId) === id;
-}
-
-function assertDatabaseConfig(guildId) {
-    if (usesDefaults(guildId)) {
-        throw new Error("Deze server gebruikt config/defaults.js. Pas dat bestand aan en herstart de bot. De opgeslagen databaseconfiguratie blijft bewaard.");
-    }
-}
 
 function clone(value) {
     return JSON.parse(JSON.stringify(value));
@@ -153,7 +141,6 @@ function readStored(guildId) {
 }
 
 function saveStored(guildId, serverConfig, source = "discord") {
-    assertDatabaseConfig(guildId);
     const data = pickEditable(serverConfig);
     db.prepare(`
         INSERT INTO settings (guild_id, prefix, config_json, config_source, updated_at)
@@ -213,7 +200,7 @@ function migrateLegacySettings() {
     const legacyGuildId = ids.length === 1 ? ids[0] : envGuildId;
 
     for (const row of rows) {
-        if (row.config_json || usesDefaults(row.guild_id)) continue;
+        if (row.config_json) continue;
 
         const initial = row.guild_id === legacyGuildId
             ? pickEditable(defaults)
@@ -230,7 +217,7 @@ function migrateLegacySettings() {
         "SELECT 1 FROM settings WHERE config_json IS NOT NULL LIMIT 1"
     ).get();
 
-    if (!hasStoredConfig && legacyGuildId && !usesDefaults(legacyGuildId)) {
+    if (!hasStoredConfig && legacyGuildId) {
         saveStored(legacyGuildId, pickEditable(defaults), "legacy");
         logger.database(
             `Bestaande config.js-instellingen bewaard voor Discord-server ${legacyGuildId}.`
@@ -241,25 +228,15 @@ function migrateLegacySettings() {
 function initialize() {
     migrateLegacySettings();
     config.__context.setProvider(getGuildConfig);
-    if (usesDefaults(settingsSource.DefaultsGuildId)) {
-        logger.database(`Server ${settingsSource.DefaultsGuildId} gebruikt config/defaults.js; andere servers gebruiken de database.`);
-    }
 }
 
 function getServerConfig(guildId) {
-    if (usesDefaults(guildId)) return pickEditable(defaults);
     const clean = createCleanServerConfig();
     const stored = readStored(guildId);
     return stored ? mergeObjects(clean, stored) : clean;
 }
 
 function getGuildConfig(guildId) {
-    if (usesDefaults(guildId)) {
-        const result = mergeWithGlobals(pickEditable(defaults));
-        const saved = readStored(guildId);
-        if (typeof saved?.Welcome?.Message === "string") result.Welcome.Message = saved.Welcome.Message;
-        return result;
-    }
     const key = String(guildId);
     if (!cache.has(key)) {
         cache.set(key, mergeWithGlobals(getServerConfig(key)));
@@ -268,7 +245,6 @@ function getGuildConfig(guildId) {
 }
 
 function ensureGuild(guildId) {
-    if (usesDefaults(guildId)) return false;
     const key = String(guildId);
     const row = db.prepare(
         "SELECT config_json FROM settings WHERE guild_id = ?"
@@ -441,7 +417,6 @@ function parseValue(path, rawValue, currentValue) {
 }
 
 function updateValue(guildId, inputPath, rawValue) {
-    assertDatabaseConfig(guildId);
     const path = normalizePath(inputPath);
     const serverConfig = getServerConfig(guildId);
     let currentValue = getPath(serverConfig, path);
@@ -457,7 +432,6 @@ function updateValue(guildId, inputPath, rawValue) {
 }
 
 function resetValue(guildId, inputPath) {
-    assertDatabaseConfig(guildId);
     const path = normalizePath(inputPath);
     const serverConfig = getServerConfig(guildId);
     const clean = createCleanServerConfig();
@@ -474,7 +448,6 @@ function resetValue(guildId, inputPath) {
 }
 
 function resetGuild(guildId) {
-    assertDatabaseConfig(guildId);
     saveStored(guildId, createCleanServerConfig(), "reset");
     return getGuildConfig(guildId);
 }
@@ -487,27 +460,13 @@ function exportGuild(guildId) {
 function setWelcomeMessage(guildId, message) {
     const value = String(message || "").replace(/\r\n?/g, "\n").replaceAll("\\n", "\n").trim();
     if (!value || value.length > 4000) throw new Error("Gebruik een tekst van 1 tot 4000 tekens.");
-    if (usesDefaults(guildId)) {
-        const current = readStored(guildId) || {};
-        current.Welcome = { ...current.Welcome, Message: value };
-        db.prepare(`
-            INSERT INTO settings (guild_id, prefix, config_json, config_source, updated_at)
-            VALUES (?, ?, ?, ?, ?)
-            ON CONFLICT(guild_id) DO UPDATE SET
-                config_json = excluded.config_json,
-                config_source = excluded.config_source,
-                updated_at = excluded.updated_at
-        `).run(String(guildId), String(defaults.Prefix || "!"), JSON.stringify(current), "discord", Math.floor(Date.now() / 1000));
-    } else {
-        updateValue(guildId, "Welcome.Message", value);
-    }
+    updateValue(guildId, "Welcome.Message", value);
     cache.delete(String(guildId));
     return value;
 }
 
 module.exports = {
     GLOBAL_PATHS,
-    usesDefaults,
     initialize,
     getGuildConfig,
     getServerConfig,

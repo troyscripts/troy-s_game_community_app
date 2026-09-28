@@ -1,18 +1,15 @@
-# Troy’s Game Community Bot — 2.5.0
+# Troy’s Game Community Bot — 2.5.1
 
 Complete Discord-bot met tickets, moderatie, XP/levels, economy, verjaardagen, selfrollen, counting, agenda, AI-chat en instelbare welkomstberichten.
 
 ## Handleiding
 
-[HANDLEIDING.md](HANDLEIDING.md) bevat de 50 slashcommando’s, instellingen en voorbeelden voor leden en beheerders. [CHANGELOG.md](CHANGELOG.md) beschrijft de wijzigingen.
+[HANDLEIDING.md](HANDLEIDING.md) bevat de slashcommando’s, instellingen en voorbeelden voor leden en beheerders. [CHANGELOG.md](CHANGELOG.md) beschrijft de wijzigingen.
 
-## Nieuw in 2.5.0
+## Nieuw in 2.5.1
 
-- `/welkomstbericht instellen`: wijzig de welkomsttekst voor deze server.
-- `/welkomstbericht voorbeeld`: bekijk de invulvelden en de actieve tekst.
-- Invulvelden: `{gebruiker}`, `{gebruikersnaam}`, `{server}`, `{ledenaantal}`, `{gebruikersid}` en `{serverid}`.
-- Beide herstelupdates zijn inbegrepen: een ontbrekende tekst veroorzaakt geen fout en het toetredingsbericht haalt de opgeslagen tekst rechtstreeks voor de juiste server op.
-- De versie blijft 2.5.0, inclusief de herstelupdates.
+- Iedere Discord-server is weer instelbaar met `/config instellen`. De vaste-configmodus is verwijderd.
+- `/reset-voortgang bevestigen:Ja` reset XP/levels en economy van alle bestaande profielen in deze server. Zie de handleiding voor de precieze werking.
 
 ## Nieuwe installatie
 
@@ -27,17 +24,17 @@ Voor welkomstberichten stel je `Welcome.Enabled` in op `ja` en `Welcome.Channel`
 
 ## Bestaande installatie bijwerken
 
-Stop de bot en maak een back-up. Voeg de bronbestanden samen met de bestaande botmap. **Behoud je eigen `.env`, database en aangepaste configuratiebestanden, met name `config/defaults.js` en `config/settingsSource.js`.** De openbare bestanden hebben lege kanaal-/rol-ID’s en een lege `DefaultsGuildId`.
+Stop de bot en maak een back-up van je database. Kopieer alle bestanden uit het updatepakket naar dezelfde paden in de botmap. Behoud je eigen `.env`, database en `config/defaults.js`.
 
-Deze versie werkt ook als `Welcome.Message` in je bestaande defaults ontbreekt. Neem de nieuwe JavaScript-bestanden van de welkomstfunctie allemaal over. Registreer nieuwe slashcommando’s met `npm run deploy` en start de bot opnieuw. Voor de stap van 2.4.9 naar 2.5.0 zijn geen nieuwe dependencies toegevoegd.
+Verwijder `config/settingsSource.js` en `INSTALLATIE-2.4.8.md`; de volledige lijst staat in `VERWIJDERDE-BESTANDEN.txt`. Start de bot opnieuw. Het nieuwe slashcommand wordt automatisch geregistreerd; bij een registratiefout kun je `npm run deploy` gebruiken. Er zijn geen nieuwe dependencies.
 
 ## Instellingen en gegevens
 
-Standaard is `DefaultsGuildId` leeg en beheert iedere server de eigen instellingen via Discord. Wie één server vanuit `config/defaults.js` wil beheren, kan die server-ID lokaal invullen in `config/settingsSource.js`.
+Iedere server gebruikt zijn opgeslagen databaseconfiguratie. Je eerder via Discord ingestelde waarden worden dus weer actief. Controleer ze met `/config bekijken` en pas ze aan met `/config instellen`. Waarden die je alleen in defaults wijzigde, worden niet over een bestaande databaseconfiguratie heen gekopieerd.
 
-De welkomsttekst blijft ook dan via `/welkomstbericht instellen` wijzigbaar en heeft voorrang op de bestandstekst. `/welkomstbericht voorbeeld` toont de actieve tekst. `/config bekijken` en `/config exporteren` tonen in bestandsmodus de defaults-instellingen.
+`config/defaults.js` blijft nodig voor basiswaarden en globale instellingen, zoals owners, databasepad en botstatus. Verwijder dit bestand niet. Serverinstellingen worden via Discord opgeslagen; de oude bestandsmodus bestaat niet meer.
 
-Instellingen, XP, economy, verjaardagen en tickets worden opgeslagen in de database. Verwijder deze niet bij een update.
+XP en economy worden pas gewist wanneer je het resetcommand met bevestiging uitvoert. De update zelf reset geen voortgang.
 
 ## Updates en GitHub
 

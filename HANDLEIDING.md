@@ -1,8 +1,8 @@
 # Troy’s Game Community Bot — Gebruikershandleiding
 
-**Versie 2.5.0 · Bijgewerkt op 27 september 2026**
+**Versie 2.5.1 · Bijgewerkt op 28 september 2026**
 
-Deze openbare versie gebruikt standaard instellingen per server via Discord. Uitleg over `config/defaults.js` als actieve serverconfiguratie geldt alleen als de beheerder een `DefaultsGuildId` heeft ingevuld.
+Iedere server beheert de eigen instellingen via `/config` in Discord. De vaste-configmodus is verwijderd.
 
 Deze handleiding legt uit hoe je de bot in Discord gebruikt. Leden vinden hier de commands voor verjaardagen, levels, spelgeld en plezier. Staffleden en serverbeheerders vinden verderop de beheercommands en instellingen.
 
@@ -570,21 +570,26 @@ De tekst verschijnt in een embed met de titel **Lid toegetreden**. Alleen de bes
 
 **Voorwaarden:** `Welcome.Enabled` moet aanstaan en `Welcome.Channel` moet een bereikbaar tekstkanaal zijn. De bot heeft daar toestemming nodig om berichten te verzenden en links in te sluiten. Dit command verandert de tekst; het stelt geen kanaal in en schakelt de welkomstfunctie niet in. Een lid-toetredingsmelding kan daarnaast via de bestaande loginstellingen worden verstuurd.
 
-**Bij een ingestelde DefaultsGuildId:** dit command werkt ook wanneer de server `config/defaults.js` gebruikt. De via Discord opgeslagen welkomsttekst krijgt dan voorrang op `Welcome.Message` uit dat bestand. Gebruik `/welkomstbericht voorbeeld` om de actieve tekst te bekijken; `/config bekijken` en `/config exporteren` tonen bij deze bestandsmodus de waarden uit defaults.
+### /reset-voortgang
+
+**Toegang:** dezelfde Owner-/Developer-toegang als `/config`.
+
+Gebruik `/reset-voortgang bevestigen:Ja` om de voortgang van iedereen in deze server definitief te resetten. Met `Nee` gebeurt niets.
+
+- XP: level 1, 0 XP, 0 berichten en de XP-cooldown op nul.
+- Economy: bestaande profielen krijgen €0 wallet en €0 bank. Daily-, work-, steel- en rekeningcooldowns worden gewist.
+- Openstaande rekeningen worden geannuleerd; afgehandelde rekeningen en steelhistorie blijven bewaard.
+- Bestaande profielen blijven bestaan, zodat zij niet opnieuw startgeld krijgen. Nieuwe gebruikers krijgen nog steeds het ingestelde startgeld.
+- De leaderboards tonen de geresette waarden. Nieuwe activiteit bouwt weer XP en geld op.
+- Bestaande Discord-rollen, serverinstellingen, counting, tickets, verjaardagen en andere servers blijven ongewijzigd.
+
+Er is geen ongedaan-maakcommand. Maak vooraf een databaseback-up als je later wilt kunnen terugzetten.
 
 ### /config
 
 Bekijk of wijzig de instellingen van deze Discord-server
 
 **Toegang:** Owner / ingestelde Developer-rol.
-
-**Bij een ingestelde DefaultsGuildId:** `/config bekijken` en
-`/config exporteren` tonen de actieve instellingen uit `config/defaults.js`.
-`/config instellen`, `/config herstellen` en `/config resetten` zijn voor
-deze server geblokkeerd. Wijzig het defaults-bestand en herstart de bot om een
-instelling te veranderen. Op andere Discord-servers blijven deze onderdelen
-wel via Discord werken. De welkomsttekst kun je op alle servers wijzigen met
-`/welkomstbericht instellen`.
 
 | Gebruik | Opties |
 | --- | --- |
@@ -640,15 +645,6 @@ Wijzigingen aan panelen en het toevoegen of verwijderen van rollen worden bijgeh
 ## Serverinstellingen via Discord
 
 Dit onderdeel is voor beheerders met Owner-toegang. Gebruik `/config bekijken` om de huidige instellingen te zien. Wijzigingen gelden voor de server waarin je het command gebruikt.
-
-> **Bij een ingestelde DefaultsGuildId:** worden de actieve
-> serverinstellingen rechtstreeks uit `config/defaults.js` gelezen. Je kunt ze
-> bekijken en exporteren via `/config`, maar niet meer via Discord wijzigen,
-> herstellen of resetten. De voorbeelden hieronder zijn op deze server bedoeld
-> als verwijzing voor de beheerder die het defaults-bestand aanpast. Andere
-> Discord-servers blijven hun database-instellingen via `/config` beheren.
-> **Uitzondering sinds 2.5.0:** de welkomsttekst kun je wel direct wijzigen met
-> `/welkomstbericht instellen`, ook op Troy’s Game Community.
 
 Bij `/config instellen` kies je een **instelling** en vul je een **waarde** in. Bijvoorbeeld:
 
