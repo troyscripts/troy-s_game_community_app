@@ -1,0 +1,22 @@
+GitHub-update: 2.5.2 naar 2.5.3, inclusief herstelcorrecties.
+
+Nieuwe en gewijzigde bestanden:
+
+BESTANDEN-2.5.3.txt
+CHANGELOG.md
+HERSTEL-2.5.3.txt
+NOTIFY-HANDLEIDING.md
+README.md
+UPDATE-2.5.3.txt
+package-lock.json
+package.json
+scripts/prepare-github.cjs
+scripts/test-notify.cjs
+scripts/test-platform-request.cjs
+scripts/test-update-checker.cjs
+services/notify/providers.js
+services/notifyService.js
+services/updateChecker.js
+utils/platformRequest.js
+
+Verwijderde bestanden: geen.

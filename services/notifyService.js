@@ -75,6 +75,7 @@ async function tick(client) {
             }
         }
     }
+    const youtubeChecks = new Map();
     for (const row of store.list()) {
         if (stopped) return;
         if (!client.guilds.cache.has(row.guild_id)) continue;
@@ -84,14 +85,20 @@ async function tick(client) {
             // Continue discovery during Discord failures and delivery during platform failures.
             let fetchError = null;
             try {
-                const result = await providers[row.platform](row);
+                let result;
+                if (row.platform === 'youtube') {
+                    const key = row.resolved_id || row.account;
+                    if (!youtubeChecks.has(key)) youtubeChecks.set(key, providers.youtube(row));
+                    result = await youtubeChecks.get(key);
+                } else result = await providers[row.platform](row);
                 if (stopped) return;
                 if (result.resolvedId) store.resolved(row.id,result.resolvedId);
-                store.ingest(row,result.items.sort((a,b) => a.published-b.published));
+                store.ingest(row,[...result.items].sort((a,b) => a.published-b.published));
             } catch (error) { fetchError = error; }
             if (stopped) return;
             await deliver(client,row);
             if (fetchError) throw fetchError;
+            if (failure) logger.info(`Notify #${row.id} (${row.platform}): controle en aflevering weer geslaagd.`);
             failures.delete(row.id);
         } catch (error) {
             if (stopped) return;
@@ -108,7 +115,7 @@ function startNotify(client) {
     stopped = false;
     const run = () => {
         if (active) return;
-        active = tick(client).catch(() => logger.warn('Notify-controle mislukt; nieuwe poging over vijf minuten.')).finally(() => { active = null; });
+        active = tick(client).catch(error => logger.warn(`Notify-controle mislukt: ${error.message || 'onbekende fout'}; nieuwe poging over vijf minuten.`)).finally(() => { active = null; });
     };
     run();
     timer = setInterval(run,5*60000); timer.unref();

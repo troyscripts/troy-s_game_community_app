@@ -1,0 +1,16 @@
+Troy’s Game Community Bot — update 2.5.2 naar 2.5.3
+
+1. Stop de bot en maak een back-up.
+2. Kopieer alle bestanden uit deze ZIP naar dezelfde paden in de botmap.
+3. Start de bot opnieuw. Geen npm-installatie of handmatige commandregistratie nodig.
+4. Controleer de console. Bij aanhoudende problemen geeft de waarschuwing nu de host en foutcode.
+
+Alleen nieuwe/gewijzigde bestanden zijn meegeleverd. Geen bestanden verwijderen.
+Config, .env, database en TikTok-koppelbestand worden niet meegeleverd of overschreven.
+Versie en automatische Discord-changelog zijn bijgewerkt naar 2.5.3.
+
+De netwerklogica is met gesimuleerde storingen, redirects en time-outs getest.
+De openbare YouTube-feed van het ingestelde Troy-kanaal is succesvol opgehaald. De verbinding vanaf jouw eigen hosting en aflevering op Discord zijn niet vanuit de ontwikkelomgeving getest.
+
+Dit pakket bevat ook de correcties voor de loggeraanroep, de YouTube-cookiepagina en kanaal-ID’s zonder UC-prefix.
+Voor GitHub: pak de ZIP uit en upload de inhoud naar de hoofdmap van de repository, met behoud van de mappenstructuur. Publiceer daarna desgewenst een release met tag v2.5.3.

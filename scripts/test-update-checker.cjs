@@ -18,7 +18,7 @@ test('numeric versions, stable releases and local beta', () => {
 test('GitHub response handling uses timeout, no auth, validated URL', async () => {
     const fetchImpl = async(url, options)=> {
         assert.equal(url,'https://api.github.com/repos/example/bot/releases/latest');
-        assert.equal(options.redirect,'error');
+        assert.equal(options.redirect,'manual');
         assert.ok(options.signal);
         assert.equal(options.headers.Authorization,undefined);
         return {ok:true,json:async()=>({tag_name:'v2.4.8',html_url:'https://evil.example'})};
@@ -34,5 +34,30 @@ test('GitHub response handling uses timeout, no auth, validated URL', async () =
     }
     await assert.rejects(checkForUpdate({repo:'example/bot',fetchImpl:async()=>({ok:false,status:500})}),/500/);
     await assert.rejects(checkForUpdate({repo:'example/bot',fetchImpl:async()=>({ok:true,json:async()=>({})})}),/geldige release/);
-    await assert.rejects(checkForUpdate({repo:'example/bot',fetchImpl:async()=>{throw new Error('timeout');}}),/timeout/);
+    await assert.rejects(checkForUpdate({repo:'example/bot',fetchImpl:async()=>{throw new Error('timeout');}}),/netwerkfout/);
+});
+
+test('scheduled checker preserves logger receiver on successful GitHub responses',async()=>{
+    const checker=require('../services/updateChecker');
+    const logger=require('../utils/logger');
+    const settings=require('../config/updates');
+    const previous={fetch:global.fetch,write:logger.write,enabled:settings.Enabled,env:process.env.UPDATE_CHECK_ENABLED};
+    const lines=[];
+    logger.write=function(type,color,message){assert.equal(this,logger);lines.push({type,message});};
+    settings.Enabled=true;delete process.env.UPDATE_CHECK_ENABLED;
+    try{
+        for(const tag of ['v0.0.1','v999.0.0']){
+            global.fetch=async()=>({ok:true,status:200,json:async()=>({tag_name:tag})});
+            checker.startUpdateChecker();
+            for(let i=0;i<10;i++)await new Promise(resolve=>setImmediate(resolve));
+            checker.stopUpdateChecker();
+        }
+        assert.equal(lines.length,2);
+        assert.equal(lines[0].type,'INFO');assert.match(lines[0].message,/gelijk aan of nieuwer/);
+        assert.equal(lines[1].type,'WARNING');assert.match(lines[1].message,/Nieuwe botversie/);
+        assert.ok(lines.every(line=>!line.message.includes('write')));
+    }finally{
+        checker.stopUpdateChecker();global.fetch=previous.fetch;logger.write=previous.write;settings.Enabled=previous.enabled;
+        if(previous.env===undefined)delete process.env.UPDATE_CHECK_ENABLED;else process.env.UPDATE_CHECK_ENABLED=previous.env;
+    }
 });

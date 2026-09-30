@@ -1,4 +1,5 @@
 const fs = require('node:fs');
+const { platformRequest } = require('../../utils/platformRequest');
 const path = require('node:path');
 const { randomBytes } = require('node:crypto');
 const tokenPath = path.resolve(__dirname, '../../data/notify-tokens.json');
@@ -25,17 +26,29 @@ function account(platform, input) {
     return value;
 }
 async function request(url, options = {}, json = true) {
-    let response;
-    try { response = await fetch(url, {...options, redirect:'error', signal:AbortSignal.timeout(15000)}); }
-    catch { throw new Error('Platform niet bereikbaar of aanvraag verlopen; wordt later opnieuw geprobeerd.'); }
-    if (!response.ok) throw new Error(`Platform gaf HTTP ${response.status}; controleer koppeling of probeer later opnieuw.`);
-    if (json) {
-        const data = await response.json();
-        if (data.error && data.error?.code !== 'ok') throw new Error('TikTok heeft de aanvraag geweigerd. Controleer toestemming, scopes en koppel zo nodig opnieuw.');
-        return data;
-    }
-    return response.text();
+    const host = new URL(url).hostname;
+    const isYoutube = ['www.youtube.com','youtube.com'].includes(host);
+    // Anonymous bot consent preference; no account/browser cookies are loaded or stored.
+    // SOCS=CAI is also used by yt-dlp's YouTube consent initialization.
+    const requestOptions = isYoutube ? {...options,headers:{...options.headers,Cookie:'SOCS=CAI'}} : options;
+    const {response,data} = await platformRequest(url, requestOptions, {
+        allowedHosts: isYoutube ? ['www.youtube.com','youtube.com'] : [host],
+        read: async response => {
+            if (!response.ok) { await response.body?.cancel(); return null; }
+            if (!json) return response.text();
+            try { return await response.json(); }
+            catch (error) {
+                if (!(error instanceof SyntaxError)) throw error;
+                throw Object.assign(new Error(`${host}: ongeldige JSON ontvangen.`), {permanent:true});
+            }
+        }
+    });
+    if (!response.ok) throw new Error(`${host}: HTTP ${response.status}; controleer koppeling of probeer later opnieuw.`);
+    if (json && (!data || typeof data !== 'object')) throw new Error(`${host}: ongeldig JSON-antwoord ontvangen.`);
+    if (json && data.error && data.error?.code !== 'ok') throw new Error('TikTok heeft de aanvraag geweigerd. Controleer toestemming, scopes en koppel zo nodig opnieuw.');
+    return data;
 }
+
 function decode(value) {
     return value.replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g,'$1').replace(/&(#x[0-9a-f]+|#\d+|amp|lt|gt|quot|apos);/gi, (match,key) => {
         const named = {amp:'&',lt:'<',gt:'>',quot:'"',apos:"'"};
@@ -48,7 +61,9 @@ function tag(xml,name) { return decode(xml.match(new RegExp(`<${name}(?:\\s[^>]*
 function parseFeed(xml, expectedId) {
     if (!/<feed[\s>]/.test(xml) || !/<\/feed>/.test(xml) || /<!DOCTYPE/i.test(xml)) throw new Error('YouTube-feed is ongeldig; niets als verwerkt opgeslagen.');
     const header = xml.split('<entry>')[0];
-    if (tag(header,'yt:channelId') !== expectedId) throw new Error('YouTube-feed hoort niet bij het ingestelde kanaal.');
+    const feedId = tag(header,'yt:channelId');
+    // Live Atom feeds may omit the UC prefix; compare the exact remaining ID.
+    if (!/^UC[\w-]{22}$/.test(expectedId) || ![expectedId,expectedId.slice(2)].includes(feedId)) throw new Error('YouTube-feed hoort niet bij het ingestelde kanaal.');
     const blocks = [...xml.matchAll(/<entry>([\s\S]*?)<\/entry>/g)];
     return blocks.map(([,block]) => {
         const id = tag(block,'yt:videoId');

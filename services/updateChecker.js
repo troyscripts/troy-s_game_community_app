@@ -1,4 +1,5 @@
 'use strict';
+const { platformRequest } = require('../utils/platformRequest');
 const settings = require('../config/updates');
 const currentVersion = require('../package.json').version;
 let timer = null;
@@ -26,14 +27,19 @@ function isNewerStable(remote, local) {
 }
 async function checkForUpdate({ repo, version = currentVersion, fetchImpl = globalThis.fetch } = {}) {
     const slug = repository(repo);
-    const response = await fetchImpl(`https://api.github.com/repos/${slug}/releases/latest`, {
-        headers: { Accept: 'application/vnd.github+json', 'User-Agent': 'Community-Bot-Update-Checker' },
-        redirect: 'error', signal: AbortSignal.timeout(10000)
-    });
+    const {response, data:release} = await platformRequest(`https://api.github.com/repos/${slug}/releases/latest`, {
+        headers: { Accept: 'application/vnd.github+json', 'User-Agent': 'Community-Bot-Update-Checker' }
+    }, {fetchImpl, read: async response => {
+        if (!response.ok) { await response.body?.cancel(); return null; }
+        try { return await response.json(); }
+        catch (error) {
+            if (!(error instanceof SyntaxError)) throw error;
+            throw Object.assign(new Error('GitHub gaf geen geldige release-JSON terug.'), {permanent:true});
+        }
+    }});
     if (response.status === 404) return { status: 'missing', slug };
     if (response.status === 403 || response.status === 429) return { status: 'limited', slug };
     if (!response.ok) throw new Error(`GitHub antwoordde met HTTP ${response.status}.`);
-    const release = await response.json();
     if (!release || typeof release.tag_name !== 'string') throw new Error('GitHub gaf geen geldige release terug.');
     if (release.draft || release.prerelease) return { status: 'ignored', slug };
     const newer = isNewerStable(release.tag_name, version);
@@ -64,11 +70,12 @@ function startUpdateChecker() {
             };
             const message = messages[result.status];
             if (message !== lastMessage) {
-                (result.status === 'update' ? logger.warn : logger.info)(message);
+                if (result.status === 'update') logger.warn(message);
+                else logger.info(message);
                 lastMessage = message;
             }
-        } catch {
-            const message = 'Versiechecker: controle mislukt (verbinding of ongeldige release). De bot blijft werken; volgende controle probeert opnieuw.';
+        } catch (error) {
+            const message = `Versiechecker: ${error.message} De bot blijft werken; volgende controle probeert opnieuw.`;
             if (lastMessage !== message) { logger.warn(message); lastMessage = message; }
         } finally { running = false; }
     };

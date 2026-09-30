@@ -1,10 +1,14 @@
-# Troy’s Game Community Bot — 2.5.2
+# Troy’s Game Community Bot — 2.5.3
 
 Complete Discord-bot met tickets, moderatie, XP/levels, economy, verjaardagen, selfrollen, counting, agenda, AI-chat en instelbare welkomstberichten.
 
 ## Handleiding
 
 [HANDLEIDING.md](HANDLEIDING.md) bevat de slashcommando’s, instellingen en voorbeelden voor leden en beheerders. [CHANGELOG.md](CHANGELOG.md) beschrijft de wijzigingen.
+
+## Nieuw in 2.5.3
+
+Robuustere YouTube- en GitHub-controles met veilige doorverwijzingen, een extra poging bij tijdelijke netwerkfouten en concrete foutcodes. Dezelfde YouTube-creator wordt per controleronde eenmaal opgehaald. Notify meldt herstel na fouten. De correcties voor de YouTube-cookiepagina, kanaal-ID’s zonder UC-prefix en de loggerfout in de versiechecker zijn inbegrepen.
 
 ## Nieuw in 2.5.2
 
@@ -23,9 +27,7 @@ Voor welkomstberichten stel je `Welcome.Enabled` in op `ja` en `Welcome.Channel`
 
 ## Bestaande installatie bijwerken
 
-Stop de bot en maak een back-up van je database. Kopieer alle bestanden uit het updatepakket naar dezelfde paden in de botmap. Behoud je eigen `.env` en database. `config/defaults.js` bevat nu het nieuwe `Notify`-blok met vier lege pingrollen. Heb je dit bestand zelf aangepast, neem dan alleen dat nieuwe blok over en behoud je andere waarden. Anders kun je het meegeleverde bestand gebruiken.
-
-Voor update 2.5.1 → 2.5.2 hoeven geen bestanden verwijderd te worden. Kopieer ook het meegeleverde `data/notify-presets.json` naar de host voor jouw vooraf ingestelde creatoraccounts. Start de bot opnieuw. Het nieuwe slashcommand wordt automatisch geregistreerd; bij een registratiefout kun je `npm run deploy` gebruiken. Er zijn geen nieuwe dependencies.
+Stop de bot, maak een back-up en kopieer de bestanden uit het updatepakket naar dezelfde paden in de botmap. Start daarna opnieuw. Voor 2.5.2 → 2.5.3 zijn geen nieuwe dependencies, configwijzigingen of verwijderingen nodig. De automatische changelog gebruikt de bestaande logginginstellingen.
 
 ## Instellingen en gegevens
 

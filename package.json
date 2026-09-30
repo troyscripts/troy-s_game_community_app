@@ -1,6 +1,6 @@
 {
   "name": "troys-gamecommunity-bot",
-  "version": "2.5.2",
+  "version": "2.5.3",
   "description": "Professionele Discord Bot voor Troy's Gamecommunity",
   "main": "index.js",
   "scripts": {

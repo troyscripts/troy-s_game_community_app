@@ -88,3 +88,23 @@ Het tokenbestand is privé, hoort niet op GitHub en wordt niet door de gewone SQ
 - https://developers.tiktok.com/docs/en/tiktok-api-v2-get-user-info
 - https://developers.tiktok.com/docs/en/tiktok-api-v2-video-list
 - https://developers.tiktok.com/docs/en/oauth-user-access-token-management
+
+
+## Verbindingsdiagnose vanaf 2.5.3
+
+De basiscontrole draait iedere vijf minuten. Bij fouten loopt de wachttijd per creator op van 5 naar 10, 20, 40 en maximaal 60 minuten. Tijdelijke GET-verbindingsfouten en HTTP 502/503/504 krijgen eerst één extra poging na 750 milliseconden, met maximaal 20 seconden per poging. Een extra poging herhaalt geen Discordmelding.
+
+Waarschuwingen tonen de betrokken host en, indien beschikbaar, de foutcode. `ENOTFOUND`/`EAI_AGAIN` wijzen op naamresolutie; `ETIMEDOUT`/`UND_ERR_CONNECT_TIMEOUT`/`TIMEOUT` op een verlopen aanvraag; `ENETUNREACH` op een onbereikbaar netwerk. HTTP 403 of 429 betekent dat het platform de aanvraag weigert of beperkt. Deel bij aanhoudende problemen de nieuwe waarschuwing met je hoster. Een code is een aanwijzing, geen bewijs van de precieze oorzaak.
+
+Een geweigerde externe doorverwijzing wordt niet gevolgd. Als het om het opzoeken van een YouTube-handle gaat, kun je met `/notify youtube-id` het juiste UC-kanaal-ID instellen. Een directe ID lost een geblokkeerde feedverbinding niet op.
+
+Na herstel verschijnt een informatieregel. TikTok blijft wachten totdat het account toestemming heeft gegeven. Video’s van vóór de eerste geslaagde controle worden, zoals voorheen, als historie overgeslagen.
+
+
+### Correctie 2.5.3 (zelfde versienummer)
+
+YouTube-aanvragen sturen nu een vaste anonieme cookievoorkeur (`SOCS=CAI`, akkoord) mee. Er worden geen persoonlijke browsercookies of accountgegevens gebruikt of opgeslagen. De hostbeperking voor doorverwijzingen blijft actief. Dit is geen YouTube-login en omzeilt geen toegangsrechten. Als een cookiepagina toch blijft verschijnen, vermeldt de waarschuwing de doelhost en kun je het UC-kanaal-ID via `/notify youtube-id` instellen.
+
+De versiechecker had daarnaast een fout in de loggeraanroep. `Cannot read properties of undefined (reading 'write')` kon daardoor verschijnen nadat GitHub al succesvol was uitgelezen; deze aanroep is hersteld.
+
+De YouTube-feed kan het kanaal-ID zonder `UC` teruggeven. De vergelijking ondersteunt nu beide schrijfwijzen en controleert nog steeds exact het ingestelde kanaal.

@@ -1,5 +1,23 @@
 # Changelog
 
+## 2.5.3 — 30 september 2026
+
+### Correctie binnen dezelfde versie
+
+- YouTube-feed: kanaal-ID’s zonder UC-prefix worden nu correct vergeleken; een feed van een ander kanaal blijft geweigerd.
+
+- Versiechecker: loggeraanroep hersteld; een geslaagde controle veroorzaakt niet langer een `undefined (reading 'write')`-fout.
+- YouTube: anonieme cookievoorkeur toegevoegd voor het ophalen van openbare kanaalpagina’s en feeds, zodat de cookiepagina het opzoeken van een handle niet onderbreekt. Hiervoor zijn geen persoonlijke browser- of accountcookies nodig.
+- Een geweigerde doorverwijzing vermeldt voortaan alleen de doelhost, zonder pad of querygegevens.
+
+- YouTube en GitHub volgen maximaal drie veilige HTTPS-doorverwijzingen binnen hun eigen platform.
+- Tijdelijke verbindingsfouten en HTTP 502/503/504 krijgen één extra GET-poging. Time-out van 20 seconden per poging, inclusief het uitlezen van het antwoord.
+- Waarschuwingen tonen nu de platformhost en beschikbare netwerkfoutcodes of HTTP-status; geen tokens of volledige aanvraag-URL’s.
+- TikTok-tokenaanvragen worden niet automatisch herhaald om problemen met tokenrotatie te voorkomen.
+- Dezelfde YouTube-creator deelt één ophaalresultaat per controleronde over meerdere servers. Aflevering en videohistorie blijven per server gescheiden.
+- Notify meldt wanneer controle en aflevering na een fout weer slagen.
+- Geen nieuwe dependencies of configwijzigingen. TikTok-accounttoestemming blijft vereist.
+
 ## 2.5.2 — 30 september 2026
 
 - Nieuw: `/notify` voor automatische YouTube- en TikTok-videomeldingen, met meerdere creators en een eigen meldingskanaal per account en Discordserver.

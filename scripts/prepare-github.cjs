@@ -6,7 +6,7 @@ const root = path.resolve(__dirname, '..');
 const destination = path.join(root, `github-export-${new Date().toISOString().replace(/[:.]/g, '-')}`);
 const folders = ['buttons','commands','config','database','events','handlers','modals','scripts','selectmenus','services','utils'];
 const roots = ['.env.example','.gitignore','package.json','package-lock.json','index.js','deploy-commands.js',
-    'NOTIFY-HANDLEIDING.md','UPDATE-2.5.2.txt','herstel-serverconfig.cjs','README.md','HANDLEIDING.md','CHANGELOG.md','GITHUB-INSTALLATIE.md','UPGRADE-2.4.6.md','INSTALLATIE-CHANGELOG.md'];
+    'NOTIFY-HANDLEIDING.md','UPDATE-2.5.3.txt','herstel-serverconfig.cjs','README.md','HANDLEIDING.md','CHANGELOG.md','GITHUB-INSTALLATIE.md','UPGRADE-2.4.6.md','INSTALLATIE-CHANGELOG.md'];
 const files = [...roots];
 function walk(folder) {
     for (const entry of fs.readdirSync(path.join(root, folder), {withFileTypes:true})) {

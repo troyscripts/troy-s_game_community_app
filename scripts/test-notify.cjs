@@ -147,3 +147,23 @@ test('ping settings validate IDs and merge safely into existing server configura
     settings.updateValue('guild-settings','Notify.PingRole1','geen');
     assert.equal(settings.getGuildConfig('guild-settings').Notify.PingRole1,'');
 });
+
+test('same YouTube creator is fetched once per tick but delivered independently to two guilds',async()=>{
+    reset();let fetches=0;const sent=[];
+    const rows=['guild-a','guild-b'].map(g=>store.save(g,'youtube','@shared','channel-'+g));
+    for(const row of rows)store.ingest(row,[],100);
+    const guilds=rows.map(row=>{
+        const guild={id:row.guild_id,members:{me:{}}};
+        const channel={type:ChannelType.GuildText,guild,permissionsFor:()=>({has:()=>true}),send:async()=>sent.push(guild.id)};
+        guild.channels={fetch:async()=>channel};return [guild.id,guild];
+    });
+    const client={isReady:()=>true,channels:{fetch:async()=>null},guilds:{cache:new Map(guilds)}};
+    const original=providers.youtube;
+    providers.youtube=async()=>{fetches++;return {items:[item('shared-new',101)]};};
+    try{
+        for(const row of rows)service.retry(row.id);
+        service.startNotify(client);for(let i=0;i<30;i++)await new Promise(resolve=>setImmediate(resolve));await service.stopNotify();
+        assert.equal(fetches,1);assert.deepEqual(sent,['guild-a','guild-b']);
+        for(const row of rows)assert.equal(store.pending(row.id).length,0);
+    }finally{providers.youtube=original;await service.stopNotify();}
+});
