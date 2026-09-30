@@ -1,6 +1,6 @@
 {
   "name": "troys-gamecommunity-bot",
-  "version": "2.5.1",
+  "version": "2.5.2",
   "description": "Professionele Discord Bot voor Troy's Gamecommunity",
   "main": "index.js",
   "scripts": {
@@ -9,7 +9,8 @@
     "deploy": "node deploy-commands.js",
     "check": "node scripts/validate.js",
     "prepare:github": "node scripts/prepare-github.cjs",
-    "test:updates": "node --test scripts/test-update-checker.cjs"
+    "test:updates": "node --test scripts/test-update-checker.cjs",
+    "notify:tiktok": "node scripts/link-tiktok.cjs"
   },
   "engines": {
     "node": ">=20"

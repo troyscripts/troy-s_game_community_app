@@ -1,4 +1,4 @@
-# Troy’s Game Community Bot — 2.5.1
+# Troy’s Game Community Bot — 2.5.2
 
 Complete Discord-bot met tickets, moderatie, XP/levels, economy, verjaardagen, selfrollen, counting, agenda, AI-chat en instelbare welkomstberichten.
 
@@ -6,10 +6,9 @@ Complete Discord-bot met tickets, moderatie, XP/levels, economy, verjaardagen, s
 
 [HANDLEIDING.md](HANDLEIDING.md) bevat de slashcommando’s, instellingen en voorbeelden voor leden en beheerders. [CHANGELOG.md](CHANGELOG.md) beschrijft de wijzigingen.
 
-## Nieuw in 2.5.1
+## Nieuw in 2.5.2
 
-- Iedere Discord-server is weer instelbaar met `/config instellen`. De vaste-configmodus is verwijderd.
-- `/reset-voortgang bevestigen:Ja` reset XP/levels en economy van alle bestaande profielen in deze server. Zie de handleiding voor de precieze werking.
+Automatische YouTube- en TikTok-videomeldingen met `/notify`: vier instelbare pingrollen, een kanaal per creatoraccount, meerdere creators per server en beheer door Head Admin, Owner en Developer. TikTok vereist eenmalig accounttoestemming. Zie [NOTIFY-HANDLEIDING.md](NOTIFY-HANDLEIDING.md).
 
 ## Nieuwe installatie
 
@@ -24,9 +23,9 @@ Voor welkomstberichten stel je `Welcome.Enabled` in op `ja` en `Welcome.Channel`
 
 ## Bestaande installatie bijwerken
 
-Stop de bot en maak een back-up van je database. Kopieer alle bestanden uit het updatepakket naar dezelfde paden in de botmap. Behoud je eigen `.env`, database en `config/defaults.js`.
+Stop de bot en maak een back-up van je database. Kopieer alle bestanden uit het updatepakket naar dezelfde paden in de botmap. Behoud je eigen `.env` en database. `config/defaults.js` bevat nu het nieuwe `Notify`-blok met vier lege pingrollen. Heb je dit bestand zelf aangepast, neem dan alleen dat nieuwe blok over en behoud je andere waarden. Anders kun je het meegeleverde bestand gebruiken.
 
-Verwijder `config/settingsSource.js` en `INSTALLATIE-2.4.8.md`; de volledige lijst staat in `VERWIJDERDE-BESTANDEN.txt`. Start de bot opnieuw. Het nieuwe slashcommand wordt automatisch geregistreerd; bij een registratiefout kun je `npm run deploy` gebruiken. Er zijn geen nieuwe dependencies.
+Voor update 2.5.1 → 2.5.2 hoeven geen bestanden verwijderd te worden. Kopieer ook het meegeleverde `data/notify-presets.json` naar de host voor jouw vooraf ingestelde creatoraccounts. Start de bot opnieuw. Het nieuwe slashcommand wordt automatisch geregistreerd; bij een registratiefout kun je `npm run deploy` gebruiken. Er zijn geen nieuwe dependencies.
 
 ## Instellingen en gegevens
 

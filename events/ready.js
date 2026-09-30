@@ -48,6 +48,7 @@ module.exports = {
 
         const reportMessage = await startupReporter.startReport(client);
         startBirthdayScheduler(client);
+        require("../services/notifyService").startNotify(client);
 
         try {
             const scan = await scanStartupMessages(client);

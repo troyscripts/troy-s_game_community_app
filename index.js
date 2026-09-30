@@ -96,6 +96,7 @@ async function shutdown(signal) {
         require("./services/updateChecker").stopUpdateChecker();
         require("./services/versionReporter").stopVersionReporter();
         require("./services/connectionMonitor").stopConnectionMonitor();
+        await require("./services/notifyService").stopNotify();
         client.destroy();
         databaseManager?.close();
     } catch (error) {

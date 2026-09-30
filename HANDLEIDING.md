@@ -805,3 +805,10 @@ Krijg je een melding dat de AI niet beschikbaar is? Probeer het later opnieuw of
 | De bot reageert helemaal niet | Controleer of de bot online is en meld het probleem bij staff. |
 
 Vermeld bij een probleem welk command of welke knop je gebruikte en stuur de foutmelding of een screenshot mee.
+
+
+## Creatormeldingen (nieuw in 2.5.2)
+
+Met `/notify` stel je een Discordkanaal in per YouTube- of TikTokaccount. Nieuwe video’s worden automatisch gemeld. Meerdere creators zijn mogelijk. Alleen Head Admin, Owner en Developer mogen toevoegen, verwijderen, wijzigen, bekijken en testen.
+
+Gebruik `/notify lijst`, `/notify toevoegen`, `/notify verwijderen` en `/notify test`. TikTok vereist eerst toestemming van de creator. Zie [NOTIFY-HANDLEIDING.md](NOTIFY-HANDLEIDING.md) voor de volledige uitleg en installatie.

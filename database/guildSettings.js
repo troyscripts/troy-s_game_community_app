@@ -10,6 +10,7 @@ const EDITABLE_ROOTS = [
     "Roles",
     "StaffRoles",
     "SelfRoles",
+    "Notify",
     "Logging",
     "Tickets",
     "Levels",
@@ -91,6 +92,7 @@ function createCleanServerConfig() {
 
     for (const key of Object.keys(clean.Roles)) clean.Roles[key] = "";
     clean.StaffRoles = [];
+    for (const key of Object.keys(clean.Notify)) clean.Notify[key] = "";
     for (const key of Object.keys(clean.SelfRoles)) clean.SelfRoles[key] = "";
     clean.Logging.Channel = "";
     clean.Tickets.Category = "";
@@ -368,7 +370,7 @@ function parseValue(path, rawValue, currentValue) {
         return values;
     }
 
-    const isIdPath = /^(Roles\.[^.]+|SelfRoles\.[^.]+|Logging\.Channel|Tickets\.(Category|LogChannel)|Levels\.Roles\.\d+|Counting\.Channel|Birthday\.(Role|Channel)|Welcome\.(Channel|AutoRole)|Leave\.Channel|StartupReport\.Channel)$/.test(path);
+    const isIdPath = /^(Notify\.PingRole[1-4]|Roles\.[^.]+|SelfRoles\.[^.]+|Logging\.Channel|Tickets\.(Category|LogChannel)|Levels\.Roles\.\d+|Counting\.Channel|Birthday\.(Role|Channel)|Welcome\.(Channel|AutoRole)|Leave\.Channel|StartupReport\.Channel)$/.test(path);
     if (isIdPath) {
         if (["leeg", "geen", "uit"].includes(raw.toLowerCase())) return "";
         const id = extractDiscordId(raw);

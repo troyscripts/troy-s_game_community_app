@@ -30,6 +30,14 @@ module.exports = {
         NewUser: ""
     },
 
+    // Vier herbruikbare pingrollen; per Discord-server instelbaar via /config.
+    Notify: {
+        PingRole1: "",
+        PingRole2: "",
+        PingRole3: "",
+        PingRole4: ""
+    },
+
     StaffRoles: [],
 
     SelfRoles: { fivem: "", ats: "", minecraft: "", streams: "" },

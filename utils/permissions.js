@@ -24,6 +24,15 @@ function hasOwnerAccess(member, userId) {
     return Boolean(ownerRoleId && member?.roles?.cache?.has(ownerRoleId));
 }
 
+function hasNotifyAccess(member, userId) {
+    if (!member?.guild || member?.user?.bot) return false;
+    if (member.guild.ownerId === userId || config.Owners.includes(userId) || config.Developers.includes(userId)) return true;
+    return ['Owner', 'Developer', 'HeadAdmin'].some(key => {
+        const id = config.Roles?.[key];
+        return id && id !== member.guild.id && member.roles?.cache?.has(id);
+    });
+}
+
 function hasStaffRole(member) {
     if (member?.id && (hasOwnerAccess(member, member.id) || member.permissions?.has("Administrator"))) {
         return true;
@@ -62,6 +71,8 @@ function hasPermission(member, permissions = []) {
 function canUseCommand(interaction, command) {
     const userId = interaction.user.id;
 
+    if (command.notifyOnly && !hasNotifyAccess(interaction.member, userId)) return false;
+
     if (command.serverOwnerOnly && interaction.guild?.ownerId !== userId) {
         return false;
     }
@@ -86,6 +97,7 @@ function canUseCommand(interaction, command) {
 }
 
 module.exports = {
+    hasNotifyAccess,
     isOwner,
     hasOwnerAccess,
     hasDeveloperRole,

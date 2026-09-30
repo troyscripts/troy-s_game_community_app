@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.5.2 — 30 september 2026
+
+- Nieuw: `/notify` voor automatische YouTube- en TikTok-videomeldingen, met meerdere creators en een eigen meldingskanaal per account en Discordserver.
+- Beheer uitsluitend door Head Admin, Owner en Developer volgens de bestaande rol-ID’s en owner-/developerlijsten. Alleen Administrator geeft geen notify-toegang.
+- Vier herbruikbare pingrollen (`Notify.PingRole1` t/m `Notify.PingRole4`), instelbaar via `/config` of `/notify pingrol` en per creator te kiezen.
+- Optioneel eigen bericht en losse pingrol, statusoverzicht, voorbeeldmelding en verwijderen via Discord.
+- Jouw YouTube- en TikTokaccount kunnen eenmalig worden geladen uit het meegeleverde persoonlijke startbestand, uitsluitend in de server van het opgegeven kanaal.
+- Controle iedere vijf minuten, blijvende videohistorie, wachtrij bij mislukte meldingen en vertraagd opnieuw proberen bij platformfouten. Bestaande video’s worden bij de eerste controle overgeslagen.
+- YouTube via de openbare feed; TikTok via officiële accounttoestemming met automatische tokenvernieuwing. TikTok blijft wachten totdat de creator gekoppeld is.
+- Geen nieuwe dependencies. Geen wijzigingen aan je bestaande serverconfiguratie, XP of economy. Twitch en aparte livestreamdetectie volgen niet in deze eerste versie.
+
 ## 2.5.1 — 28 september 2026
 
 - Vaste serverconfiguratie verwijderd: iedere server gebruikt weer de opgeslagen instellingen via `/config`, inclusief staffrollen en welkomsttekst.
