@@ -21,11 +21,12 @@ function withPingRole(row) {
     return config.__context.run(row.guild_id,() => ({...row,role_id:config.Notify?.[`PingRole${row.role_slot}`] || null}));
 }
 function payload(row,item,test = false) {
-    const names = {youtube:'YouTube',tiktok:'TikTok'};
-    const message = (row.message || '{creator} heeft een nieuwe video op {platform}!')
+    const names = {youtube:'YouTube',tiktok:'TikTok',twitch:'Twitch'};
+    const message = (row.message || (row.platform === 'twitch' ? '{creator} is live op Twitch! {url}' : '{creator} heeft een nieuwe video op {platform}!'))
         .replace(/\{creator\}/g,() => row.account).replace(/\{platform\}/g,() => names[row.platform]).replace(/\{titel\}/g,() => item.title).replace(/\{url\}/g,() => item.url);
-    const embed = {title:(test ? 'TEST — ' : '') + item.title.slice(0,245),url:item.url,color:row.platform === 'youtube' ? 0xff0000 : 0x25f4ee,
+    const embed = {title:(test ? 'TEST — ' : '') + item.title.slice(0,245),url:item.url,color:row.platform === 'youtube' ? 0xff0000 : row.platform === 'twitch' ? 0x9146ff : 0x25f4ee,
         footer:{text:`${names[row.platform]} • ${row.account}`}};
+    if (item.game) embed.fields = [{name:'Game / categorie',value:item.game.slice(0,1024)}];
     if (item.image) embed.image = {url:item.image};
     // nonce + enforceNonce closes the normal retry window after an ambiguous send timeout.
     const nonce = createHash('sha256').update(`${row.guild_id}:${row.id}:${item.id}`).digest('hex').slice(0,24);
@@ -86,9 +87,9 @@ async function tick(client) {
             let fetchError = null;
             try {
                 let result;
-                if (row.platform === 'youtube') {
-                    const key = row.resolved_id || row.account;
-                    if (!youtubeChecks.has(key)) youtubeChecks.set(key, providers.youtube(row));
+                if (['youtube','twitch'].includes(row.platform)) {
+                    const key = `${row.platform}:${row.resolved_id || row.account}`;
+                    if (!youtubeChecks.has(key)) youtubeChecks.set(key, providers[row.platform](row));
                     result = await youtubeChecks.get(key);
                 } else result = await providers[row.platform](row);
                 if (stopped) return;
@@ -96,7 +97,7 @@ async function tick(client) {
                 store.ingest(row,[...result.items].sort((a,b) => a.published-b.published));
             } catch (error) { fetchError = error; }
             if (stopped) return;
-            await deliver(client,row);
+            if (row.platform !== 'twitch' || !fetchError) await deliver(client,row);
             if (fetchError) throw fetchError;
             if (failure) logger.info(`Notify #${row.id} (${row.platform}): controle en aflevering weer geslaagd.`);
             failures.delete(row.id);

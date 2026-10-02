@@ -74,7 +74,7 @@ Het tokenbestand is privé, hoort niet op GitHub en wordt niet door de gewone SQ
 - Bij fouten wordt de controle tijdelijk vertraagd, tot maximaal één uur. Opnieuw opslaan via `/notify toevoegen` haalt die wachttijd weg. De status staat in `/notify lijst`; herhaalde identieke fouten vervuilen de console niet iedere vijf minuten.
 - YouTube RSS bevat een beperkt aantal recente items (doorgaans vijftien). Na langdurige uitval of zeer veel uploads kunnen oudere items uit de feed verdwenen zijn en gemist worden. De feed kan vertraging hebben. Alleen video’s die het platform beschikbaar stelt zijn zichtbaar.
 - YouTube Shorts worden meegenomen wanneer ze in de videofeed voorkomen. Er is in deze versie geen afzonderlijke detectie voor het moment waarop een livestream begint. Een stream kan wel als video in de feed verschijnen.
-- TikTok-video’s worden via de officiële API opgehaald; TikTok LIVE, Stories, foto-posts en Twitch zijn niet opgenomen in deze eerste versie.
+- TikTok-video’s worden via de officiële API opgehaald; TikTok LIVE, Stories en foto-posts zijn niet opgenomen. Twitch-livemeldingen zijn vanaf 2.5.4 beschikbaar; zie TWITCH-HANDLEIDING.md.
 - Het kanaal moet een tekst- of aankondigingskanaal zijn met Kanaal bekijken, Berichten verzenden en Links insluiten voor de bot. Aankondigingen worden niet automatisch gecrosspost.
 - De bot moet draaien. Een zeldzame crash tussen een geslaagde Discordverzending en de databasebevestiging kan nog een dubbele melding geven; Discord-nonces verkleinen dit risico, maar gelden slechts een korte tijd.
 
@@ -108,3 +108,7 @@ YouTube-aanvragen sturen nu een vaste anonieme cookievoorkeur (`SOCS=CAI`, akkoo
 De versiechecker had daarnaast een fout in de loggeraanroep. `Cannot read properties of undefined (reading 'write')` kon daardoor verschijnen nadat GitHub al succesvol was uitgelezen; deze aanroep is hersteld.
 
 De YouTube-feed kan het kanaal-ID zonder `UC` teruggeven. De vergelijking ondersteunt nu beide schrijfwijzen en controleert nog steeds exact het ingestelde kanaal.
+
+## Twitch vanaf 2.5.4
+
+Kies Twitch bij `/notify toevoegen`. Zie [TWITCH-HANDLEIDING.md](TWITCH-HANDLEIDING.md) voor de eenmalige appkoppeling. De controle loopt iedere vijf minuten. Een actieve stream wordt ook bij de eerste controle gemeld, daarna eenmaal per stream-ID.

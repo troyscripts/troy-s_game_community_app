@@ -31,8 +31,14 @@ function ingest(row, items, now = Date.now()) {
         if (!current) return;
         const first = current.baseline_at === null;
         const insert = db.prepare('INSERT OR IGNORE INTO notify_items(creator_id,item_id,payload,sent_at) VALUES(?,?,?,?)');
+        if (current.platform === 'twitch') {
+            const liveIds = new Set(items.map(item => item.id));
+            for (const queued of pending(row.id)) {
+                if (!liveIds.has(queued.item_id)) sent(row.id,queued.item_id);
+            }
+        }
         for (const item of items) {
-            const historic = first || item.published < current.baseline_at;
+            const historic = current.platform !== 'twitch' && (first || item.published < current.baseline_at);
             insert.run(row.id,item.id,JSON.stringify(item),historic ? now : null);
         }
         db.prepare('UPDATE notify_creators SET baseline_at=COALESCE(baseline_at,?),checked_at=?,error=NULL WHERE id=?').run(now,now,row.id);

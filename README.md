@@ -1,10 +1,14 @@
-# Troy’s Game Community Bot — 2.5.3
+# Troy’s Game Community Bot — 2.5.4
 
 Complete Discord-bot met tickets, moderatie, XP/levels, economy, verjaardagen, selfrollen, counting, agenda, AI-chat en instelbare welkomstberichten.
 
 ## Handleiding
 
 [HANDLEIDING.md](HANDLEIDING.md) bevat de slashcommando’s, instellingen en voorbeelden voor leden en beheerders. [CHANGELOG.md](CHANGELOG.md) beschrijft de wijzigingen.
+
+## Nieuw in 2.5.4
+
+Twitch-livemeldingen via `/notify`, met kanaalkeuze en pingrollen voor iedere streamer. Zie [TWITCH-HANDLEIDING.md](TWITCH-HANDLEIDING.md) voor appgegevens en het instellen van troyenrobin.
 
 ## Nieuw in 2.5.3
 
@@ -27,7 +31,7 @@ Voor welkomstberichten stel je `Welcome.Enabled` in op `ja` en `Welcome.Channel`
 
 ## Bestaande installatie bijwerken
 
-Stop de bot, maak een back-up en kopieer de bestanden uit het updatepakket naar dezelfde paden in de botmap. Start daarna opnieuw. Voor 2.5.2 → 2.5.3 zijn geen nieuwe dependencies, configwijzigingen of verwijderingen nodig. De automatische changelog gebruikt de bestaande logginginstellingen.
+Stop de bot, maak een back-up en kopieer de bestanden uit het updatepakket naar dezelfde paden in de botmap. Start daarna opnieuw. Voor 2.5.3 → 2.5.4 zijn geen nieuwe dependencies of verwijderingen nodig. Voeg voor Twitch de twee appgegevens toe aan je bestaande .env. De automatische changelog gebruikt de bestaande logginginstellingen.
 
 ## Instellingen en gegevens
 

@@ -167,3 +167,70 @@ test('same YouTube creator is fetched once per tick but delivered independently 
         for(const row of rows)assert.equal(store.pending(row.id).length,0);
     }finally{providers.youtube=original;await service.stopNotify();}
 });
+
+test('Twitch accepts channel URLs and rejects clips and foreign hosts',()=>{
+    assert.equal(providers.account('twitch','https://www.twitch.tv/TroyEnRobin'),'troyenrobin');
+    assert.equal(providers.account('twitch','@TroyEnRobin'),'troyenrobin');
+    for(const url of ['https://evil.test/troyenrobin','https://www.twitch.tv/videos/123','https://www.twitch.tv/troyenrobin/clip/foo']) assert.throws(()=>providers.account('twitch',url));
+});
+test('Twitch first live sends once, survives restart, drops offline pending and allows next stream',()=>{
+    reset();const row=store.save('guild-twitch','twitch','troyenrobin','channel');
+    store.ingest(row,[item('live-1',10)],100);
+    assert.equal(store.pending(row.id).length,1);
+    store.sent(row.id,'live-1');
+    store.ingest(store.get(row.id,row.guild_id),[item('live-1',10)],200);
+    assert.equal(store.pending(row.id).length,0);
+    store.ingest(row,[item('live-2',300)],400);
+    assert.equal(store.pending(row.id).length,1);
+    store.ingest(row,[],500);
+    assert.equal(store.pending(row.id).length,0);
+    store.ingest(row,[item('live-3',600)],700);
+    assert.equal(store.pending(row.id).length,1);
+});
+test('Twitch API token reuse, 401 refresh, offline and invalid channel handling',async()=>{
+    const oldFetch=global.fetch;
+    const oldId=process.env.TWITCH_CLIENT_ID,oldSecret=process.env.TWITCH_CLIENT_SECRET;
+    delete process.env.TWITCH_CLIENT_ID;delete process.env.TWITCH_CLIENT_SECRET;
+    await assert.rejects(()=>providers.twitch({account:'troyenrobin'}),/appgegevens ontbreken/);
+    process.env.TWITCH_CLIENT_ID='fixture';process.env.TWITCH_CLIENT_SECRET='secret';
+    let tokens=0,offline=false,unauthorized=false,bad=false;
+    global.fetch=async(url,opts)=>{
+        let result;
+        if(url.includes('/oauth2/token')) {tokens++;result={access_token:'token'+tokens,expires_in:3600};assert.equal(new URLSearchParams(opts.body).get('grant_type'),'client_credentials');}
+        else if(unauthorized){unauthorized=false;return {ok:false,status:401};}
+        else {
+            assert.equal(opts.headers.Authorization,'Bearer token'+tokens);
+            result=url.includes('/users?')?{data:bad?[]:[{id:'123',login:'troyenrobin'}]}:{data:offline?[]:[{id:'456',user_id:'123',user_login:'troyenrobin',type:'live',title:'Test',game_name:'ETS2',started_at:'2026-10-01T14:00:00Z',thumbnail_url:'https://static-cdn.jtvnw.net/test-{width}x{height}.jpg'}]};
+        }
+        return {ok:true,json:async()=>result};
+    };
+    try{
+        const live=await providers.twitch({account:'troyenrobin'});
+        assert.equal(live.items[0].image,'https://static-cdn.jtvnw.net/test-1280x720.jpg');
+        const embed=service.payload({id:1,guild_id:'g',platform:'twitch',account:'troyenrobin'},live.items[0]);
+        assert.match(embed.content,/is live op Twitch/);assert.equal(embed.embeds[0].color,0x9146ff);
+        offline=true;assert.deepEqual((await providers.twitch({account:'troyenrobin',resolved_id:'123'})).items,[]);assert.equal(tokens,1);
+        unauthorized=true;await providers.twitch({account:'troyenrobin',resolved_id:'123'});assert.equal(tokens,2);
+        bad=true;await assert.rejects(()=>providers.twitch({account:'troyenrobin'}),/niet gevonden/);
+    }finally{
+        global.fetch=oldFetch;
+        if(oldId===undefined)delete process.env.TWITCH_CLIENT_ID;else process.env.TWITCH_CLIENT_ID=oldId;
+        if(oldSecret===undefined)delete process.env.TWITCH_CLIENT_SECRET;else process.env.TWITCH_CLIENT_SECRET=oldSecret;
+    }
+});
+test('Twitch scheduler suppresses pending live alerts on API error and offline, then delivers new live once',async()=>{
+    reset();let sends=0,mode='error';const row=store.save('guild-live','twitch','troyenrobin','channel');
+    store.ingest(row,[item('old-stream',10)],100);
+    const guild={id:row.guild_id,members:{me:{}}};
+    const channel={type:ChannelType.GuildText,guild,permissionsFor:()=>({has:()=>true}),send:async()=>{sends++;}};
+    guild.channels={fetch:async()=>channel};
+    const client={isReady:()=>true,channels:{fetch:async()=>null},guilds:{cache:new Map([[guild.id,guild]])}};
+    const original=providers.twitch;
+    providers.twitch=async()=>{if(mode==='error')throw new Error('Twitch unavailable');return {items:mode==='offline'?[]:[item('new-stream',200)]};};
+    async function run(){service.retry(row.id);service.startNotify(client);for(let i=0;i<30;i++)await new Promise(resolve=>setImmediate(resolve));await service.stopNotify();}
+    try{
+        await run();assert.equal(sends,0);assert.equal(store.pending(row.id).length,1);
+        mode='offline';await run();assert.equal(sends,0);assert.equal(store.pending(row.id).length,0);
+        mode='live';await run();assert.equal(sends,1);await run();assert.equal(sends,1);
+    }finally{providers.twitch=original;await service.stopNotify();}
+});

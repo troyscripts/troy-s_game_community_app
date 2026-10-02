@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.5.4 — 1 oktober 2026
+
+- Twitch toegevoegd aan `/notify toevoegen`: meerdere streamers, eigen kanaal per server, vier pingkeuzes en eigen bericht.
+- Live-melding met titel, categorie, preview en kijklink; controle iedere vijf minuten. Ook een al actieve stream wordt bij de eerste controle eenmaal gemeld.
+- Stream-ID’s worden blijvend bijgehouden om herhaalde meldingen na een herstart te voorkomen. Offline streams verdwijnen uit de nog niet verstuurde wachtrij.
+- Officiële Twitch API met app-token, automatische vernieuwing, periodieke validatie en herstel na HTTP 401. Appgegevens via TWITCH_CLIENT_ID en TWITCH_CLIENT_SECRET.
+- Beheer blijft beperkt tot Head Admin, Owner en Developer. Geen nieuwe dependencies; bestaande YouTube-/TikTokinstellingen blijven behouden.
+
 ## 2.5.3 — 30 september 2026
 
 ### Correctie binnen dezelfde versie

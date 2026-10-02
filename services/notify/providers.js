@@ -8,17 +8,22 @@ function account(platform, input) {
     let value = input.trim();
     if (/^https?:\/\//i.test(value)) {
         const url = new URL(value);
-        const hosts = platform === 'youtube' ? ['youtube.com','www.youtube.com'] : ['tiktok.com','www.tiktok.com'];
+        const hosts = platform === 'youtube' ? ['youtube.com','www.youtube.com'] : platform === 'twitch' ? ['twitch.tv','www.twitch.tv','m.twitch.tv'] : ['tiktok.com','www.tiktok.com'];
         if (url.protocol !== 'https:' || !hosts.includes(url.hostname) || url.port || url.username || url.password) throw new Error('Gebruik een HTTPS-profiel-URL van het gekozen platform.');
         const parts = url.pathname.split('/').filter(Boolean);
         if (platform === 'youtube' && parts[0] === 'channel' && parts.length === 2) value = parts[1];
-        else if (parts.length === 1 && parts[0].startsWith('@')) value = parts[0];
+        else if (parts.length === 1 && (platform === 'twitch' || parts[0].startsWith('@'))) value = parts[0];
         else throw new Error('Gebruik de creatorprofiel-URL, geen videolink.');
     }
     if (platform === 'youtube') {
         if (/^UC[\w-]{22}$/.test(value)) return value;
         if (/^@[\p{L}\p{N}_.·-]{3,30}$/u.test(value)) return value.toLowerCase();
         throw new Error('Gebruik een YouTube @handle of UC-kanaal-ID.');
+    }
+    if (platform === 'twitch') {
+        value = value.replace(/^@/,'').toLowerCase();
+        if (!/^[a-z0-9_]{1,25}$/.test(value)) throw new Error('Gebruik een geldige Twitch-gebruikersnaam of profiel-URL.');
+        return value;
     }
     if (platform !== 'tiktok') throw new Error('Platform niet ondersteund.');
     value = value.replace(/^@/,'').toLowerCase();
@@ -43,7 +48,7 @@ async function request(url, options = {}, json = true) {
             }
         }
     });
-    if (!response.ok) throw new Error(`${host}: HTTP ${response.status}; controleer koppeling of probeer later opnieuw.`);
+    if (!response.ok) throw Object.assign(new Error(`${host}: HTTP ${response.status}; controleer koppeling of probeer later opnieuw.`), {status:response.status});
     if (json && (!data || typeof data !== 'object')) throw new Error(`${host}: ongeldig JSON-antwoord ontvangen.`);
     if (json && data.error && data.error?.code !== 'ok') throw new Error('TikTok heeft de aanvraag geweigerd. Controleer toestemming, scopes en koppel zo nodig opnieuw.');
     return data;
@@ -134,3 +139,5 @@ async function tiktok(row) {
     throw new Error('Te veel TikTok-pagina’s; koppel opnieuw of vraag beheer om hulp.');
 }
 module.exports = {account,parseFeed,youtube,tiktok,request,readTokens,saveToken,tokenRequest,tokenRecord};
+
+module.exports.twitch = require('./twitch').twitch;

@@ -7,9 +7,9 @@ const guildSettings = require('../../database/guildSettings');
 const { hasNotifyAccess } = require('../../utils/permissions');
 const data = new SlashCommandBuilder().setName('notify').setDescription('Beheer automatische creatormeldingen').setDMPermission(false)
     .addSubcommand(s => s.setName('toevoegen').setDescription('Creator toevoegen of kanaal/bericht/ping wijzigen')
-        .addStringOption(o => o.setName('platform').setDescription('Platform').setRequired(true).addChoices({name:'YouTube',value:'youtube'},{name:'TikTok',value:'tiktok'}))
+        .addStringOption(o => o.setName('platform').setDescription('Platform').setRequired(true).addChoices({name:'YouTube',value:'youtube'},{name:'TikTok',value:'tiktok'},{name:'Twitch',value:'twitch'}))
         .addStringOption(o => o.setName('creator').setDescription('Profiel-URL, @handle of YouTube UC-kanaal-ID').setRequired(true).setMaxLength(200))
-        .addChannelOption(o => o.setName('kanaal').setDescription('Waar nieuwe video’s verschijnen').setRequired(true).addChannelTypes(ChannelType.GuildText,ChannelType.GuildAnnouncement))
+        .addChannelOption(o => o.setName('kanaal').setDescription('Waar video- en livemeldingen verschijnen').setRequired(true).addChannelTypes(ChannelType.GuildText,ChannelType.GuildAnnouncement))
         .addIntegerOption(o => o.setName('pingkeuze').setDescription('Gebruik een van de vier geconfigureerde pingrollen').addChoices({name:'Pingrol 1',value:1},{name:'Pingrol 2',value:2},{name:'Pingrol 3',value:3},{name:'Pingrol 4',value:4}))
         .addRoleOption(o => o.setName('pingrol').setDescription('Optionele rolvermelding; weglaten verwijdert de ping'))
         .addStringOption(o => o.setName('bericht').setDescription('Optioneel: {creator}, {platform}, {titel}, {url}').setMaxLength(600)))
@@ -58,7 +58,7 @@ module.exports = {data,category:'Beheer',guildOnly:true,dmAllowed:false,notifyOn
                     if (existing.length >= 100 && !existing.some(r => r.platform === platform && r.account === account)) throw new Error('Maximaal 100 creatoraccounts per server.');
                     const row = store.save(interaction.guildId,platform,account,channel.id,slot ? null : role?.id || null,interaction.options.getString('bericht') || '',slot);
                     service.retry(row.id);
-                    return interaction.editReply({content:`Creator #${row.id}: **${account}** (${platform}) → <#${channel.id}>. Controle iedere vijf minuten. Bestaande video’s worden bij de eerste succesvolle controle overgeslagen.${platform === 'tiktok' ? '\nTikTok vereist een geautoriseerde accountkoppeling; zie NOTIFY-HANDLEIDING.md.' : ''}`,allowedMentions:{parse:[]}});
+                    return interaction.editReply({content:`Creator #${row.id}: **${account}** (${platform}) → <#${channel.id}>. Controle iedere vijf minuten. ${platform === 'twitch' ? 'Een actieve livestream wordt bij de eerste controle eenmaal gemeld. Twitch vereist TWITCH_CLIENT_ID en TWITCH_CLIENT_SECRET in .env.' : 'Bestaande video’s worden bij de eerste succesvolle controle overgeslagen.'}${platform === 'tiktok' ? '\nTikTok vereist een geautoriseerde accountkoppeling; zie NOTIFY-HANDLEIDING.md.' : ''}`,allowedMentions:{parse:[]}});
                 }
                 if (sub === 'lijst') {
                     const rows = store.list(interaction.guildId);
@@ -83,8 +83,8 @@ module.exports = {data,category:'Beheer',guildOnly:true,dmAllowed:false,notifyOn
                 }
                 const channel = await interaction.guild.channels.fetch(row.channel_id);
                 service.checkChannel(channel,interaction.guildId);
-                const url = row.platform === 'youtube' ? (/^UC/.test(row.account) ? `https://www.youtube.com/channel/${row.account}` : `https://www.youtube.com/${encodeURI(row.account)}`) : `https://www.tiktok.com/@${row.account}`;
-                await channel.send(service.payload(row,{id:'test',title:'Voorbeeld van een nieuwe video',url},true));
+                const url = row.platform === 'youtube' ? (/^UC/.test(row.account) ? `https://www.youtube.com/channel/${row.account}` : `https://www.youtube.com/${encodeURI(row.account)}`) : row.platform === 'twitch' ? `https://www.twitch.tv/${row.account}` : `https://www.tiktok.com/@${row.account}`;
+                await channel.send(service.payload(row,{id:'test',title:row.platform === 'twitch' ? 'Voorbeeld van een livestream' : 'Voorbeeld van een nieuwe video',url},true));
                 return interaction.editReply('Testmelding geplaatst zonder rolping. Dit test het Discordkanaal; /notify lijst toont de status van de platformkoppeling.');
             } catch (error) {
                 return interaction.editReply({content:`❌ ${error.message}`,allowedMentions:{parse:[]}});
