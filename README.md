@@ -1,10 +1,14 @@
-# Troy’s Game Community Bot — 2.5.4
+# Troy’s Game Community Bot — 2.5.5
 
 Complete Discord-bot met tickets, moderatie, XP/levels, economy, verjaardagen, selfrollen, counting, agenda, AI-chat en instelbare welkomstberichten.
 
 ## Handleiding
 
 [HANDLEIDING.md](HANDLEIDING.md) bevat de slashcommando’s, instellingen en voorbeelden voor leden en beheerders. [CHANGELOG.md](CHANGELOG.md) beschrijft de wijzigingen.
+
+## Nieuw in 2.5.5
+
+De vaste boteigenaar heeft in elke server toegang tot botbeheer, onafhankelijk van rollen en de ownerlijst. De botstatus is vastgezet op **Troy Scrips** en kan niet via Discord of .env worden aangepast. Wie de broncode beheert, kan die code uiteraard wijzigen. Discord-kanaalrechten, commandoverschrijvingen en de rechten/rolhiërarchie van de bot blijven gelden.
 
 ## Nieuw in 2.5.4
 

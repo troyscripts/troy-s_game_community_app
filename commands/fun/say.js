@@ -80,13 +80,14 @@ module.exports = {
 
         .setDefaultMemberPermissions(
 
-            PermissionFlagsBits.ManageMessages
+            null
 
         ),
 
 
 
     category: "Fun",
+    permissions: ["ManageMessages"],
 
 
     guildOnly: true,

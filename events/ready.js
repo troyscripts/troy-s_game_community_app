@@ -1,6 +1,6 @@
 const { ActivityType, Events } = require("discord.js");
 
-const config = require("../config/config");
+const { statusText } = require("../utils/botIdentity");
 const logger = require("../utils/logger");
 const { scanStartupMessages } = require("../services/messageScanner");
 const { startBirthdayScheduler } = require("../services/birthdayScheduler");
@@ -10,14 +10,6 @@ const guildSettings = require("../database/guildSettings");
 const { startConnectionMonitor } = require("../services/connectionMonitor");
 
 const { registerAllGuilds } = require("../services/commandRegistration");
-
-const activityTypes = {
-    PLAYING: ActivityType.Playing,
-    LISTENING: ActivityType.Listening,
-    WATCHING: ActivityType.Watching,
-    COMPETING: ActivityType.Competing,
-    STREAMING: ActivityType.Streaming
-};
 
 module.exports = {
     name: Events.ClientReady,
@@ -34,8 +26,8 @@ module.exports = {
 
         client.user.setPresence({
             activities: [{
-                name: config.Bot.Status.Text,
-                type: activityTypes[config.Bot.Status.Type] ?? ActivityType.Watching
+                name: statusText,
+                type: ActivityType.Watching
             }],
             status: "online"
         });

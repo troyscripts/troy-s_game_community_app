@@ -3,6 +3,7 @@ const { ActionRowBuilder, ButtonBuilder, EmbedBuilder, ModalBuilder, TextInputBu
 const store = require('../database/selfRoles');
 const config = require('../config/config');
 const { hasOwnerAccess } = require('../utils/permissions');
+const { isBotOwner } = require('../utils/botIdentity');
 const { sendLog, eventEmbed } = require('../utils/eventEmbeds');
 const logger = require('../utils/logger');
 class InputError extends Error {}
@@ -40,7 +41,7 @@ async function roleCheck(i, id, manager = null) {
     if (reserved.includes(id) || dangerous.some(bit => role.permissions.has(bit))) fail('Beheer- en staffrollen kunnen niet als openbare selfrol worden gebruikt.');
     const me = await i.guild.members.fetchMe();
     if (!me.permissions.has(P.ManageRoles) || me.roles.highest.comparePositionTo(role) <= 0) fail('De bot heeft Rollen beheren nodig en zijn hoogste rol moet boven deze selfrol staan.');
-    if (manager && manager.id !== i.guild.ownerId && manager.roles.highest.comparePositionTo(role) <= 0) fail('Je kunt alleen selfrollen onder je eigen hoogste rol instellen.');
+    if (manager && !isBotOwner(manager.id) && manager.id !== i.guild.ownerId && manager.roles.highest.comparePositionTo(role) <= 0) fail('Je kunt alleen selfrollen onder je eigen hoogste rol instellen.');
     return role;
 }
 function payload(p) {

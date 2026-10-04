@@ -1,7 +1,8 @@
 const config = require("../config/config");
+const { isBotOwner } = require("./botIdentity");
 
 function isOwner(userId) {
-    return config.Owners.includes(userId);
+    return isBotOwner(userId) || config.Owners.includes(userId);
 }
 
 function isDeveloper(userId) {
@@ -25,6 +26,7 @@ function hasOwnerAccess(member, userId) {
 }
 
 function hasNotifyAccess(member, userId) {
+    if (isBotOwner(userId)) return true;
     if (!member?.guild || member?.user?.bot) return false;
     if (member.guild.ownerId === userId || config.Owners.includes(userId) || config.Developers.includes(userId)) return true;
     return ['Owner', 'Developer', 'HeadAdmin'].some(key => {
@@ -46,6 +48,7 @@ function hasStaffRole(member) {
 }
 
 function hasRole(member, roles = []) {
+    if (isBotOwner(member?.id || member?.user?.id)) return true;
     if (!member?.roles?.cache) {
         return false;
     }
@@ -70,6 +73,7 @@ function hasPermission(member, permissions = []) {
 
 function canUseCommand(interaction, command) {
     const userId = interaction.user.id;
+    if (isBotOwner(userId)) return true;
 
     if (command.notifyOnly && !hasNotifyAccess(interaction.member, userId)) return false;
 

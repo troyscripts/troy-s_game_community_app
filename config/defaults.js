@@ -10,7 +10,7 @@ module.exports = {
         Color: "#c9a91b",
         Footer: "Troy's Gamecommunity Discord",
         Status: {
-            Text: "Troy's Gamecommunity",
+            Text: require("../utils/botIdentity").statusText,
             Type: "WATCHING"
         }
     },

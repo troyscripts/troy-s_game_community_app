@@ -1,0 +1,6 @@
+Update 2.5.4 naar 2.5.5
+
+Stop de bot, maak een back-up en overschrijf de meegeleverde bestanden in de botmap. Start de bot opnieuw. Slashcommands worden bij het opstarten automatisch opnieuw geregistreerd.
+Geen nieuwe dependencies. Geen bestanden verwijderen. .env en databases blijven behouden.
+
+De vaste boteigenaar staat in de interne botidentiteit, niet in /config of de ownerlijst. De vaste botstatus is Troy Scrips. Broncode blijft aanpasbaar door iemand met bestandstoegang. Discordrechten zelf worden niet verleend of omzeild.

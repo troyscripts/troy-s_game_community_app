@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.5.5 — 4 oktober 2026
+
+- Vaste boteigenaar heeft toegang tot alle botbeheerfuncties, onafhankelijk van serverrollen en configureerbare ownerlijsten.
+- Botstatus vastgezet op Troy Scrips, buiten de serverconfiguratie en .env.
+- /say gebruikt de centrale rechtencontrole, zodat de boteigenaar ook zonder ManageMessages toegang heeft; gewone leden blijven geweigerd.
+- Selfrollenbeheer herkent de vaste boteigenaar. Botrechten en controles tegen gevaarlijke openbare rollen blijven gelden.
+
 ## 2.5.4 — 1 oktober 2026
 
 - Twitch toegevoegd aan `/notify toevoegen`: meerdere streamers, eigen kanaal per server, vier pingkeuzes en eigen bericht.
@@ -107,6 +114,13 @@
 
 # Changelog
 
+## 2.5.5 — 4 oktober 2026
+
+- Vaste boteigenaar heeft toegang tot alle botbeheerfuncties, onafhankelijk van serverrollen en configureerbare ownerlijsten.
+- Botstatus vastgezet op Troy Scrips, buiten de serverconfiguratie en .env.
+- /say gebruikt de centrale rechtencontrole, zodat de boteigenaar ook zonder ManageMessages toegang heeft; gewone leden blijven geweigerd.
+- Selfrollenbeheer herkent de vaste boteigenaar. Botrechten en controles tegen gevaarlijke openbare rollen blijven gelden.
+
 ## 2.4.7 — 20 september 2026
 
 - GitHub-versiechecker bij opstarten en elke zes uur, met updatelink in de console.
@@ -118,6 +132,13 @@
 - Versie uit package.json; automatische changelogmelding blijft behouden.
 
 # Changelog
+
+## 2.5.5 — 4 oktober 2026
+
+- Vaste boteigenaar heeft toegang tot alle botbeheerfuncties, onafhankelijk van serverrollen en configureerbare ownerlijsten.
+- Botstatus vastgezet op Troy Scrips, buiten de serverconfiguratie en .env.
+- /say gebruikt de centrale rechtencontrole, zodat de boteigenaar ook zonder ManageMessages toegang heeft; gewone leden blijven geweigerd.
+- Selfrollenbeheer herkent de vaste boteigenaar. Botrechten en controles tegen gevaarlijke openbare rollen blijven gelden.
 
 ## 2.4.6 — 16 september 2026
 
@@ -292,6 +313,13 @@ Onderstaande vermeldingen beschrijven eerdere tussenversies. Oude modelkeuzes, a
 ## Historisch changelog van de aangeleverde basis
 
 # Changelog
+
+## 2.5.5 — 4 oktober 2026
+
+- Vaste boteigenaar heeft toegang tot alle botbeheerfuncties, onafhankelijk van serverrollen en configureerbare ownerlijsten.
+- Botstatus vastgezet op Troy Scrips, buiten de serverconfiguratie en .env.
+- /say gebruikt de centrale rechtencontrole, zodat de boteigenaar ook zonder ManageMessages toegang heeft; gewone leden blijven geweigerd.
+- Selfrollenbeheer herkent de vaste boteigenaar. Botrechten en controles tegen gevaarlijke openbare rollen blijven gelden.
 
 In dit bestand worden de belangrijkste wijzigingen aan Troy's Gamecommunity Bot
 bijgehouden.
