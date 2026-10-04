@@ -1,8 +1,0 @@
-Herstelpakket voor de reeds geïnstalleerde versie 2.5.3
-
-Stop de bot, kopieer de bestanden uit deze ZIP naar dezelfde paden en start opnieuw.
-Geen versieverhoging, nieuwe dependencies, configwijzigingen of verwijderde bestanden.
-De reeds verstuurde Discord-changelog wordt niet opnieuw verstuurd bij hetzelfde versienummer.
-
-Hersteld: loggeraanroep van versiechecker, kanaal-ID-controle zonder UC-prefix en YouTube-cookiepagina bij het ophalen van openbare kanalen.
-Alleen nieuwe/gewijzigde bestanden ten opzichte van het eerdere 2.5.3-pakket.
