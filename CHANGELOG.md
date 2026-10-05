@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.5.6 — 5 oktober 2026
+
+- Installatiehandleiding voor nieuwe downloaders toegevoegd: Discord, hosting, eigen .env, GroqCloud, eerste configuratie en probleemoplossing.
+- AI-chat overgezet naar GroqCloud: eigen pc, Ollama en eigen AI-bridge zijn niet meer nodig.
+- Groq-sleutel via GROQ_API_KEY; standaardmodel openai/gpt-oss-20b, instelbaar via GROQ_MODEL.
+- Bestaande AI-kanalen, modus, persoonlijkheid en cooldown blijven werken. Alleen beperkte gesprekshistorie met de bot wordt doorgestuurd.
+- Bij een Groq-gebruikslimiet pauzeert de bot AI-aanvragen voor alle servers van dit botproces. Geen automatische herhaalpogingen of overstap naar andere diensten.
+- Nederlandse foutmeldingen, time-out en begrensde invoer/uitvoer. Interne redeneertekst wordt niet naar Discord gestuurd.
+- Geen nieuwe dependencies of databasewijzigingen.
+
 ## 2.5.5 — 4 oktober 2026
 
 - Vaste boteigenaar heeft toegang tot alle botbeheerfuncties, onafhankelijk van serverrollen en configureerbare ownerlijsten.

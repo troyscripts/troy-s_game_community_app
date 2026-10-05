@@ -780,6 +780,8 @@ versie wordt met een downloadlink in de botconsole gemeld.
 
 ## AI-chat gebruiken
 
+De AI draait via GroqCloud. De boteigenaar stelt de API-sleutel in bij de hosting; zie `GROQ-INSTALLATIE.md`. Je pc hoeft niet aan te blijven. De ingestelde AI-berichten en beperkte eerdere gespreksrondes worden bij Groq verwerkt. Bij een gebruikslimiet volgt een melding en pauzeert de AI tijdelijk.
+
 Stuur een gewoon tekstbericht in een kanaal waar AI-chat is ingeschakeld. In de modus `all` reageert de bot op gewone berichten; in de modus `mention` moet je de bot vermelden. Tussen antwoorden kan een wachttijd gelden.
 
 Beheerders kiezen de kanalen met `AIChat.Channels` en schakelen antwoorden in met `AIChat.Enabled`. De toon van de bot is instelbaar via `AIChat.Personality`. De bot reageert niet met AI in het telkanaal.

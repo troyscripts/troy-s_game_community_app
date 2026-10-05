@@ -1,10 +1,16 @@
-# Troy’s Game Community Bot — 2.5.5
+# Troy’s Game Community Bot — 2.5.6
 
 Complete Discord-bot met tickets, moderatie, XP/levels, economy, verjaardagen, selfrollen, counting, agenda, AI-chat en instelbare welkomstberichten.
 
 ## Handleiding
 
+**Voor het eerst gedownload? Begin bij [INSTALLATIE.md](INSTALLATIE.md).** Daarin staan Discord-app aanmaken, hosting, `.env`, opstarten en optionele GroqCloud-AI stap voor stap.
+
 [HANDLEIDING.md](HANDLEIDING.md) bevat de slashcommando’s, instellingen en voorbeelden voor leden en beheerders. [CHANGELOG.md](CHANGELOG.md) beschrijft de wijzigingen.
+
+## Nieuw in 2.5.6
+
+AI-chat werkt nu via GroqCloud, zonder eigen AI-host. Zie [GROQ-INSTALLATIE.md](GROQ-INSTALLATIE.md) voor installatie en testen.
 
 ## Nieuw in 2.5.5
 
@@ -24,7 +30,7 @@ Automatische YouTube- en TikTok-videomeldingen met `/notify`: vier instelbare pi
 
 ## Nieuwe installatie
 
-1. Gebruik Node.js 20 of hoger.
+1. Volg [INSTALLATIE.md](INSTALLATIE.md) en gebruik Node.js 24 LTS.
 2. Kopieer `.env.example` naar `.env` en vul je eigen Discord-botgegevens in.
 3. Installeer de dependencies met `npm ci`.
 4. Vul voor een eerste installatie ook `GUILD_ID` in `.env` in en registreer de slashcommando’s met `npm run deploy`. De bot moet al aan die server zijn toegevoegd.
@@ -35,7 +41,7 @@ Voor welkomstberichten stel je `Welcome.Enabled` in op `ja` en `Welcome.Channel`
 
 ## Bestaande installatie bijwerken
 
-Stop de bot, maak een back-up en kopieer de bestanden uit het updatepakket naar dezelfde paden in de botmap. Start daarna opnieuw. Voor 2.5.3 → 2.5.4 zijn geen nieuwe dependencies of verwijderingen nodig. Voeg voor Twitch de twee appgegevens toe aan je bestaande .env. De automatische changelog gebruikt de bestaande logginginstellingen.
+Stop de bot, maak een back-up en kopieer de bestanden uit het updatepakket naar dezelfde paden in de botmap. Start daarna opnieuw. Voor de Groq-update naar 2.5.6 zijn geen nieuwe dependencies of slashcommandregistraties nodig. Voeg voor AI je eigen GROQ_API_KEY en GROQ_MODEL toe aan je bestaande .env; zie [GROQ-INSTALLATIE.md](GROQ-INSTALLATIE.md). De automatische changelog gebruikt de bestaande logginginstellingen.
 
 ## Instellingen en gegevens
 
