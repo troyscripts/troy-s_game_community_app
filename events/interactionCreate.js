@@ -50,12 +50,12 @@ module.exports = {
 
                 if (command.guildOnly && !interaction.inGuild()) {
                     state = "Alleen in server toegestaan";
-                    return sendPrivate(interaction, "❌ Dit command werkt alleen in een server.");
+                    return await sendPrivate(interaction, "❌ Dit command werkt alleen in een server.");
                 }
 
                 if (!canUseCommand(interaction, command)) {
                     state = "Geen toestemming";
-                    return sendPrivate(
+                    return await sendPrivate(
                         interaction,
                         "❌ Je hebt geen toestemming om dit command te gebruiken."
                     );
@@ -68,7 +68,7 @@ module.exports = {
                 if (expiresAt > Date.now()) {
                     state = "Wachttijd actief";
                     const remaining = Math.ceil((expiresAt - Date.now()) / 1000);
-                    return sendPrivate(
+                    return await sendPrivate(
                         interaction,
                         `⏳ Wacht nog ${remaining} seconde(n) voordat je dit command opnieuw gebruikt.`
                     );
@@ -113,13 +113,20 @@ module.exports = {
                 ? `Command: ${interaction.commandName}`
                 : `Interaction: ${interaction.customId || "onbekend"}`;
 
-            logger.error(`Fout in ${location}`);
+            logger.error(`Fout in ${location} | Interactie-ID: ${interaction.id} | Leeftijd: ${Date.now() - interaction.createdTimestamp} ms | deferred=${interaction.deferred} | replied=${interaction.replied}`);
             logger.error(error.stack || error);
 
-            await sendPrivate(
-                interaction,
-                "❌ Er ging iets fout tijdens deze actie. De fout is opgeslagen in de logs."
-            ).catch(() => {});
+            // Een verlopen of al bevestigde interactie niet opnieuw beantwoorden.
+            if (![10062, 40060].includes(Number(error.code))) {
+                try {
+                    await sendPrivate(
+                        interaction,
+                        "❌ Er ging iets fout tijdens deze actie. De fout is opgeslagen in de logs."
+                    );
+                } catch (replyError) {
+                    logger.warn(`Foutmelding voor ${location} kon niet worden verstuurd (code ${replyError.code || "onbekend"}).`);
+                }
+            }
         } finally {
             await logInteraction(interaction, state);
         }

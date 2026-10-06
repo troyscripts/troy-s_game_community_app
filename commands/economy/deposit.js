@@ -1,3 +1,4 @@
+const { replyAfterDefer } = require("../../utils/deferredReply");
 const { MessageFlags } = require("discord.js");
 const {
     SlashCommandBuilder,
@@ -50,6 +51,9 @@ module.exports = {
 
 
     async execute(client, interaction) {
+
+        // Bevestig vóór databasewerk; bij een mislukte bevestiging geen mutaties.
+        await interaction.deferReply();
 
 
         const amount =
@@ -109,7 +113,7 @@ module.exports = {
         ) {
 
 
-            return interaction.reply({
+            return replyAfterDefer(interaction, {
 
                 content:
                 "❌ Je hebt niet genoeg geld in je portemonnee.",
@@ -130,7 +134,7 @@ module.exports = {
         if (!balance) {
 
 
-            return interaction.reply({
+            return replyAfterDefer(interaction, {
 
                 content:
                 "❌ De storting kon niet worden uitgevoerd.",
@@ -179,7 +183,7 @@ module.exports = {
 
 
 
-        return interaction.reply({
+        return replyAfterDefer(interaction, {
 
             embeds:[
 

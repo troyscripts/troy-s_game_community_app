@@ -1,3 +1,4 @@
+const { replyAfterDefer } = require("../../utils/deferredReply");
 const { MessageFlags } = require("discord.js");
 const {
     SlashCommandBuilder,
@@ -52,6 +53,9 @@ module.exports = {
 
     async execute(client, interaction) {
 
+        // Bevestig vóór databasewerk; bij een mislukte bevestiging geen mutaties.
+        await interaction.deferReply();
+
 
         const allowedRoles = [
 
@@ -82,7 +86,7 @@ module.exports = {
         if (!hasPermission) {
 
 
-            return interaction.reply({
+            return replyAfterDefer(interaction, {
 
                 content:
                 "❌ Je hebt geen toestemming om economie te resetten.",
@@ -159,7 +163,7 @@ module.exports = {
 
 
 
-        return interaction.reply({
+        return replyAfterDefer(interaction, {
 
             embeds:[
 

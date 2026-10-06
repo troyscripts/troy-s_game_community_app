@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.5.7 — 6 oktober 2026
+
+- `/work`, `/daily`, `/deposit`, `/withdraw`, `/pay`, `/give`, `/economy-reset` en `/balance` bevestigen de interactie vóór databasewerk; openbare resultaten gebruiken `editReply`.
+- Wachttijd- en foutmeldingen van deze commando’s blijven privé via een gedeelde antwoordhelper. Bij een mislukte eerste bevestiging worden geen databasewijzigingen uitgevoerd.
+- Centrale weigeringen worden afgewacht binnen de foutafhandeling, zodat een afgewezen reactie niet buiten de `catch` valt.
+- Verlopen of al bevestigde interacties krijgen geen tweede foutreactie; foutlogs bevatten het commando, interactie-ID, leeftijd en reactiestatus.
+- Botversie verhoogd naar 2.5.7; configuratie en databases blijven ongewijzigd.
+
 ## 2.5.6 — 5 oktober 2026
 
 - Installatiehandleiding voor nieuwe downloaders toegevoegd: Discord, hosting, eigen .env, GroqCloud, eerste configuratie en probleemoplossing.

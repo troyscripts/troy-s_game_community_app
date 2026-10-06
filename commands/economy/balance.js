@@ -1,3 +1,4 @@
+const { replyAfterDefer } = require("../../utils/deferredReply");
 const {
     SlashCommandBuilder,
     EmbedBuilder
@@ -47,6 +48,9 @@ module.exports = {
 
 
     async execute(client, interaction) {
+
+        // Bevestig vóór databasewerk; bij een mislukte bevestiging geen mutaties.
+        await interaction.deferReply();
 
 
         const target =
@@ -154,7 +158,7 @@ module.exports = {
 
 
 
-        return interaction.reply({
+        return replyAfterDefer(interaction, {
 
             embeds:[
 

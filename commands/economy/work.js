@@ -1,3 +1,4 @@
+const { replyAfterDefer } = require("../../utils/deferredReply");
 const { applyRewardBonus, rewardMultiplier } = require("../../services/rewardBonus");
 const { MessageFlags } = require("discord.js");
 const {
@@ -34,6 +35,9 @@ module.exports = {
 
     async execute(client, interaction) {
 
+        // Bevestig vóór databasewerk; bij een mislukte bevestiging geen mutaties.
+        await interaction.deferReply();
+
 
         const userId =
             interaction.user.id;
@@ -62,7 +66,7 @@ module.exports = {
 
 
 
-                return interaction.reply({
+                return replyAfterDefer(interaction, {
 
                     content:
                     `⏳ Je moet nog **${minutes} minuten** wachten voordat je weer kunt werken.`,
@@ -157,7 +161,7 @@ module.exports = {
 
 
 
-        return interaction.reply({
+        return replyAfterDefer(interaction, {
 
             embeds:[
 
