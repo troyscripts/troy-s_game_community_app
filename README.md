@@ -1,4 +1,4 @@
-# Troy’s Game Community Bot — 2.5.7
+# Troy’s Game Community Bot — 2.5.8
 
 Complete Discord-bot met tickets, moderatie, XP/levels, economy, verjaardagen, selfrollen, counting, agenda, AI-chat en instelbare welkomstberichten.
 
@@ -7,6 +7,12 @@ Complete Discord-bot met tickets, moderatie, XP/levels, economy, verjaardagen, s
 **Voor het eerst gedownload? Begin bij [INSTALLATIE.md](INSTALLATIE.md).** Daarin staan Discord-app aanmaken, hosting, `.env`, opstarten en optionele GroqCloud-AI stap voor stap.
 
 [HANDLEIDING.md](HANDLEIDING.md) bevat de slashcommando’s, instellingen en voorbeelden voor leden en beheerders. [CHANGELOG.md](CHANGELOG.md) beschrijft de wijzigingen.
+
+## Nieuw in 2.5.8 — Handleiding via Discord
+
+Gebruik `/help` om `HANDLEIDING.md` als bijlage in het huidige kanaal te ontvangen, samen met de supportlink. Het antwoord is openbaar. De bot moet berichten kunnen verzenden en bestanden kunnen bijvoegen.
+
+Na het plaatsen van update 2.5.8: herstart de bot. Het nieuwe commando wordt bij het opstarten automatisch geregistreerd.
 
 ## Nieuw in 2.5.7
 

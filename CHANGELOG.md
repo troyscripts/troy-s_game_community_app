@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.5.8 — 10 oktober 2026
+
+- `/help` toegevoegd: plaatst de bot-handleiding als bijlage in het huidige kanaal, zichtbaar voor iedereen met toegang tot het kanaal.
+- Het bericht bevat: Voor support ga naar https://discord.gg/nTzVy5uMWX.
+- Beschikbaar voor iedereen, met 10 seconden wachttijd per gebruiker en een duidelijke melding als de handleiding ontbreekt.
+- Botversie verhoogd naar 2.5.8. Geen nieuwe dependencies; configuratie blijft ongewijzigd.
+
 ## 2.5.7 — 6 oktober 2026
 
 - `/work`, `/daily`, `/deposit`, `/withdraw`, `/pay`, `/give`, `/economy-reset` en `/balance` bevestigen de interactie vóór databasewerk; openbare resultaten gebruiken `editReply`.

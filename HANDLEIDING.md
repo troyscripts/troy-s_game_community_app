@@ -1,6 +1,6 @@
 # Troy’s Game Community Bot — Gebruikershandleiding
 
-**Versie 2.5.1 · Bijgewerkt op 28 september 2026**
+**Botversie 2.5.8 · Bijgewerkt op 10 oktober 2026**
 
 Iedere server beheert de eigen instellingen via `/config` in Discord. De vaste-configmodus is verwijderd.
 
@@ -15,12 +15,21 @@ Deze handleiding legt uit hoe je de bot in Discord gebruikt. Leden vinden hier d
 - De welkomsttekst wordt per server opgeslagen en blijft na een herstart bewaard. Dit werkt ook op Troy’s Game Community wanneer de overige instellingen uit `config/defaults.js` komen.
 - Sinds 2.4.9 toont `/ping` ook de verbindingsstatus, gemiddelde/minimale/maximale Gateway-ping, uptime en verbindingsgebeurtenissen. Revisie 2.4.9A verbeterde de stabiliteit van de statusmeldingen.
 
+## /help — Handleiding en support
+
+Gebruik `/help` om deze handleiding als downloadbare bijlage te ontvangen in het kanaal waar je het commando uitvoert. Het bericht is zichtbaar voor iedereen die toegang heeft tot dat kanaal. Iedereen kan dit commando gebruiken; de wachttijd is 10 seconden per gebruiker.
+
+Voor support ga naar https://discord.gg/nTzVy5uMWX
+
+De bot heeft in dat kanaal toestemming nodig om berichten te verzenden en bestanden bij te voegen.
+
 ## Snel beginnen
 
 Typ `/` in een Discord-kanaal en kies een command van de bot. Discord laat zien welke velden je moet invullen. **Verplicht** betekent dat je het veld moet invullen; **optioneel** mag je overslaan.
 
 | Wat wil je doen? | Zo doe je dat |
 | --- | --- |
+| De bot-handleiding ontvangen | `/help` |
 | Je verjaardag instellen | `/setbirthday datum:15-09-1991` — vul je eigen geboortedatum in. |
 | Je level en XP bekijken | `/rank` |
 | Je saldo bekijken | `/balance` |
