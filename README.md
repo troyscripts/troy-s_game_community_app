@@ -1,4 +1,4 @@
-# Troy’s Game Community Bot — 2.5.9
+# Troy’s Game Community Bot — 2.6.0
 
 Complete Discord-bot met tickets, moderatie, XP/levels, economy, verjaardagen, selfrollen, counting, agenda, AI-chat en instelbare welkomstberichten.
 
@@ -7,6 +7,12 @@ Complete Discord-bot met tickets, moderatie, XP/levels, economy, verjaardagen, s
 **Voor het eerst gedownload? Begin bij [INSTALLATIE.md](INSTALLATIE.md).** Daarin staan Discord-app aanmaken, hosting, `.env`, opstarten en optionele GroqCloud-AI stap voor stap.
 
 [HANDLEIDING.md](HANDLEIDING.md) bevat de slashcommando’s, instellingen en voorbeelden voor leden en beheerders. [CHANGELOG.md](CHANGELOG.md) beschrijft de wijzigingen.
+
+## Nieuw in 2.6.0 — Bump-herinneringen
+
+Stel een kanaal in met `/config instellen instelling:Bump.Channel waarde:#bump`. De bot stuurt daar iedere twee uur een herinnering om `/bump` te gebruiken. De eerste herinnering volgt direct bij activeren. Uitschakelen kan met dezelfde instelling en waarde `uit`. De planning wordt per server opgeslagen en blijft na een herstart bewaard.
+
+Update vanaf 2.5.9: stop de bot, plaats de gewijzigde bestanden en herstart. Nieuwe dependencies zijn niet nodig. Je serverinstellingen blijven behouden.
 
 ## Nieuw in 2.5.9 — Uitgebreide polls
 

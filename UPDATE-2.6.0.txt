@@ -1,0 +1,21 @@
+Troy’s Game Community Bot — Update 2.6.0
+
+Update vanaf 2.5.9; uitsluitend nieuwe en gewijzigde bestanden.
+
+1. Stop de bot en maak een back-up.
+2. Plaats de bestanden in je bestaande botmap met behoud van de mapstructuur.
+3. Herstart de bot. Geen nieuwe dependencies nodig.
+4. Stel via Discord in:
+   /config instellen instelling:Bump.Channel waarde:#bump
+   Gebruik een echte kanaalvermelding of kanaal-ID.
+
+De eerste herinnering komt direct bij activeren, daarna iedere twee uur.
+De planning blijft na een herstart bewaard. De controle draait iedere 30 seconden.
+Uitschakelen: /config instellen instelling:Bump.Channel waarde:uit
+
+De bot moet het kanaal kunnen bekijken en er berichten kunnen verzenden.
+De herinnering voert /bump niet automatisch uit en pingt niemand.
+Er wordt niet gecontroleerd of iemand tussentijds al heeft gebumpt.
+
+Geen bestanden verwijderen. Bestaande serverinstellingen in de database en je .env blijven behouden.
+Als je zelf config/defaults.js hebt aangepast, vergelijk je eigen wijzigingen vóór je dit bestand vervangt.

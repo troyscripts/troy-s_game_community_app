@@ -124,6 +124,7 @@ module.exports = {
                     "**Voorbeelden**\n" +
                     "`Counting.Channel` → kies/plak een kanaalvermelding of kanaal-ID\n" +
                     "`Tickets.Enabled` → `ja` of `nee`\n" +
+                    "`Bump.Channel` → kanaalvermelding/ID voor een herinnering iedere 2 uur; `uit` schakelt deze uit\n" +
                     "`Bot.Color` → `#c9a91b`\n" +
                     "`StaffRoles` → laat waarde leeg om rollen aan te klikken, of voer rol-ID's in\n" +
                     "`Roles.Developer` → de rol-ID van je developers (volledig botbeheer op deze server)\n" +
@@ -172,16 +173,18 @@ module.exports = {
                 return interaction.reply({ content: "❌ Vul voor deze instelling een waarde in. Alleen StaffRoles heeft een rollenkeuzemenu.", flags: MessageFlags.Ephemeral });
             }
 
+            await interaction.deferReply({ flags: MessageFlags.Ephemeral });
             try {
                 const result = settings.updateValue(guildId, path, rawValue);
-                return interaction.reply({
+                if (result.path === "Bump.Channel") await require("../../services/bumpReminder").tick(_client);
+                return interaction.editReply({
                     content:
                         `✅ **${result.path}** is opgeslagen voor alleen deze Discord-server.\n` +
                         `Nieuwe waarde: ${displayValue(result.value)}`,
                     flags: MessageFlags.Ephemeral
                 });
             } catch (error) {
-                return interaction.reply({
+                return interaction.editReply({
                     content: `❌ ${error.message}`,
                     flags: MessageFlags.Ephemeral
                 });
@@ -190,16 +193,18 @@ module.exports = {
 
         if (subcommand === "herstellen") {
             const path = interaction.options.getString("instelling", true);
+            await interaction.deferReply({ flags: MessageFlags.Ephemeral });
             try {
                 const result = settings.resetValue(guildId, path);
-                return interaction.reply({
+                if (result.path === "Bump.Channel") await require("../../services/bumpReminder").tick(_client);
+                return interaction.editReply({
                     content:
                         `✅ **${result.path}** is hersteld naar de veilige standaard.\n` +
                         `Waarde: ${displayValue(result.value)}`,
                     flags: MessageFlags.Ephemeral
                 });
             } catch (error) {
-                return interaction.reply({
+                return interaction.editReply({
                     content: `❌ ${error.message}`,
                     flags: MessageFlags.Ephemeral
                 });
@@ -214,8 +219,10 @@ module.exports = {
             });
         }
 
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
         settings.resetGuild(guildId);
-        return interaction.reply({
+        await require("../../services/bumpReminder").tick(_client);
+        return interaction.editReply({
             content:
                 "✅ Alle instellingen voor deze Discord-server zijn teruggezet. " +
                 "Kanaal- en rol-ID's zijn leeggemaakt; stel ze opnieuw in met `/config instellen`.",

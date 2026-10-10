@@ -38,6 +38,9 @@ module.exports = {
         PingRole4: ""
     },
 
+    // Een kanaal instellen via /config activeert de herinnering iedere twee uur.
+    Bump: { Channel: "" },
+
     StaffRoles: [],
 
     SelfRoles: { fivem: "", ats: "", minecraft: "", streams: "" },

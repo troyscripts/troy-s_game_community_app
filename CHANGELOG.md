@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.6.0 — 10 oktober 2026
+
+- Bump-herinneringen toegevoegd: stel via `/config instellen` de instelling `Bump.Channel` in op een kanaalvermelding of kanaal-ID.
+- De eerste herinnering komt direct bij activeren; daarna iedere twee uur na de vorige geslaagde verzending.
+- Per Discord-server een eigen kanaal en blijvend opgeslagen planning, ook na een herstart.
+- Gebruik `Bump.Channel` met waarde `uit`, of herstel de instelling, om de herinneringen uit te schakelen.
+- Een nieuw ingesteld kanaal krijgt direct een herinnering en start daarna een nieuwe periode van twee uur. Mislukte verzendingen worden opnieuw geprobeerd; na downtime wordt maximaal één achterstallige herinnering gestuurd.
+- Berichten bevatten `/bump`, zonder rol- of iedereen-ping. De bot voert geen bump uit en kijkt niet of iemand al heeft gebumpt.
+- Botversie 2.6.0; geen nieuwe dependencies. Bestaande serverinstellingen blijven behouden.
+
 ## 2.5.9 — 10 oktober 2026
 
 - `/poll maken`: 2–10 antwoorden, stemknoppen, optioneel meerdere keuzes en een timer van 1 minuut tot 30 dagen.

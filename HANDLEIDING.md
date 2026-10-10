@@ -1,6 +1,6 @@
 # Troy’s Game Community Bot — Gebruikershandleiding
 
-**Botversie 2.5.9 · Bijgewerkt op 10 oktober 2026**
+**Botversie 2.6.0 · Bijgewerkt op 10 oktober 2026**
 
 Iedere server beheert de eigen instellingen via `/config` in Discord. De vaste-configmodus is verwijderd.
 
@@ -22,6 +22,22 @@ Gebruik `/help` om deze handleiding als downloadbare bijlage te ontvangen in het
 Voor support ga naar https://discord.gg/nTzVy5uMWX
 
 De bot heeft in dat kanaal toestemming nodig om berichten te verzenden en bestanden bij te voegen.
+
+## Bump-herinneringen
+
+Stel een eigen herinneringskanaal per Discord-server in:
+
+`/config instellen instelling:Bump.Channel waarde:#bump`
+
+Kies bij `waarde` een echte kanaalvermelding of plak het kanaal-ID. Hiervoor gelden de bestaande `/config`-rechten: owner of ingestelde developer met toegang tot configuratiebeheer. De instelling staat ook in de autocomplete en `/config bekijken`.
+
+Na het instellen stuurt de bot direct de eerste herinnering. Daarna volgt iedere twee uur na de vorige geslaagde verzending een nieuw bericht met de tekst dat het tijd is om `/bump` te gebruiken. Er worden geen rollen of leden gepingd. De bot voert het bumpcommando niet zelf uit en reageert niet op uitgevoerde bumps: dit is een vaste herinnering.
+
+De bot controleert iedere 30 seconden. Via `/config` wordt een kanaalwijziging direct verwerkt: een nieuw ingesteld kanaal krijgt meteen een herinnering. De volgende herinnering komt twee uur later. De planning blijft in de database bewaard; herstarten zet de timer niet opnieuw op nul. Als de bot tijdens een geplande herinnering offline was, volgt bij terugkomst maximaal één inhaalbericht.
+
+**Uitschakelen:** `/config instellen instelling:Bump.Channel waarde:uit` of `/config herstellen instelling:Bump.Channel`. Er volgen vanaf de eerstvolgende controle geen nieuwe herinneringen meer. Reeds verstuurde berichten blijven staan.
+
+De bot moet het kanaal kunnen bekijken en er berichten kunnen verzenden. In een thread is ook toestemming nodig om berichten in threads te verzenden. Bij een onbereikbaar kanaal of ontbrekende rechten schrijft de bot een waarschuwing in de console en probeert hij later opnieuw te verzenden.
 
 ## Snel beginnen
 

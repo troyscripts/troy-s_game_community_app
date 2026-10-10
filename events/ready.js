@@ -37,6 +37,7 @@ module.exports = {
         require("../services/updateChecker").startUpdateChecker();
 
         require("../services/polls").start(client);
+        require("../services/bumpReminder").start(client);
 
         await registerAllGuilds(client);
 
