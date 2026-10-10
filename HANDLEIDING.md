@@ -1,6 +1,6 @@
 # Troy’s Game Community Bot — Gebruikershandleiding
 
-**Botversie 2.5.8 · Bijgewerkt op 10 oktober 2026**
+**Botversie 2.5.9 · Bijgewerkt op 10 oktober 2026**
 
 Iedere server beheert de eigen instellingen via `/config` in Discord. De vaste-configmodus is verwijderd.
 
@@ -303,13 +303,28 @@ Een losse hoge meting of een reconnect bewijst niet dat de bot vastloopt. Bekijk
 
 ### /poll
 
-Maak een poll.
+Maak een poll met 2 tot 10 antwoordmogelijkheden en een instelbare timer. Stemmen gebeurt met de genummerde knoppen onder het bericht.
 
-**Toegang:** Iedereen. Eventuele wachttijden en serverinstellingen blijven gelden.
+| Commando | Toegang | Werking |
+| --- | --- | --- |
+| `/poll maken` | Iedereen | Vul `vraag`, `antwoorden` en `minuten` in. Scheid antwoorden met een verticale streep: `Ja \| Nee \| Misschien`. Met `meerdere:True` mag iedereen meerdere antwoorden kiezen. |
+| `/poll wijzigen` | Staff | Vul `id` en een nieuwe `vraag`, `antwoorden` of `minuten` in. |
+| `/poll stoppen` | Staff | Vul `id` in. Sluit onmiddellijk en bewaart de uitslag. |
+| `/poll annuleren` | Staff | Vul `id` in. Verklaart de poll ongeldig en wist alle stemmen, ook bij een al afgesloten poll. Het bericht blijft zichtbaar als geannuleerd. |
 
-| Gebruik | Opties |
-| --- | --- |
-| `/poll` | `vraag` (verplicht): De vraag voor de poll. |
+**Voorbeeld:** `/poll maken vraag:Wat spelen we vanavond? antwoorden:FiveM | ETS2 | ATS minuten:60 meerdere:False`
+
+Het Poll-ID staat onder het pollbericht. Met `/poll wijzigen id:12 minuten:30` geef je poll 12 vanaf dat moment nog 30 minuten. Alleen de timer aanpassen behoudt de stemmen. Een gewijzigde vraag of antwoordlijst wist alle stemmen en vereist opnieuw stemmen; dit wordt op het pollbericht vermeld. Een afgesloten of geannuleerde poll kan niet opnieuw geopend of inhoudelijk gewijzigd worden.
+
+**Stemmen:** standaard één antwoord per persoon. Klik op een ander antwoord om te wisselen, of op hetzelfde antwoord om je stem in te trekken. Bij meerdere keuzes schakel je elk antwoord apart aan of uit. De tellingen zijn openbaar; de persoonlijke stembevestiging is privé. Elke keuze telt als één stem, dus bij meerdere keuzes kan de som groter zijn dan het aantal deelnemers.
+
+**Timer:** 1 tot 43.200 minuten (30 dagen), met een zichtbare eindtijd. Stemmen na de eindtijd wordt direct geweigerd. De bot controleert iedere 10 seconden of het bericht moet worden afgesloten. Polls en stemmen worden in SQLite opgeslagen; na een herstart worden verlopen polls alsnog gesloten. Terwijl de bot offline is, werken stemknoppen niet.
+
+**Staff:** ingestelde staffrollen, serverbeheerders met Administrator, de servereigenaar en gebruikers met Owner-/Developer-toegang volgens de bestaande botrechten. Gewone leden mogen een poll maken en stemmen, maar ook hun eigen poll niet beheren zonder staffrechten.
+
+**Botrechten:** kanaal bekijken, berichten verzenden, links insluiten (Embed Links) en berichtgeschiedenis lezen. In threads is ook berichten verzenden in threads nodig. Bij een tijdelijk mislukte berichtupdate bewaart de bot de wijziging en probeert hij het opnieuw.
+
+Oude Ja/Nee-polls met emoji-reacties worden niet omgezet en kunnen niet met deze beheercommando’s worden beheerd. Maak hiervoor een nieuwe poll.
 
 ### /ship
 

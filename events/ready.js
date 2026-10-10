@@ -36,6 +36,8 @@ module.exports = {
         startConnectionMonitor(client);
         require("../services/updateChecker").startUpdateChecker();
 
+        require("../services/polls").start(client);
+
         await registerAllGuilds(client);
 
         const reportMessage = await startupReporter.startReport(client);

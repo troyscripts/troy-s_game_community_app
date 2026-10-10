@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.5.9 — 10 oktober 2026
+
+- `/poll maken`: 2–10 antwoorden, stemknoppen, optioneel meerdere keuzes en een timer van 1 minuut tot 30 dagen.
+- Staff kan polls wijzigen, vroegtijdig stoppen met behoud van de uitslag of annuleren met verwijdering van de stemmen.
+- Een gewijzigde vraag of antwoordlijst wist de stemmen; alleen de timer aanpassen behoudt ze. Oude knoppen worden na inhoudelijke wijzigingen geweigerd.
+- Polls, stemmen en eindtijden worden blijvend opgeslagen. Na een herstart worden verlopen polls alsnog gesloten.
+- Stemmen na de eindtijd wordt geweigerd; berichtupdates worden iedere 10 seconden gecontroleerd en bij tijdelijke fouten opnieuw geprobeerd.
+- Oude Ja/Nee-reactiepolls blijven ongewijzigd. Nieuwe commando’s worden bij de botstart automatisch geregistreerd.
+- Botversie 2.5.9; geen nieuwe dependencies of configuratiewijzigingen. De polltabel wordt automatisch aangemaakt.
+
 ## 2.5.8 — 10 oktober 2026
 
 - `/help` toegevoegd: plaatst de bot-handleiding als bijlage in het huidige kanaal, zichtbaar voor iedereen met toegang tot het kanaal.

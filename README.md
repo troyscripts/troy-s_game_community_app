@@ -1,4 +1,4 @@
-# Troy’s Game Community Bot — 2.5.8
+# Troy’s Game Community Bot — 2.5.9
 
 Complete Discord-bot met tickets, moderatie, XP/levels, economy, verjaardagen, selfrollen, counting, agenda, AI-chat en instelbare welkomstberichten.
 
@@ -7,6 +7,14 @@ Complete Discord-bot met tickets, moderatie, XP/levels, economy, verjaardagen, s
 **Voor het eerst gedownload? Begin bij [INSTALLATIE.md](INSTALLATIE.md).** Daarin staan Discord-app aanmaken, hosting, `.env`, opstarten en optionele GroqCloud-AI stap voor stap.
 
 [HANDLEIDING.md](HANDLEIDING.md) bevat de slashcommando’s, instellingen en voorbeelden voor leden en beheerders. [CHANGELOG.md](CHANGELOG.md) beschrijft de wijzigingen.
+
+## Nieuw in 2.5.9 — Uitgebreide polls
+
+Maak polls met `/poll maken`, 2–10 antwoorden gescheiden door `|`, een looptijd in minuten en optioneel meerdere keuzes per persoon. Staff beheert polls via `/poll wijzigen`, `/poll stoppen` en `/poll annuleren`, met het Poll-ID onder het bericht.
+
+Vraag of antwoorden wijzigen wist bestaande stemmen; alleen de timer wijzigen behoudt ze. Polls en stemmen blijven na een herstart bewaard. Zie [HANDLEIDING.md](HANDLEIDING.md) voor voorbeelden en rechten.
+
+Update vanaf 2.5.8: stop de bot, maak een databaseback-up, plaats de gewijzigde bestanden en herstart. Geen nieuwe dependencies nodig. De polltabel en slashcommando’s worden automatisch bijgewerkt. Oude polls met emoji-reacties worden niet omgezet.
 
 ## Nieuw in 2.5.8 — Handleiding via Discord
 

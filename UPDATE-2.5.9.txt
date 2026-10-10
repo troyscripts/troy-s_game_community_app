@@ -1,0 +1,19 @@
+Troy’s Game Community Bot — Update 2.5.9
+
+Update vanaf 2.5.8. Dit pakket bevat uitsluitend nieuwe en gewijzigde bestanden.
+
+1. Stop de bot en maak een back-up van je database.
+2. Pak dit pakket uit in de bestaande hoofdmap van je bot. Behoud de mapstructuur.
+3. Start de bot. De polltabel en de nieuwe /poll-subcommando’s worden automatisch aangemaakt/geregistreerd.
+4. Probeer: /poll maken vraag:Wat spelen we? antwoorden:FiveM | ETS2 | ATS minuten:60
+
+Staff gebruikt /poll wijzigen, /poll stoppen of /poll annuleren met het Poll-ID onder het bericht.
+Vraag/antwoorden wijzigen wist de stemmen. Alleen de timer wijzigen behoudt de stemmen.
+Stoppen bewaart de uitslag; annuleren wist stemmen en markeert het bericht als geannuleerd.
+Oude polls met emoji-reacties worden niet omgezet.
+
+Botrechten: kanaal bekijken, berichten verzenden, links insluiten en berichtgeschiedenis lezen.
+In threads is ook berichten verzenden in threads nodig.
+
+Geen bestanden verwijderen. Geen nieuwe dependencies. Eigen configuratie en .env blijven behouden.
+Zie HANDLEIDING.md voor alle opties en uitleg.
