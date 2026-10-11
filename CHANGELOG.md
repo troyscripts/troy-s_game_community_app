@@ -2,6 +2,8 @@
 
 ## 2.6.1 — 11 oktober 2026
 
+- Aanvulling zonder versieverhoging: `/help` heeft een optionele taalkeuze Nederlands/English, met een Engelse gebruikershandleiding (`MANUAL-EN.md`) en bijpassende Engelse antwoord- en supporttekst. Zonder keuze blijft Nederlands de standaard.
+
 - `/giveaway start`: titel, tekst, Nederlandse einddatum tot twee kalendermaanden vooruit en 1–10 prijzen.
 - Deelnemen en uitschrijven via een knop; één deelname per persoon en maximaal één prijs per winnaar.
 - Staff kan vroegtijdig stoppen met directe trekking, of annuleren zonder trekking en het giveawaybericht verwijderen.

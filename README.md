@@ -8,6 +8,12 @@ Complete Discord-bot met tickets, moderatie, XP/levels, economy, verjaardagen, s
 
 [HANDLEIDING.md](HANDLEIDING.md) bevat de slashcommando’s, instellingen en voorbeelden voor leden en beheerders. [CHANGELOG.md](CHANGELOG.md) beschrijft de wijzigingen.
 
+## Handleidingen in Nederlands en Engels
+
+Gebruik `/help taal:Nederlands` of `/help taal:English` om de gewenste handleiding in het huidige kanaal te ontvangen. Zonder taalkeuze blijft Nederlands de standaard. In een Engelstalige Discord-interface heet de optie `language`. De Engelse handleiding staat in [MANUAL-EN.md](MANUAL-EN.md).
+
+Herstart de bot na deze aanvulling; de taaloptie wordt automatisch geregistreerd. Botversie blijft 2.6.1.
+
 ## Nieuw in 2.6.1 — Giveaways
 
 Start als staff een giveaway met `/giveaway start`: titel, tekst, einddatum (`DD-MM-JJJJ UU:MM`, Nederlandse tijd) en prijzen gescheiden door `|`. Elke prijs krijgt één unieke winnaar. Gebruik dezelfde prijs meerdere keren voor meerdere exemplaren.

@@ -1,0 +1,23 @@
+/help — Nederlandse en Engelse handleiding
+
+Aanvulling op versie 2.6.1, zonder versieverhoging.
+Alleen nieuwe en gewijzigde bestanden.
+
+1. Stop de bot.
+2. Plaats de bestanden in je bestaande botmap, met behoud van de mapstructuur.
+   HANDLEIDING.md en MANUAL-EN.md horen in de hoofdmap, naast package.json.
+3. Herstart de bot. De taaloptie van /help wordt automatisch geregistreerd.
+
+/help                  -> Nederlands (standaard)
+/help taal:Nederlands  -> Nederlandse handleiding
+/help taal:English     -> Engelse handleiding
+
+In een Engelstalige Discord-interface heet de optie language.
+Kies de gewenste taal uit de opties die Discord toont.
+De handleiding verschijnt als bijlage in het huidige kanaal, zichtbaar voor iedereen met kanaaltoegang.
+Het begeleidende bericht en de supporttekst volgen de taalkeuze.
+De supportlink blijft https://discord.gg/nTzVy5uMWX.
+
+Andere commando’s, configuratiesleutels en placeholders blijven hun bestaande namen gebruiken.
+Geen nieuwe dependencies of configuratiewijzigingen. Geen bestanden verwijderen.
+De bot moet berichten kunnen verzenden en bestanden kunnen bijvoegen.

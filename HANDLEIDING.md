@@ -17,7 +17,9 @@ Deze handleiding legt uit hoe je de bot in Discord gebruikt. Leden vinden hier d
 
 ## /help — Handleiding en support
 
-Gebruik `/help` om deze handleiding als downloadbare bijlage te ontvangen in het kanaal waar je het commando uitvoert. Het bericht is zichtbaar voor iedereen die toegang heeft tot dat kanaal. Iedereen kan dit commando gebruiken; de wachttijd is 10 seconden per gebruiker.
+Gebruik `/help` of `/help taal:Nederlands` voor de Nederlandse handleiding. Kies `/help taal:English` voor de Engelse handleiding (`MANUAL-EN.md`). Zonder taalkeuze blijft Nederlands de standaard. In een Engelstalige Discord-interface heet de optie `language`. Ook het begeleidende bericht en de supporttekst volgen de gekozen taal.
+
+Je ontvangt de gekozen handleiding als downloadbare bijlage in het kanaal waar je het commando uitvoert. Het bericht is zichtbaar voor iedereen die toegang heeft tot dat kanaal. Iedereen kan dit commando gebruiken; de wachttijd is 10 seconden per gebruiker.
 
 Voor support ga naar https://discord.gg/nTzVy5uMWX
 
@@ -722,7 +724,7 @@ Bij `/config instellen` kies je een **instelling** en vul je een **waarde** in. 
 /config instellen instelling:StaffRoles
 ```
 
-Bij `StaffRoles` laat je de waarde leeg om rollen aan te klikken. De standaarden hieronder gelden voor een nieuwe server; bestaande instellingen kunnen afwijken. Voor Troy’s Game Community zijn de waarden in `config/defaults.js` leidend. De tabel bevat de instellingen die relevant zijn voor gebruik en beheer.
+Bij `StaffRoles` laat je de waarde leeg om rollen aan te klikken. De standaarden hieronder gelden voor een nieuwe server; bestaande instellingen kunnen afwijken. Ook Troy’s Game Community gebruikt de opgeslagen instellingen via `/config`; `config/defaults.js` levert de basiswaarden. De tabel bevat de instellingen die relevant zijn voor gebruik en beheer.
 
 | Instelling | Type | Standaard | Betekenis |
 | --- | --- | --- | --- |
@@ -743,6 +745,7 @@ Bij `StaffRoles` laat je de waarde leeg om rollen aan te klikken. De standaarden
 | `SelfRoles.ats` | tekst / ID | `leeg` | Rol voor de ATS-knop op een oud standaardpaneel. Gebruik /selfrollen voor nieuwe panelen. |
 | `SelfRoles.minecraft` | tekst / ID | `leeg` | Rol voor de Minecraft-knop op een oud standaardpaneel. Gebruik /selfrollen voor nieuwe panelen. |
 | `SelfRoles.streams` | tekst / ID | `leeg` | Rol voor de Streams-knop op een oud standaardpaneel. Gebruik /selfrollen voor nieuwe panelen. |
+| `Bump.Channel` | tekst / ID | `leeg` | Kanaal voor een directe bump-herinnering bij activeren en daarna iedere twee uur; `uit` schakelt deze uit. |
 | `Logging.Enabled` | ja/nee | `ja` | Activiteitsmeldingen, updateberichten en selfrolmeldingen in Discord aan- of uitzetten. Verwijderde berichten schakel je apart in of uit met Logging.MessageDelete. |
 | `Logging.MessageDelete` | ja/nee | `ja` | Verwijderde gebruikersberichten loggen in het ingestelde Discord-logkanaal. |
 | `Logging.Channel` | tekst / ID | `leeg` | Kanaal voor meldingen over berichten, commandgebruik, leden, selfrollen en botupdates. |
@@ -840,9 +843,8 @@ Na een botupdate verschijnt automatisch een overzicht van de wijzigingen in het 
 
 Vul bij het tweede command het gewenste kanaal in. De bot moet daar berichten, embeds en bijlagen kunnen plaatsen. Bij dezelfde botversie verschijnt niet bij iedere herstart opnieuw een updatebericht. Lukt het versturen niet, dan probeert de bot het later opnieuw.
 
-Op Troy’s Game Community pas je deze waarden vanaf versie 2.4.8 aan in
-`config/defaults.js`; de bovenstaande instelcommands wijzigen daar niets. Gebruik `/config bekijken`
-om de bestandsinstellingen te bekijken. Naast de Discord-changelog controleert
+Ook op Troy’s Game Community pas je deze waarden via `/config` aan. Gebruik `/config bekijken`
+om de opgeslagen serverinstellingen te bekijken. Naast de Discord-changelog controleert
 de bot GitHub bij het opstarten en iedere zes uur. Een beschikbare nieuwere
 versie wordt met een downloadlink in de botconsole gemeld.
 
@@ -879,6 +881,8 @@ Vermeld bij een probleem welk command of welke knop je gebruikte en stuur de fou
 
 ## Creatormeldingen (nieuw in 2.5.2)
 
-Met `/notify` stel je een Discordkanaal in per YouTube- of TikTokaccount. Nieuwe video’s worden automatisch gemeld. Meerdere creators zijn mogelijk. Alleen Head Admin, Owner en Developer mogen toevoegen, verwijderen, wijzigen, bekijken en testen.
+Met `/notify` stel je een Discordkanaal in per YouTube-, TikTok- of Twitchaccount. Nieuwe video’s en actieve Twitch-livestreams worden automatisch gemeld. Meerdere creators zijn mogelijk. Alleen Head Admin, Owner en Developer mogen toevoegen, verwijderen, wijzigen, bekijken en testen.
 
 Gebruik `/notify lijst`, `/notify toevoegen`, `/notify verwijderen` en `/notify test`. TikTok vereist eerst toestemming van de creator. Zie [NOTIFY-HANDLEIDING.md](NOTIFY-HANDLEIDING.md) voor de volledige uitleg en installatie.
+
+Twitch vereist `TWITCH_CLIENT_ID` en `TWITCH_CLIENT_SECRET` in `.env`, nooit een stream key. Controle iedere vijf minuten; een actieve stream wordt eenmaal bij de eerste detectie gemeld. Zie [TWITCH-HANDLEIDING.md](TWITCH-HANDLEIDING.md).

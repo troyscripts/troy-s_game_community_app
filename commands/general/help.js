@@ -2,34 +2,60 @@ const { SlashCommandBuilder } = require("discord.js");
 const { readFile } = require("node:fs/promises");
 const path = require("node:path");
 
-const support = "Voor support ga naar https://discord.gg/nTzVy5uMWX";
+const manuals = {
+    nl: {
+        filename: "HANDLEIDING.md",
+        support: "Voor support ga naar https://discord.gg/nTzVy5uMWX",
+        message: "📖 **Bot-handleiding**\nDownload de bijlage voor uitleg over de commando’s en instellingen.",
+        missing: "De Nederlandse handleiding ontbreekt. Vraag de botbeheerder om HANDLEIDING.md in de hoofdmap van de bot te plaatsen."
+    },
+    en: {
+        filename: "MANUAL-EN.md",
+        support: "For support, go to https://discord.gg/nTzVy5uMWX",
+        message: "📖 **Bot manual**\nDownload the attachment for instructions on commands and settings.",
+        missing: "The English manual is missing. Ask the bot administrator to place MANUAL-EN.md in the bot’s main folder."
+    }
+};
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("help")
-        .setDescription("Ontvang de bot-handleiding en supportlink in dit kanaal."),
+        .setDescription("Ontvang de bot-handleiding en supportlink in dit kanaal.")
+        .setDescriptionLocalizations({
+            "en-US": "Receive the bot manual and support link in this channel.",
+            "en-GB": "Receive the bot manual and support link in this channel."
+        })
+        .addStringOption(option => option
+            .setName("taal")
+            .setNameLocalizations({ "en-US": "language", "en-GB": "language" })
+            .setDescription("Taal van de handleiding. Standaard: Nederlands.")
+            .setDescriptionLocalizations({
+                "en-US": "Manual language. Default: Dutch.",
+                "en-GB": "Manual language. Default: Dutch."
+            })
+            .setRequired(false)
+            .addChoices({ name: "Nederlands", value: "nl" }, { name: "English", value: "en" })),
 
     category: "Algemeen",
     cooldown: 10,
 
     async execute(client, interaction) {
-        // Meteen openbaar bevestigen, voordat de handleiding wordt ingelezen.
         await interaction.deferReply();
-
+        const language = interaction.options.getString("taal") === "en" ? "en" : "nl";
+        const selected = manuals[language];
         let manual;
         try {
-            manual = await readFile(path.join(__dirname, "..", "..", "HANDLEIDING.md"));
+            manual = await readFile(path.join(__dirname, "..", "..", selected.filename));
         } catch (error) {
             if (error.code !== "ENOENT") throw error;
             return interaction.editReply({
-                content: `De bot-handleiding ontbreekt. Vraag de botbeheerder om HANDLEIDING.md in de hoofdmap van de bot te plaatsen.\n\n${support}`,
+                content: `${selected.missing}\n\n${selected.support}`,
                 allowedMentions: { parse: [] }
             });
         }
-
         return interaction.editReply({
-            content: `📖 **Bot-handleiding**\nDownload de bijlage voor uitleg over de commando’s en instellingen.\n\n${support}`,
-            files: [{ attachment: manual, name: "HANDLEIDING.md" }],
+            content: `${selected.message}\n\n${selected.support}`,
+            files: [{ attachment: manual, name: selected.filename }],
             allowedMentions: { parse: [] }
         });
     }
