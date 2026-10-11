@@ -41,6 +41,9 @@ module.exports = {
     // Een kanaal instellen via /config activeert de herinnering iedere twee uur.
     Bump: { Channel: "" },
 
+    // Aparte tijdelijke VIP-rol voor de economywinkel; per server via /config.
+    Store: { VIPRole: "" },
+
     StaffRoles: [],
 
     SelfRoles: { fivem: "", ats: "", minecraft: "", streams: "" },

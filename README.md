@@ -1,4 +1,4 @@
-# Troy’s Game Community Bot — 2.6.1
+# Troy’s Game Community Bot — 2.6.2
 
 Complete Discord-bot met tickets, moderatie, XP/levels, economy, verjaardagen, selfrollen, counting, agenda, AI-chat en instelbare welkomstberichten.
 
@@ -8,11 +8,21 @@ Complete Discord-bot met tickets, moderatie, XP/levels, economy, verjaardagen, s
 
 [HANDLEIDING.md](HANDLEIDING.md) bevat de slashcommando’s, instellingen en voorbeelden voor leden en beheerders. [CHANGELOG.md](CHANGELOG.md) beschrijft de wijzigingen.
 
+## Nieuw in 2.6.2 — VIP-winkel
+
+Stel `/config instellen instelling:Store.VIPRole waarde:@VIP` in met een aparte VIP-rol, onder de hoogste botrol. De bot heeft Rollen beheren nodig.
+
+`/store` verkoopt 1 dag VIP voor €500, 3 dagen voor €1.300 en 7 dagen voor €2.700 spelgeld. Kies optioneel `betaalmiddel:Bank`. Elke aankoop vraagt bevestiging; verlengingen sluiten aan op je huidige eindtijd. Bekijk `/store actie:status` en `/store actie:geschiedenis`.
+
+VIP geeft de bestaande 2× beloningsbonus wanneer bonusbeloningen aanstaan. De rol verloopt automatisch; controle iedere 30 seconden en bij herstart. De winkel houdt betalingen en eindtijden bij in de database. Gebruik een aparte rol die niet ook als staff-, verjaardags- of automatische ledenrol dient.
+
+Update vanaf 2.6.1 inclusief de Engelse /help-aanvulling: stop de bot, maak een databaseback-up, plaats de bestanden en herstart. De nieuwe tabellen en het commando worden automatisch aangemaakt. Geen nieuwe dependencies.
+
 ## Handleidingen in Nederlands en Engels
 
 Gebruik `/help taal:Nederlands` of `/help taal:English` om de gewenste handleiding in het huidige kanaal te ontvangen. Zonder taalkeuze blijft Nederlands de standaard. In een Engelstalige Discord-interface heet de optie `language`. De Engelse handleiding staat in [MANUAL-EN.md](MANUAL-EN.md).
 
-Herstart de bot na deze aanvulling; de taaloptie wordt automatisch geregistreerd. Botversie blijft 2.6.1.
+Herstart de bot na deze aanvulling; de taaloptie wordt automatisch geregistreerd. De taalkeuze is sinds de aanvulling op 2.6.1 beschikbaar.
 
 ## Nieuw in 2.6.1 — Giveaways
 

@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.6.2 — 11 oktober 2026
+
+- `/store` toegevoegd: koop VIP voor 1 dag (€500), 3 dagen (€1.300) of 7 dagen (€2.700) met spelgeld.
+- Stel per server een aparte rol in via `Store.VIPRole` in `/config`. De bot geeft de rol en verwijdert deze na afloop; controle iedere 30 seconden en bij opstarten.
+- Portemonnee of bank kiezen, aankoopbevestiging, resterende VIP-tijd, voordeelprijzen en de laatste tien aankopen.
+- Verlengen sluit aan op de huidige eindtijd. Eén dag is 24 uur; gekochte tijd begint bij geslaagde levering.
+- Betalingen worden transactioneel opgeslagen; dezelfde bevestiging kan niet dubbel afschrijven. Tijdelijke leverfouten worden hersteld, bevestigde niet-levering wordt terugbetaald.
+- Winkel-VIP krijgt de bestaande 2× XP-/daily-/workbonus wanneer bonusbeloningen aanstaan, zonder stapeling met verjaardag/VIP. Na de eindtijd vervalt de winkelbonus direct.
+- Alleen winkelrollen worden automatisch verwijderd. Bestaande niet via de winkel verkregen VIP wordt niet overgenomen. Aankopen en eindtijden blijven na herstart bewaard.
+- Nederlandse en Engelse handleiding bijgewerkt. Geen nieuwe dependencies; botversie 2.6.2.
+
 ## 2.6.1 — 11 oktober 2026
 
 - Aanvulling zonder versieverhoging: `/help` heeft een optionele taalkeuze Nederlands/English, met een Engelse gebruikershandleiding (`MANUAL-EN.md`) en bijpassende Engelse antwoord- en supporttekst. Zonder keuze blijft Nederlands de standaard.

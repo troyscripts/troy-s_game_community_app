@@ -124,6 +124,7 @@ module.exports = {
                     "**Voorbeelden**\n" +
                     "`Counting.Channel` → kies/plak een kanaalvermelding of kanaal-ID\n" +
                     "`Tickets.Enabled` → `ja` of `nee`\n" +
+                    "`Store.VIPRole` → aparte VIP-rol voor /store; de botrol moet erboven staan\n" +
                     "`Bump.Channel` → kanaalvermelding/ID voor een herinnering iedere 2 uur; `uit` schakelt deze uit\n" +
                     "`Bot.Color` → `#c9a91b`\n" +
                     "`StaffRoles` → laat waarde leeg om rollen aan te klikken, of voer rol-ID's in\n" +

@@ -1,6 +1,6 @@
 # Troy’s Game Community Bot — Gebruikershandleiding
 
-**Botversie 2.6.1 · Bijgewerkt op 11 oktober 2026**
+**Botversie 2.6.2 · Bijgewerkt op 11 oktober 2026**
 
 Iedere server beheert de eigen instellingen via `/config` in Discord. De vaste-configmodus is verwijderd.
 
@@ -142,6 +142,37 @@ Bekijk de level ranglijst.
 | `/leaderboard` | Geen |
 
 ## Commands voor leden — Spelgeld
+
+### /store
+
+Koop tijdelijke VIP met **spelgeld**. De winkel verschijnt privé, met knoppen en een aparte aankoopbevestiging.
+
+| Pakket | Prijs | Voordeel ten opzichte van losse dagen |
+| --- | --- | --- |
+| VIP 1 dag | €500 | — |
+| VIP 3 dagen | €1.300 | €200 goedkoper |
+| VIP 7 dagen | €2.700 | €800 goedkoper |
+
+| Gebruik | Werking |
+| --- | --- |
+| `/store` | Open de winkel; standaard betalen uit je portemonnee |
+| `/store betaalmiddel:Bank` | Betalen uit je bankrekening; er wordt niet automatisch tussen bank en portemonnee gecombineerd |
+| `/store actie:status` | Bekijk je lopende winkel-VIP, eindtijd en eventueel nog te leveren aankoop |
+| `/store actie:geschiedenis` | Bekijk je laatste tien aankopen: geleverd, in behandeling of terugbetaald |
+
+Kies een pakket en klik daarna op **Kopen / verlengen**. Annuleren vóór aankoop schrijft niets af. Eén dag duurt precies 24 uur. Nieuwe VIP begint bij de geslaagde roltoekenning; verlengen telt op bij de huidige eindtijd. Er is geen automatische verlenging of herhaalde betaling.
+
+**Instellen:** maak een aparte VIP-rol en gebruik `/config instellen instelling:Store.VIPRole waarde:@VIP` met een echte rolvermelding of rol-ID. De bot moet Rollen beheren hebben en zijn hoogste rol moet boven de VIP-rol staan. Staff- en beheerrollen, @everyone, beheerde rollen, de verjaardagsrol en de automatische ledenrol zijn niet toegestaan. `Economy.Enabled` moet aanstaan voor aankopen. Met `/config herstellen instelling:Store.VIPRole` sluit je de winkel voor nieuwe aankopen; bestaande aankopen lopen door en verlopen nog steeds.
+
+**Bonus:** de gekochte VIP geeft de bestaande 2× bonus op normale chat-XP, counting-XP, ingehaalde XP, `/daily` en `/work`, zolang bonusbeloningen aanstaan. Deze bonus stapelt niet met verjaardag of andere VIP: maximaal 2×. De winkelrol hoeft niet apart in `VIP_ROLE_IDS`. Overboekingen, handmatige geld-/XP-aanpassingen, startsaldo, stortingen en opnames krijgen geen bonus. Na de opgeslagen eindtijd vervalt de bonus, ook als het verwijderen van de rol tijdelijk mislukt.
+
+**Automatisch verlopen:** controle iedere 30 seconden en meteen na het opstarten. De rol wordt dus normaal uiterlijk bij de volgende controle verwijderd; tijdens downtime of bij ontbrekende Discord-rechten volgt verwijdering zodra de bot dit weer kan uitvoeren. Een lopende winkelrol die tussentijds ontbreekt wordt hersteld, bijvoorbeeld als iemand terugkomt in de server. De timer blijft daarbij doorlopen. Gebruik daarom de winkelrol niet voor losse handmatige VIP-toekenningen.
+
+**Veilige betaling:** saldo en aankoop worden samen in één databasetransactie opgeslagen. Dezelfde aankoopbevestiging kan niet dubbel afschrijven. Bij onvoldoende saldo wordt niets afgeschreven. Bij tijdelijke Discord-/netwerkfouten bewaart de bot de betaalde aankoop en probeert hij de roltoekenning opnieuw. Bij bevestigde niet-levering, bijvoorbeeld ontbrekende rol/rechten of een vertrokken koper, wordt het bedrag eenmaal teruggestort op hetzelfde betaalmiddel. Bekijk bij problemen de status en aankoopgeschiedenis. Er kan per lid één aankoop tegelijk in behandeling zijn.
+
+**Bestaande VIP:** heeft iemand dezelfde rol al buiten de winkel gekregen, dan weigert de winkel de aankoop; die rol wordt niet automatisch overgenomen of verwijderd. Als een beheerder een andere winkelrol instelt, blijven bestaande aankopen gekoppeld aan hun oorspronkelijke rol en eindtijd. De koper kan pas naar de nieuwe rol overstappen wanneer de oude VIP afgelopen is.
+
+De gegevens worden per server opgeslagen en blijven na een herstart bewaard. Een reset van XP/spelgeld via `/reset-voortgang` beëindigt eerder gekochte VIP niet. De betaalbevestiging noemt altijd het pakket, bedrag, betaalmiddel en de eindtijd.
 
 ### /balance
 
@@ -745,6 +776,7 @@ Bij `StaffRoles` laat je de waarde leeg om rollen aan te klikken. De standaarden
 | `SelfRoles.ats` | tekst / ID | `leeg` | Rol voor de ATS-knop op een oud standaardpaneel. Gebruik /selfrollen voor nieuwe panelen. |
 | `SelfRoles.minecraft` | tekst / ID | `leeg` | Rol voor de Minecraft-knop op een oud standaardpaneel. Gebruik /selfrollen voor nieuwe panelen. |
 | `SelfRoles.streams` | tekst / ID | `leeg` | Rol voor de Streams-knop op een oud standaardpaneel. Gebruik /selfrollen voor nieuwe panelen. |
+| `Store.VIPRole` | rol-ID | `leeg` | Aparte tijdelijke VIP-rol voor /store; wordt bij afloop automatisch verwijderd. |
 | `Bump.Channel` | tekst / ID | `leeg` | Kanaal voor een directe bump-herinnering bij activeren en daarna iedere twee uur; `uit` schakelt deze uit. |
 | `Logging.Enabled` | ja/nee | `ja` | Activiteitsmeldingen, updateberichten en selfrolmeldingen in Discord aan- of uitzetten. Verwijderde berichten schakel je apart in of uit met Logging.MessageDelete. |
 | `Logging.MessageDelete` | ja/nee | `ja` | Verwijderde gebruikersberichten loggen in het ingestelde Discord-logkanaal. |
@@ -824,7 +856,7 @@ De ingestelde verjaardagsrol en een voor de bonus aangewezen VIP-rol geven **2×
 | `/give`, `/pay`, rekeningen, stelen, storten, opnemen, startsaldo | Geen bonus |
 | Handmatige XP-aanpassingen | Geen bonus |
 
-De wachttijden blijven gelijk. Bestaande XP en saldi worden niet achteraf verdubbeld. Niet iedere rol met de naam VIP geeft automatisch een bonus; vraag een beheerder welke VIP-rol hiervoor is aangewezen.
+De wachttijden blijven gelijk. Bestaande XP en saldi worden niet achteraf verdubbeld. De rol bij `Store.VIPRole` telt automatisch mee. Niet iedere andere rol met de naam VIP geeft automatisch een bonus; vraag een beheerder welke VIP-rollen hiervoor zijn aangewezen.
 
 ## Ticketpanelen en transcripts
 

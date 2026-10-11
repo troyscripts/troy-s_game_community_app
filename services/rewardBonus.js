@@ -1,6 +1,7 @@
 const config = require('../config/config');
 const bonuses = require('../config/rewardBonuses');
 const logger = require('../utils/logger');
+const shop = require('../database/store');
 
 function hasRole(member, id) {
     if (!id) return false;
@@ -9,7 +10,16 @@ function hasRole(member, id) {
 }
 function rewardMultiplier(member) {
     if (!bonuses.Enabled) return 1;
-    return hasRole(member, config.Birthday?.Role) || bonuses.VIPRoles.some(id => hasRole(member, id)) ? 2 : 1;
+    const guildId = member?.guild?.id || config.__context.getGuildId();
+    const userId = member?.id || member?.user?.id;
+    const validVIP = id => {
+        if (!hasRole(member, id)) return false;
+        const purchased = guildId && userId ? shop.vip(guildId, userId, id) : null;
+        // Expired purchased VIP never grants a bonus while Discord role removal is pending.
+        return !purchased || (purchased.status === 'active' && purchased.expires_at > Date.now());
+    };
+    const purchasedRoles = guildId && userId ? shop.memberships(guildId, userId).map(v => v.role_id) : [];
+    return hasRole(member, config.Birthday?.Role) || [...bonuses.VIPRoles, config.Store?.VIPRole, ...purchasedRoles].some(validVIP) ? 2 : 1;
 }
 function applyRewardBonus(amount, member) {
     // Called only for earned positive rewards, never for transfers or administrative edits.

@@ -1,6 +1,6 @@
 # Troy’s Game Community Bot — User Manual
 
-**Bot version 2.6.1 · Updated 11 October 2026**
+**Bot version 2.6.2 · Updated 11 October 2026**
 
 Each server manages its own settings through `/config` in Discord. Fixed configuration mode has been removed.
 
@@ -110,6 +110,37 @@ View the level leaderboard. No options.
 ## Member commands — Virtual money
 
 Everyone may use these commands, subject to cooldowns and server settings.
+
+### /store
+
+Buy temporary VIP using **virtual game money**. The store and purchase confirmation are private.
+
+| Package | Price | Saving compared with separate days |
+| --- | --- | --- |
+| VIP 1 day | €500 | — |
+| VIP 3 days | €1,300 | €200 |
+| VIP 7 days | €2,700 | €800 |
+
+| Command | Action |
+| --- | --- |
+| `/store` | Open the shop; pay from your wallet by default |
+| `/store betaalmiddel:Bank` | Pay from your bank account; wallet and bank funds are not automatically combined |
+| `/store actie:status` | Show active purchased VIP, expiry and any purchase awaiting delivery |
+| `/store actie:geschiedenis` | Show the last ten orders: delivered, pending or refunded |
+
+Choose a package, then click **Kopen / verlengen** (buy / extend). Cancelling before purchase costs nothing. Each day is exactly 24 hours. New VIP starts when the role is successfully delivered; extensions add to the current expiry. There is no automatic renewal or recurring payment.
+
+**Setup:** create a separate VIP role and run `/config instellen instelling:Store.VIPRole waarde:@VIP` using a real role mention or ID. The bot needs Manage Roles and its highest role must be above VIP. Staff/administrative roles, @everyone, managed roles, the birthday role and automatic join role cannot be sold. `Economy.Enabled` must be enabled for purchases. `/config herstellen instelling:Store.VIPRole` closes the shop to new purchases; existing purchases continue and still expire normally.
+
+**Rewards:** purchased VIP uses the existing 2× bonus for normal chat XP, counting XP, catch-up XP, `/daily` and `/work`, while reward bonuses are enabled. It does not stack with birthdays or another VIP role: the maximum is 2×. The store role does not need to be added to `VIP_ROLE_IDS`. Transfers, manual money/XP adjustments, starting balances, deposits and withdrawals do not receive a bonus. The bonus ends at the stored expiry even if Discord role removal is delayed.
+
+**Expiry:** checked every 30 seconds and immediately after startup. Normally the role is removed by the next check; during downtime or permission failures it is removed once the bot can perform the action again. A missing role for an active purchase is restored, for example when a member rejoins. The timer continues while they are away. Do not use the store role for separate manual VIP grants.
+
+**Payment handling:** balance deduction and the order are saved in one database transaction. Reusing the same purchase confirmation cannot charge twice. Insufficient funds cause no charge. Temporary Discord/network errors leave the paid order pending for automatic delivery retry. Confirmed non-delivery, such as a missing role, missing permissions or a departed buyer, refunds the amount once to the original wallet/bank source. Check status and history if anything goes wrong. Only one pending order per member is allowed at a time.
+
+**Existing VIP:** if a member already holds the role without a shop entitlement, purchases are refused; that role is not taken over or automatically removed. Changing the configured store role does not change existing purchases: the original role and expiry are retained. Members must wait for old VIP to expire before purchasing the newly configured role.
+
+Orders are stored per server and survive restarts. Resetting XP/money using `/reset-voortgang` does not end previously purchased VIP. Successful receipts show the package, amount, payment source and expiry.
 
 ### /balance
 
@@ -520,6 +551,7 @@ Boolean values accept `ja`/`nee` or `true`/`false`. Keep setting keys and specia
 | `SelfRoles.ats` | Role ID | Empty | ATS button role on an old default panel |
 | `SelfRoles.minecraft` | Role ID | Empty | Minecraft button role on an old default panel |
 | `SelfRoles.streams` | Role ID | Empty | Streams button role on an old default panel |
+| `Store.VIPRole` | Role ID | Empty | Dedicated temporary VIP role sold through /store and removed when purchased time expires |
 | `Bump.Channel` | Channel ID | Empty | Channel for an immediate bump reminder when enabled, then every two hours; `uit` disables it |
 | `Logging.Enabled` | Boolean | `ja` | Enable activity, update and self-role messages in Discord. Deleted-message logging has its own switch |
 | `Logging.MessageDelete` | Boolean | `ja` | Log deleted user messages in the configured Discord log channel |
@@ -609,7 +641,7 @@ The configured birthday role and a designated bonus VIP role grant **2×** these
 | `/give`, `/pay`, bills, stealing, deposits, withdrawals, starting balance | No bonus |
 | Manual XP adjustments | No bonus |
 
-Cooldowns stay the same. Existing XP and balances are not doubled retroactively. A role merely named VIP does not automatically qualify; ask an administrator which VIP role is designated.
+Cooldowns stay the same. Existing XP and balances are not doubled retroactively. The role configured in `Store.VIPRole` qualifies automatically. Other roles merely named VIP do not automatically qualify; ask an administrator which roles are designated.
 
 ## Ticket panels and transcripts
 
