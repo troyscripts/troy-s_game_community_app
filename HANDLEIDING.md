@@ -1,6 +1,6 @@
 # Troy’s Game Community Bot — Gebruikershandleiding
 
-**Botversie 2.6.0 · Bijgewerkt op 10 oktober 2026**
+**Botversie 2.6.1 · Bijgewerkt op 11 oktober 2026**
 
 Iedere server beheert de eigen instellingen via `/config` in Discord. De vaste-configmodus is verwijderd.
 
@@ -316,6 +316,34 @@ Een losse hoge meting of een reconnect bewijst niet dat de bot vastloopt. Bekijk
 | Gebruik | Opties |
 | --- | --- |
 | `/ping` | Geen |
+
+### /giveaway
+
+Maak als staff een giveaway in het kanaal waarin je het commando uitvoert. Leden klikken op **Deelnemen / uitschrijven** om mee te doen of hun deelname weer in te trekken. Elke persoon heeft één deelname; bots kunnen niet deelnemen.
+
+| Commando | Werking |
+| --- | --- |
+| `/giveaway start` | Vul `titel`, `tekst`, `einddatum` en `prijzen` in. |
+| `/giveaway stoppen id:12` | Sluit giveaway 12 vroegtijdig en trekt direct de winnaars. |
+| `/giveaway annuleren id:12` | Annuleert een open giveaway zonder trekking, wist de deelnemers en verwijdert het giveawaybericht. |
+
+**Voorbeeld:**
+
+`/giveaway start titel:Community giveaway tekst:Doe mee en maak kans! einddatum:18-10-2026 20:00 prijzen:Steam cadeaukaart €10 | Discord Nitro`
+
+Kies een toekomstige einddatum in het formaat **DD-MM-JJJJ UU:MM**, altijd in **Europe/Amsterdam** (Nederlandse tijd, inclusief zomer-/wintertijd). Maximaal twee kalendermaanden vanaf het moment van aanmaken. Een onmogelijke datum of een dubbelzinnige tijd tijdens het verzetten van de klok wordt geweigerd; kies dan een andere tijd.
+
+Vul 1 tot 10 prijzen in, gescheiden door `|`, maximaal 80 tekens per prijs. **Elke prijs krijgt één unieke winnaar.** Voor bijvoorbeeld drie identieke cadeaukaarten: `Cadeaukaart €10 | Cadeaukaart €10 | Cadeaukaart €10`. De eerste getrokken winnaar krijgt de eerste prijs enzovoort. Een deelnemer kan per giveaway maximaal één prijs winnen.
+
+Bij afsluiten kiest de bot willekeurig uit de ingeschreven deelnemers met Node crypto. De uitslag wordt opgeslagen en als apart bericht in hetzelfde kanaal geplaatst, met een mention naar iedere winnaar. Andere vermeldingen in titel, tekst of prijzen veroorzaken geen ping. Prijzen worden niet automatisch geleverd; de organisator regelt de uitreiking.
+
+Bij minder deelnemers dan prijzen wint iedere beschikbare deelnemer maximaal één prijs; overige prijzen worden niet verloot. Zonder deelnemers verschijnt een uitslag zonder winnaar. De trekking gebruikt de ingeschreven deelnemers; leden die intussen de server verlaten worden niet automatisch uit de lijst verwijderd.
+
+**Rechten:** starten, stoppen en annuleren zijn voor ingestelde staffrollen, Administrator, servereigenaar en Owner-/Developer-toegang volgens de bestaande botrechten. Gewone leden kunnen alleen deelnemen of zich uitschrijven. Het Giveaway-ID staat onder het giveawaybericht. Afgesloten giveaways kunnen niet opnieuw getrokken of geannuleerd worden via deze commando’s.
+
+**Automatisch sluiten:** controle iedere 10 seconden. Vanaf de eindtijd wordt nieuwe deelname geweigerd. Na een herstart worden verlopen giveaways alsnog afgehandeld. Tijdens downtime is geen deelname mogelijk. Deelnemers, einddatum en trekking blijven in SQLite bewaard. Als de bekendmaking mislukt, probeert de bot opnieuw met dezelfde uitslag.
+
+**Botrechten:** kanaal bekijken, berichten verzenden, links insluiten (Embed Links) en berichtgeschiedenis lezen. In threads is ook berichten verzenden in threads nodig. Annuleren verwijdert alleen het eigen botbericht. Bij een tijdelijke fout blijft de annulering geldig en probeert de bot de verwijdering opnieuw.
 
 ### /poll
 

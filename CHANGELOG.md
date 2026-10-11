@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.6.1 — 11 oktober 2026
+
+- `/giveaway start`: titel, tekst, Nederlandse einddatum tot twee kalendermaanden vooruit en 1–10 prijzen.
+- Deelnemen en uitschrijven via een knop; één deelname per persoon en maximaal één prijs per winnaar.
+- Staff kan vroegtijdig stoppen met directe trekking, of annuleren zonder trekking en het giveawaybericht verwijderen.
+- Willekeurige trekking met Node crypto; één unieke winnaar per prijs. Het uitslagbericht mentiont uitsluitend de winnaars.
+- Automatisch afsluiten, blijvende opslag en herstel na herstart. Een mislukte bekendmaking wordt opnieuw geprobeerd met dezelfde opgeslagen uitslag.
+- Bij te weinig deelnemers blijven resterende prijzen onverloot; zonder deelnemers wordt geen winnaar getrokken.
+- Botversie 2.6.1; geen configuratiewijzigingen of nieuwe dependencies. Giveawaytabel en commando’s worden automatisch aangemaakt.
+
 ## 2.6.0 — 10 oktober 2026
 
 - Bump-herinneringen toegevoegd: stel via `/config instellen` de instelling `Bump.Channel` in op een kanaalvermelding of kanaal-ID.

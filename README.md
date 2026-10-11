@@ -1,4 +1,4 @@
-# Troy’s Game Community Bot — 2.6.0
+# Troy’s Game Community Bot — 2.6.1
 
 Complete Discord-bot met tickets, moderatie, XP/levels, economy, verjaardagen, selfrollen, counting, agenda, AI-chat en instelbare welkomstberichten.
 
@@ -7,6 +7,14 @@ Complete Discord-bot met tickets, moderatie, XP/levels, economy, verjaardagen, s
 **Voor het eerst gedownload? Begin bij [INSTALLATIE.md](INSTALLATIE.md).** Daarin staan Discord-app aanmaken, hosting, `.env`, opstarten en optionele GroqCloud-AI stap voor stap.
 
 [HANDLEIDING.md](HANDLEIDING.md) bevat de slashcommando’s, instellingen en voorbeelden voor leden en beheerders. [CHANGELOG.md](CHANGELOG.md) beschrijft de wijzigingen.
+
+## Nieuw in 2.6.1 — Giveaways
+
+Start als staff een giveaway met `/giveaway start`: titel, tekst, einddatum (`DD-MM-JJJJ UU:MM`, Nederlandse tijd) en prijzen gescheiden door `|`. Elke prijs krijgt één unieke winnaar. Gebruik dezelfde prijs meerdere keren voor meerdere exemplaren.
+
+Leden doen mee via de knop. `/giveaway stoppen` trekt direct winnaars; `/giveaway annuleren` verwijdert een open giveaway zonder trekking. Geef bij beheer het Giveaway-ID onder het bericht op. De einddatum mag maximaal twee kalendermaanden vooruit liggen. Zie [HANDLEIDING.md](HANDLEIDING.md) voor details.
+
+Update vanaf 2.6.0: stop de bot, maak een back-up, plaats de gewijzigde bestanden en herstart. Geen nieuwe dependencies nodig; tabel en slashcommando’s worden automatisch aangemaakt.
 
 ## Nieuw in 2.6.0 — Bump-herinneringen
 
