@@ -1,8 +1,9 @@
+const { tr } = require("../../utils/localization");
 const { replyAfterDefer } = require("../../utils/deferredReply");
 const {
     SlashCommandBuilder,
     EmbedBuilder
-} = require("discord.js");
+} = require("../../utils/discord");
 
 const config =
     require("../../config/config");
@@ -126,7 +127,8 @@ module.exports = {
 
                 .setDescription(
 
-                    `💵 Portemonnee: **€${user.wallet}**\n` +
+                    `💵 Portemonnee: **€${user.wallet}**
+` +
 
                     `🏦 Bank: **€${user.bank}**\n\n` +
 

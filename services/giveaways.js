@@ -1,3 +1,4 @@
+const { tr, send } = require("../utils/localization");
 const { MessageFlags } = require('discord.js');
 const { randomInt, randomBytes } = require('node:crypto');
 const store = require('../database/giveaways');
@@ -17,10 +18,10 @@ function localTime(p) {
 function fail(message) { const e = new Error(message); e.giveawayInput = true; throw e; }
 function parseEnd(text, now = Date.now()) {
     const m = /^(\d{2})-(\d{2})-(\d{4}) (\d{2}):(\d{2})$/.exec(text.trim());
-    if (!m) fail('Gebruik DD-MM-JJJJ UU:MM, in Nederlandse tijd.');
+    if (!m) fail(tr("Gebruik DD-MM-JJJJ UU:MM, in Nederlandse tijd."));
     const [, d, mo, y, h, mi] = m;
     const times = localTime({ year: +y, month: +mo, day: +d, hour: +h, minute: +mi });
-    if (times.length !== 1) fail('Deze datum/tijd bestaat niet of valt dubbel bij de klokverzetting. Kies een andere tijd.');
+    if (times.length !== 1) fail(tr("Deze datum/tijd bestaat niet of valt dubbel bij de klokverzetting. Kies een andere tijd."));
     const current = parts(now);
     const maxDate = new Date(Date.UTC(current.year, current.month + 1, 1));
     const lastDay = new Date(Date.UTC(maxDate.getUTCFullYear(), maxDate.getUTCMonth() + 1, 0)).getUTCDate();
@@ -28,12 +29,12 @@ function parseEnd(text, now = Date.now()) {
     // The maximum can land in a DST gap: compare wall-clock calendar values instead.
     const wallMax = Date.UTC(maxDate.getUTCFullYear(), maxDate.getUTCMonth(), Math.min(current.day, lastDay), current.hour, current.minute);
     const wallEnd = Date.UTC(+y, +mo - 1, +d, +h, +mi);
-    if (times[0] <= now || (max.length ? times[0] > Math.max(...max) : wallEnd > wallMax)) fail('Kies een toekomstige einddatum, maximaal twee kalendermaanden vanaf nu.');
+    if (times[0] <= now || (max.length ? times[0] > Math.max(...max) : wallEnd > wallMax)) fail(tr("Kies een toekomstige einddatum, maximaal twee kalendermaanden vanaf nu."));
     return times[0];
 }
 function prizes(text) {
     const values = text.split('|').map(s => s.trim());
-    if (values.length > 10 || values.some(s => !s || s.length > 80)) fail('Vul 1 tot 10 prijzen in, gescheiden door |, maximaal 80 tekens per prijs.');
+    if (values.length > 10 || values.some(s => !s || s.length > 80)) fail(tr("Vul 1 tot 10 prijzen in, gescheiden door |, maximaal 80 tekens per prijs."));
     return values;
 }
 function locked(id, action) {
@@ -56,25 +57,25 @@ function close(g, reason) {
 }
 function payload(g) {
     const ended = g.status !== 'open';
-    const description = [g.text, '', '**Prijzen**', ...g.prizes.map((p, n) => `${n + 1}. ${p}`), '',
-        `Deelnemers: **${g.participants.length}**`, ended ? g.note : `Eindigt <t:${Math.floor(g.endsAt / 1000)}:f> · <t:${Math.floor(g.endsAt / 1000)}:R>`,
-        ended ? (g.winners.length ? '\n**Winnaars**\n' + g.winners.map(w => `<@${w.userId}> — ${w.prize}`).join('\n') : '\nGeen deelnemers, dus geen winnaar.') : 'Klik om mee te doen. Nogmaals klikken trekt je deelname in. Eén prijs per winnaar.'];
+    const description = [g.text, '', tr("**Prijzen**"), ...g.prizes.map((p, n) => `${n + 1}. ${p}`), '',
+        tr("Deelnemers: **{0}**", g.participants.length), ended ? g.note : tr("Eindigt <t:{0}:f> · <t:{1}:R>", Math.floor(g.endsAt / 1000), Math.floor(g.endsAt / 1000)),
+        ended ? (g.winners.length ? tr("\n**Winnaars**\n") + g.winners.map(w => `<@${w.userId}> — ${w.prize}`).join('\n') : tr("\nGeen deelnemers, dus geen winnaar.")) : tr("Klik om mee te doen. Nogmaals klikken trekt je deelname in. Eén prijs per winnaar.")];
     return { embeds: [{ title: `🎁 ${g.title}`, description: description.join('\n'), color: ended ? 0x57F287 : 0x5865F2,
-        footer: { text: `Giveaway-ID: ${g.id} • ${ended ? 'Afgelopen' : 'Open'}` } }],
-        components: ended ? [] : [{ type: 1, components: [{ type: 2, style: 3, label: '🎉 Deelnemen / uitschrijven', custom_id: `giveaway:${g.id}` }] }], allowedMentions: { parse: [] } };
+        footer: { text: tr("Giveaway-ID: {0} • {1}", g.id, ended ? tr("Afgelopen") : 'Open') } }],
+        components: ended ? [] : [{ type: 1, components: [{ type: 2, style: 3, label: tr("🎉 Deelnemen / uitschrijven"), custom_id: `giveaway:${g.id}` }] }], allowedMentions: { parse: [] } };
 }
 function announcement(g) {
     const unused = g.prizes.length - g.winners.length;
-    return { content: `🎉 **Uitslag giveaway #${g.id}: ${g.title}**\n` +
-        (g.winners.length ? g.winners.map((w, n) => `${n + 1}. <@${w.userId}> wint: ${w.prize}`).join('\n') : 'Er waren geen deelnemers. Er is geen winnaar getrokken.') +
-        (unused && g.winners.length ? `\n${unused} prijs/prijzen niet verloot: onvoldoende unieke deelnemers.` : ''),
+    return { content: tr("🎉 **Uitslag giveaway #{0}: {1}**\n", g.id, g.title) +
+        (g.winners.length ? g.winners.map((w, n) => tr("{0}. <@{1}> wint: {2}", n + 1, w.userId, w.prize)).join('\n') : tr("Er waren geen deelnemers. Er is geen winnaar getrokken.")) +
+        (unused && g.winners.length ? tr("\n{0} prijs/prijzen niet verloot: onvoldoende unieke deelnemers.", unused) : ''),
         allowedMentions: { parse: [], users: g.winners.map(w => w.userId) },
         nonce: g.announcementNonce, enforceNonce: true };
 }
 async function sync(client, g) {
     if (!g.messageId) return;
     const channel = await client.channels.fetch(g.channelId);
-    if (!channel || channel.guildId !== g.guildId || !channel.messages || typeof channel.send !== 'function') throw new Error('Giveawaykanaal niet beschikbaar.');
+    if (!channel || channel.guildId !== g.guildId || !channel.messages || typeof channel.send !== 'function') throw new Error(tr("Giveawaykanaal niet beschikbaar."));
     let message;
     try { message = await channel.messages.fetch(g.messageId); }
     catch (e) { if (Number(e.code) !== 10008) throw e; }
@@ -85,13 +86,13 @@ async function sync(client, g) {
         store.save(g, false); return;
     }
     if (!message && g.status === 'open') {
-        g.status = 'cancelled'; g.participants = []; g.note = 'Giveawaybericht verwijderd.';
+        g.status = 'cancelled'; g.participants = []; g.note = tr("Giveawaybericht verwijderd.");
         store.save(g, false); return;
     }
-    if (g.status === 'open' && g.endsAt <= Date.now()) close(g, 'Automatisch afgelopen.');
-    if (message) await message.edit(payload(g));
+    if (g.status === 'open' && g.endsAt <= Date.now()) close(g, tr("Automatisch afgelopen."));
+    if (message) await send(message, "edit", payload(g));
     if (g.status === 'closed' && !g.announcementId) {
-        const sent = await channel.send(announcement(g));
+        const sent = await send(channel, "send", announcement(g));
         g.announcementId = sent.id;
     }
     store.save(g, false);
@@ -100,58 +101,58 @@ async function refresh(client, g) {
     try { await sync(client, g); return ''; }
     catch (e) {
         logger.warn(`Giveaway #${g.id}: ${e.message}. Opgeslagen; nieuwe poging volgt.`);
-        return '\nOpgeslagen, maar Discord kon nog niet bijgewerkt worden. De bot probeert opnieuw; controleer de kanaalrechten.';
+        return tr("\nOpgeslagen, maar Discord kon nog niet bijgewerkt worden. De bot probeert opnieuw; controleer de kanaalrechten.");
     }
 }
 async function guarded(i, action) {
     await i.deferReply({ flags: MessageFlags.Ephemeral });
     try { return await action(); }
-    catch (e) { if (!e.giveawayInput) throw e; return i.editReply({ content: e.message, allowedMentions: { parse: [] } }); }
+    catch (e) { if (!e.giveawayInput) throw e; return send(i, "editReply", { content: e.message, allowedMentions: { parse: [] } }); }
 }
 async function command(client, i) {
     return guarded(i, async () => {
-        if (!(hasStaffRole(i.member) || hasOwnerAccess(i.member, i.user.id) || isDeveloper(i.user.id))) fail('Alleen staff, de servereigenaar en botbeheerders mogen giveaways beheren.');
+        if (!(hasStaffRole(i.member) || hasOwnerAccess(i.member, i.user.id) || isDeveloper(i.user.id))) fail(tr("Alleen staff, de servereigenaar en botbeheerders mogen giveaways beheren."));
         const action = i.options.getSubcommand();
         if (action === 'start') {
             const title = i.options.getString('titel').trim(), text = i.options.getString('tekst').trim();
-            if (!title || !text) fail('Vul een titel en tekst in.');
+            if (!title || !text) fail(tr("Vul een titel en tekst in."));
             const g = store.create({ guildId: i.guildId, channelId: i.channelId, messageId: null,
                 title, text, prizes: prizes(i.options.getString('prijzen')), endsAt: parseEnd(i.options.getString('einddatum')),
                 participants: [], winners: [], status: 'open', createdBy: i.user.id, note: '',
                 announcementId: null, announcementNonce: randomBytes(12).toString('hex') });
             let message;
-            try { message = await i.channel.send(payload(g)); } catch (e) { store.remove(g.id); throw e; }
+            try { message = await send(i.channel, "send", payload(g)); } catch (e) { store.remove(g.id); throw e; }
             g.messageId = message.id; store.save(g, false);
-            return i.editReply(`✅ Giveaway #${g.id} gestart: ${message.url}`);
+            return send(i, "editReply", tr("✅ Giveaway #{0} gestart: {1}", g.id, message.url));
         }
         const id = i.options.getInteger('id');
         return locked(id, async () => {
             const g = store.get(id);
-            if (!g || g.guildId !== i.guildId) fail('Deze giveaway bestaat niet in deze server.');
-            if (g.status !== 'open') fail('Deze giveaway is al afgesloten of geannuleerd.');
+            if (!g || g.guildId !== i.guildId) fail(tr("Deze giveaway bestaat niet in deze server."));
+            if (g.status !== 'open') fail(tr("Deze giveaway is al afgesloten of geannuleerd."));
             if (action === 'annuleren') {
-                g.status = 'cancelled'; g.participants = []; g.winners = []; g.note = 'Geannuleerd zonder trekking.';
+                g.status = 'cancelled'; g.participants = []; g.winners = []; g.note = tr("Geannuleerd zonder trekking.");
                 store.save(g);
-            } else { close(g, `Vroegtijdig gestopt door staff (${i.user.id}).`); }
+            } else { close(g, tr("Vroegtijdig gestopt door staff ({0}).", i.user.id)); }
             const warning = await refresh(client, g);
-            return i.editReply(`✅ Giveaway #${id}: ${g.note}${warning}`);
+            return send(i, "editReply", tr("✅ Giveaway #{0}: {1}{2}", id, g.note, warning));
         });
     });
 }
 async function join(client, i) {
     return guarded(i, async () => {
-        if (i.user.bot) fail('Bots kunnen niet deelnemen.');
+        if (i.user.bot) fail(tr("Bots kunnen niet deelnemen."));
         const match = /^giveaway:(\d+)$/.exec(i.customId);
-        if (!match) fail('Ongeldige giveawayknop.');
+        if (!match) fail(tr("Ongeldige giveawayknop."));
         return locked(Number(match[1]), async () => {
             const g = store.get(Number(match[1]));
-            if (!g || g.guildId !== i.guildId || g.messageId !== i.message.id) fail('Deze giveaway is niet beschikbaar.');
-            if (g.status !== 'open' || g.endsAt <= Date.now()) fail('Deze giveaway is gesloten.');
+            if (!g || g.guildId !== i.guildId || g.messageId !== i.message.id) fail(tr("Deze giveaway is niet beschikbaar."));
+            if (g.status !== 'open' || g.endsAt <= Date.now()) fail(tr("Deze giveaway is gesloten."));
             const index = g.participants.indexOf(i.user.id);
             if (index >= 0) g.participants.splice(index, 1); else g.participants.push(i.user.id);
             store.save(g);
             const warning = await refresh(client, g);
-            return i.editReply((index >= 0 ? 'Je deelname is ingetrokken.' : '🎉 Je doet mee aan de giveaway!') + warning);
+            return send(i, "editReply", (index >= 0 ? tr("Je deelname is ingetrokken.") : tr("🎉 Je doet mee aan de giveaway!")) + warning);
         });
     });
 }

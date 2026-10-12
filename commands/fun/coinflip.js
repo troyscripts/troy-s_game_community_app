@@ -1,7 +1,8 @@
+const { tr, send } = require("../../utils/localization");
 const {
     SlashCommandBuilder,
     EmbedBuilder
-} = require("discord.js");
+} = require("../../utils/discord");
 
 const config =
     require("../../config/config");
@@ -33,8 +34,8 @@ module.exports = {
 
         const result =
             Math.random() < 0.5
-                ? "Kop"
-                : "Munt";
+                ? tr("Kop")
+                : tr("Munt");
 
 
 
@@ -61,7 +62,9 @@ module.exports = {
 
                 .setDescription(
 
-                    `${interaction.user} gooide een muntje.\n\n` +
+                    `${interaction.user} gooide een muntje.
+
+` +
 
                     `${emoji} **${result}!**`
 
@@ -80,7 +83,7 @@ module.exports = {
 
 
 
-        return interaction.reply({
+        return send(interaction, "reply", {
 
             embeds:[
 

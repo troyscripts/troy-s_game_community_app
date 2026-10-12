@@ -1,3 +1,4 @@
+const { tr, send } = require("../../utils/localization");
 const {
     AttachmentBuilder,
     MessageFlags,
@@ -21,9 +22,9 @@ function jsonAttachment(data, guildId, section = null) {
 }
 
 function displayValue(value) {
-    if (value === "") return "*leeg*";
-    if (Array.isArray(value)) return value.length ? `\`${JSON.stringify(value)}\`` : "*lege lijst*";
-    if (typeof value === "boolean") return value ? "`ja`" : "`nee`";
+    if (value === "") return tr("*leeg*");
+    if (Array.isArray(value)) return value.length ? `\`${JSON.stringify(value)}\`` : tr("*lege lijst*");
+    if (typeof value === "boolean") return value ? tr("`ja`") : tr("`nee`");
     return `\`${String(value).replaceAll("`", "ˋ")}\``;
 }
 
@@ -85,27 +86,23 @@ module.exports = {
 
         if (focused.name === "onderdeel") {
             const sections = Object.keys(settings.createCleanServerConfig());
-            return interaction.respond(
-                sections
+            return send(interaction, "respond", sections
                     .filter((name) => name.toLowerCase().includes(query))
                     .slice(0, 25)
-                    .map((name) => ({ name, value: name }))
-            );
+                    .map((name) => ({ name, value: name })));
         }
 
         const paths = settings.getEditablePaths();
-        return interaction.respond(
-            paths
+        return send(interaction, "respond", paths
                 .filter((path) => path.toLowerCase().includes(query))
                 .slice(0, 25)
-                .map((path) => ({ name: path, value: path }))
-        );
+                .map((path) => ({ name: path, value: path })));
     },
 
     async execute(_client, interaction) {
         if (!hasOwnerAccess(interaction.member, interaction.user.id)) {
-            return interaction.reply({
-                content: "❌ Alleen de owner of een ingestelde developer van deze Discord-server kan de configuratie beheren.",
+            return send(interaction, "reply", {
+                content: tr("❌ Alleen de owner of een ingestelde developer van deze Discord-server kan de configuratie beheren."),
                 flags: MessageFlags.Ephemeral
             });
         }
@@ -114,25 +111,25 @@ module.exports = {
         const guildId = interaction.guild.id;
 
         if (subcommand === "hulp") {
-            return interaction.reply({
+            return send(interaction, "reply", {
                 content:
-                    "⚙️ **Serverconfiguratie**\n\n" +
-                    "• `/config bekijken` downloadt de huidige instellingen.\n" +
-                    "• `/config instellen` wijzigt één instelling direct.\n" +
-                    "• `/config herstellen` herstelt één veilige standaardwaarde.\n" +
-                    "• `/config resetten` wist alle serverspecifieke keuzes na bevestiging.\n\n" +
-                    "**Voorbeelden**\n" +
-                    "`Counting.Channel` → kies/plak een kanaalvermelding of kanaal-ID\n" +
-                    "`Tickets.Enabled` → `ja` of `nee`\n" +
-                    "`Store.VIPRole` → aparte VIP-rol voor /store; de botrol moet erboven staan\n" +
-                    "`Bump.Channel` → kanaalvermelding/ID voor een herinnering iedere 2 uur; `uit` schakelt deze uit\n" +
+                    tr("⚙️ **Serverconfiguratie**\n\n") +
+                    tr("• `/config bekijken` downloadt de huidige instellingen.\n") +
+                    tr("• `/config instellen` wijzigt één instelling direct.\n") +
+                    tr("• `/config herstellen` herstelt één veilige standaardwaarde.\n") +
+                    tr("• `/config resetten` wist alle serverspecifieke keuzes na bevestiging.\n\n") +
+                    tr("**Voorbeelden**\n") +
+                    tr("`Counting.Channel` → kies/plak een kanaalvermelding of kanaal-ID\n") +
+                    tr("`Tickets.Enabled` → `ja` of `nee`\n") +
+                    tr("`Store.VIPRole` → aparte VIP-rol voor /store; de botrol moet erboven staan\n") +
+                    tr("`Bump.Channel` → kanaalvermelding/ID voor een herinnering iedere 2 uur; `uit` schakelt deze uit\n") +
                     "`Bot.Color` → `#c9a91b`\n" +
-                    "`StaffRoles` → laat waarde leeg om rollen aan te klikken, of voer rol-ID's in\n" +
-                    "`Roles.Developer` → de rol-ID van je developers (volledig botbeheer op deze server)\n" +
-                    "`Birthday.Messages` → berichten gescheiden door `|`\n\n" +
-                    "De owner en de ingestelde Developer-rol kunnen dit command gebruiken.\n" +
-                    "Token, client-ID, botversie, databasepad en globale owners blijven " +
-                    "om veiligheidsredenen buiten Discord beheerbaar.",
+                    tr("`StaffRoles` → laat waarde leeg om rollen aan te klikken, of voer rol-ID's in\n") +
+                    tr("`Roles.Developer` → de rol-ID van je developers (volledig botbeheer op deze server)\n") +
+                    tr("`Birthday.Messages` → berichten gescheiden door `|`\n\n") +
+                    tr("De owner en de ingestelde Developer-rol kunnen dit command gebruiken.\n") +
+                    tr("Token, client-ID, botversie, databasepad en globale owners blijven ") +
+                    tr("om veiligheidsredenen buiten Discord beheerbaar."),
                 flags: MessageFlags.Ephemeral
             });
         }
@@ -148,17 +145,17 @@ module.exports = {
                     (key) => key.toLowerCase() === section.toLowerCase()
                 );
                 if (!section) {
-                    return interaction.reply({
-                        content: "❌ Dat configuratieonderdeel bestaat niet.",
+                    return send(interaction, "reply", {
+                        content: tr("❌ Dat configuratieonderdeel bestaat niet."),
                         flags: MessageFlags.Ephemeral
                     });
                 }
             }
 
-            return interaction.reply({
+            return send(interaction, "reply", {
                 content: section
-                    ? `⚙️ Hier staat de huidige configuratie van **${section}**.`
-                    : "⚙️ Hier staat de volledige configuratie van deze Discord-server.",
+                    ? tr("⚙️ Hier staat de huidige configuratie van **{0}**.", section)
+                    : tr("⚙️ Hier staat de volledige configuratie van deze Discord-server."),
                 files: [jsonAttachment(data, guildId, section)],
                 flags: MessageFlags.Ephemeral
             });
@@ -171,21 +168,21 @@ module.exports = {
                 return require("../../services/configStaffRoles").open(interaction);
             }
             if (rawValue === null) {
-                return interaction.reply({ content: "❌ Vul voor deze instelling een waarde in. Alleen StaffRoles heeft een rollenkeuzemenu.", flags: MessageFlags.Ephemeral });
+                return send(interaction, "reply", { content: tr("❌ Vul voor deze instelling een waarde in. Alleen StaffRoles heeft een rollenkeuzemenu."), flags: MessageFlags.Ephemeral });
             }
 
             await interaction.deferReply({ flags: MessageFlags.Ephemeral });
             try {
                 const result = settings.updateValue(guildId, path, rawValue);
                 if (result.path === "Bump.Channel") await require("../../services/bumpReminder").tick(_client);
-                return interaction.editReply({
+                return send(interaction, "editReply", {
                     content:
-                        `✅ **${result.path}** is opgeslagen voor alleen deze Discord-server.\n` +
-                        `Nieuwe waarde: ${displayValue(result.value)}`,
+                        tr("✅ **{0}** is opgeslagen voor alleen deze Discord-server.\n", result.path) +
+                        tr("Nieuwe waarde: {0}", displayValue(result.value)),
                     flags: MessageFlags.Ephemeral
                 });
             } catch (error) {
-                return interaction.editReply({
+                return send(interaction, "editReply", {
                     content: `❌ ${error.message}`,
                     flags: MessageFlags.Ephemeral
                 });
@@ -198,14 +195,14 @@ module.exports = {
             try {
                 const result = settings.resetValue(guildId, path);
                 if (result.path === "Bump.Channel") await require("../../services/bumpReminder").tick(_client);
-                return interaction.editReply({
+                return send(interaction, "editReply", {
                     content:
-                        `✅ **${result.path}** is hersteld naar de veilige standaard.\n` +
-                        `Waarde: ${displayValue(result.value)}`,
+                        tr("✅ **{0}** is hersteld naar de veilige standaard.\n", result.path) +
+                        tr("Waarde: {0}", displayValue(result.value)),
                     flags: MessageFlags.Ephemeral
                 });
             } catch (error) {
-                return interaction.editReply({
+                return send(interaction, "editReply", {
                     content: `❌ ${error.message}`,
                     flags: MessageFlags.Ephemeral
                 });
@@ -214,8 +211,8 @@ module.exports = {
 
         const confirmed = interaction.options.getBoolean("bevestigen", true);
         if (!confirmed) {
-            return interaction.reply({
-                content: "ℹ️ De configuratie is niet gewijzigd.",
+            return send(interaction, "reply", {
+                content: tr("ℹ️ De configuratie is niet gewijzigd."),
                 flags: MessageFlags.Ephemeral
             });
         }
@@ -223,10 +220,10 @@ module.exports = {
         await interaction.deferReply({ flags: MessageFlags.Ephemeral });
         settings.resetGuild(guildId);
         await require("../../services/bumpReminder").tick(_client);
-        return interaction.editReply({
+        return send(interaction, "editReply", {
             content:
-                "✅ Alle instellingen voor deze Discord-server zijn teruggezet. " +
-                "Kanaal- en rol-ID's zijn leeggemaakt; stel ze opnieuw in met `/config instellen`.",
+                tr("✅ Alle instellingen voor deze Discord-server zijn teruggezet. ") +
+                tr("Kanaal- en rol-ID's zijn leeggemaakt; stel ze opnieuw in met `/config instellen`."),
             flags: MessageFlags.Ephemeral
         });
     }

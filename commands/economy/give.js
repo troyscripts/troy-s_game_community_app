@@ -1,10 +1,11 @@
+const { tr } = require("../../utils/localization");
 const { replyAfterDefer } = require("../../utils/deferredReply");
-const { MessageFlags } = require("discord.js");
+const { MessageFlags } = require("../../utils/discord");
 const {
     SlashCommandBuilder,
     EmbedBuilder,
     PermissionFlagsBits
-} = require("discord.js");
+} = require("../../utils/discord");
 
 const config =
     require("../../config/config");
@@ -107,7 +108,7 @@ module.exports = {
             return replyAfterDefer(interaction, {
 
                 content:
-                "❌ Je hebt geen toestemming om geld te geven.",
+                tr("❌ Je hebt geen toestemming om geld te geven."),
 
                 flags: MessageFlags.Ephemeral
 

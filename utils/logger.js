@@ -34,7 +34,7 @@ class Logger {
             return;
         }
 
-        const formatted = this.formatMessage(message);
+        const formatted = require('./localization').render(this.formatMessage(message), 'nl');
         const plainLine = `[${this.getTime()}] [${type}] ${formatted}`;
 
         if (config.Logging?.Console !== false) {

@@ -1,12 +1,47 @@
 # Troy’s Game Community Bot — User Manual
 
-**Bot version 2.6.2 · Updated 11 October 2026**
+**Bot version 2.9.9-beta · Updated 12 October 2026**
+
+## New in 2.9.9-beta: Dutch and English
+
+- Public bot messages show Dutch followed by English. Short buttons and selection labels show both languages side by side.
+- Use `/language taal:English` or `/language taal:Nederlands` for your private replies. The preference is saved per member and server and survives restarts. Dutch is the default.
+- Slash commands, subcommands and options have English display names and descriptions when your Discord interface is English. This manual retains the original command identifiers in examples. `/language` changes private replies, not your Discord interface language.
+- `/help` uses your saved language for its attachment unless you select a different `taal` option. Its public message and support link are always bilingual.
+- Custom giveaway prizes and self-role panels are not automatically rewritten. Poll content, welcome translations and the optional `/say` translation described below are explicit exceptions.
+
+### Translate poll questions and answers
+
+`/poll maken` automatically translates the question and answers into English using the existing Groq connection. Both languages share the same answer numbers, votes and timer. Translations are stored, so voting and restarting do not request another translation.
+
+To provide or correct the translation yourself, supply both `vraag-en` and `antwoorden-en`. Separate English answers with `|`, preserving their number and order. This also works without Groq. The English question allows 700 characters; each English answer allows 120.
+
+`/poll wijzigen` translates changed content again. Changing the question, answer list or manual English translation clears the votes. A timer-only change preserves votes. If translation fails, no new poll is posted and an existing poll remains unchanged. Existing polls receive a translation when next edited; legacy reaction polls are not included.
+
+### Translate a /say message
+
+Use `/say bericht:Welkom allemaal! embed:False vertalen:True` to post Dutch followed by English. In an English Discord interface, use `/say message:Welkom allemaal! embed:False translate:True`. Both plain messages and embeds support translation, including the optional target channel. You can supply `engels` (English display name: `english`) instead to enter the English text yourself. Without these options, your message is posted unchanged.
+
+Permissions are checked before translating. If translation fails, the message is not posted. Long translated messages may include the full text as an attachment; the bot needs **Attach Files** permission for this.
+
+### Translate your configured welcome text
+
+1. Save your Dutch text using `/welkomstbericht instellen` or `Welcome.Message` in `/config`.
+2. Run `/welkomstbericht vertalen` (shown as `/welcome translate` in English Discord). The bot translates the saved text once and stores it.
+3. New members receive Dutch followed by English. Names, member counts, links and mentions are preserved.
+4. Use `/welkomstbericht vertalen engels:...` to provide or correct the translation manually. Keep all placeholders, links and mentions. `/welkomstbericht voorbeeld` previews it in your preferred language.
+
+After editing the Dutch welcome text, run `vertalen` again. Until then, the new Dutch text is used; a stale English translation is never paired with a different source. The built-in default welcome is bilingual immediately.
+
+**Automatic translation:** configure `GROQ_API_KEY` only in `.env`; `GROQ_MODEL` remains optional. Translation does not require `AIChat.Enabled`. Only the provided poll text or welcome template is sent to Groq, never channel history. If access is missing or the provider is unavailable or rate-limited, enter the English text manually. Review machine translations and correct them when necessary.
+
+Very long messages are fitted to Discord's limits. If text must be shortened, its full version is attached as `complete-message.txt` to the same message.
 
 Each server manages its own settings through `/config` in Discord. Fixed configuration mode has been removed.
 
 This manual explains how to use the bot in Discord: birthdays, levels, virtual money, entertainment, polls, giveaways, staff commands and server settings.
 
-**Command names, subcommands, option names, setting keys and placeholders remain as registered in the bot.** Many are Dutch: copy them as shown. Translating this manual does not change the language of other bot features. Dates use day-month-year. `ja` means yes, `nee` means no, `leeg` means empty, `uit` means off and `geen` means none.
+**Setting keys and placeholders remain unchanged.** Command names in examples use their original identifiers; English Discord shows their localized names. Dates use day-month-year. Configuration accepts `yes`/`no`, `on`/`off` and `empty`/`none` as well as the Dutch forms.
 
 ## Changes introduced in version 2.5.0
 
@@ -19,9 +54,9 @@ This manual explains how to use the bot in Discord: birthdays, levels, virtual m
 
 ## /help — Manual and support
 
-Use `/help` to receive the Dutch manual, or choose **English** in its language option to receive this English manual. In a Dutch Discord interface: `/help taal:English`. In an English interface the option is displayed as `language`.
+Use `/help` to receive the manual in your saved `/language` preference, or choose **English** explicitly to receive this manual. In a Dutch Discord interface: `/help taal:English`. In an English interface the option is displayed as `language`.
 
-The manual is sent as a downloadable attachment in the channel where you run the command. Everyone with access to that channel can see it. Anyone can use `/help`, with a 10-second cooldown per user. The response text and support line follow the selected language. Dutch remains the default when no language is selected.
+The manual is sent as a downloadable attachment in the channel where you run the command. Everyone with access to that channel can see it. Anyone can use `/help`, with a 10-second cooldown per user. The public response and support line are bilingual. The attachment follows your saved preference, which defaults to Dutch.
 
 For support, go to https://discord.gg/nTzVy5uMWX
 
@@ -530,7 +565,7 @@ With `/config instellen`, select an **instelling** (setting) and enter its **waa
 
 For `StaffRoles`, omit the value to select roles interactively. The defaults below apply to a new server; existing saved settings can differ. Each server, including Troy’s Game Community, uses its saved `/config` settings. `config/defaults.js` supplies baseline values.
 
-Boolean values accept `ja`/`nee` or `true`/`false`. Keep setting keys and special values exactly as shown. Empty defaults below mean no ID is configured. Dutch message templates in the defaults column are literal defaults, not untranslated instructions.
+Boolean values accept `ja`/`nee`, `yes`/`no`, `on`/`off` or `true`/`false`. Keep setting keys and special values exactly as shown. Empty defaults below mean no ID is configured. Dutch message templates in the defaults column are literal defaults, not untranslated instructions.
 
 | Setting | Type | Default | Meaning |
 | --- | --- | --- | --- |

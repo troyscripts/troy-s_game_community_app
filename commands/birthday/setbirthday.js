@@ -1,8 +1,9 @@
-const { MessageFlags } = require("discord.js");
+const { tr, send } = require("../../utils/localization");
+const { MessageFlags } = require("../../utils/discord");
 const {
     SlashCommandBuilder,
     EmbedBuilder
-} = require("discord.js");
+} = require("../../utils/discord");
 
 const config =
     require("../../config/config");
@@ -65,10 +66,10 @@ module.exports = {
         if (!regex.test(date)) {
 
 
-            return interaction.reply({
+            return send(interaction, "reply", {
 
                 content:
-                "❌ Ongeldige datum. Gebruik DD-MM-JJJJ.\nVoorbeeld: `15-09-1991`",
+                tr("❌ Ongeldige datum. Gebruik DD-MM-JJJJ.\nVoorbeeld: `15-09-1991`"),
 
                 flags: MessageFlags.Ephemeral
 
@@ -104,10 +105,10 @@ module.exports = {
         ) {
 
 
-            return interaction.reply({
+            return send(interaction, "reply", {
 
                 content:
-                "❌ Deze datum bestaat niet.",
+                tr("❌ Deze datum bestaat niet."),
 
                 flags: MessageFlags.Ephemeral
 
@@ -146,7 +147,7 @@ module.exports = {
 
                 .setDescription(
 
-                    `Je verjaardag staat nu ingesteld op:\n\n` +
+                    "Je verjaardag staat nu ingesteld op:\n\n" +
 
                     `🎉 **${date}**`
 
@@ -165,7 +166,7 @@ module.exports = {
 
 
 
-        return interaction.reply({
+        return send(interaction, "reply", {
 
             embeds:[
 

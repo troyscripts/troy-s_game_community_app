@@ -1,4 +1,15 @@
-# Troy’s Game Community Bot — 2.6.2
+# Troy’s Game Community Bot — 2.9.9-beta
+
+## 2.9.9-beta — tweetalige bot
+
+Openbare berichten verschijnen in het Nederlands en Engels. Met `/language` kiest ieder lid de taal voor privéantwoorden. `/help` volgt die voorkeur. Discord toont Engelse commandnamen en beschrijvingen bij een Engelse interface.
+
+Pollvragen en antwoorden worden vertaald en opgeslagen. `vraag-en` en `antwoorden-en` bieden handmatige invoer of correctie. Gebruik `/welkomstbericht vertalen` voor de ingestelde welkomsttekst; met `engels` kun je zelf een vertaling invullen. Na een wijziging van de Nederlandse welkomsttekst opnieuw vertalen. `/say vertalen:True` plaatst je bericht met Engels eronder; met `engels` kun je de vertaling zelf invullen.
+
+Automatische vertaling gebruikt de bestaande `GROQ_API_KEY` in `.env`. Geen nieuwe afhankelijkheden. Er wordt nooit vertaald bij iedere stem of ieder nieuw lid. Zie HANDLEIDING.md en MANUAL-EN.md voor de werking en foutafhandeling.
+
+Controleer lokaal met `npm run check` en `npm run test:languages`. De taaltest gebruikt tijdelijke SQLite-opslag en nagebootste Discord-/Groq-aanroepen.
+
 
 Complete Discord-bot met tickets, moderatie, XP/levels, economy, verjaardagen, selfrollen, counting, agenda, AI-chat en instelbare welkomstberichten.
 
@@ -8,7 +19,7 @@ Complete Discord-bot met tickets, moderatie, XP/levels, economy, verjaardagen, s
 
 [HANDLEIDING.md](HANDLEIDING.md) bevat de slashcommando’s, instellingen en voorbeelden voor leden en beheerders. [CHANGELOG.md](CHANGELOG.md) beschrijft de wijzigingen.
 
-## Nieuw in 2.6.2 — VIP-winkel
+## Nieuw in 2.9.9-beta — VIP-winkel
 
 Stel `/config instellen instelling:Store.VIPRole waarde:@VIP` in met een aparte VIP-rol, onder de hoogste botrol. De bot heeft Rollen beheren nodig.
 

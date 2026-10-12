@@ -1,3 +1,4 @@
+const { tr } = require("./localization");
 const crypto = require("crypto");
 
 
@@ -103,7 +104,7 @@ function formatDuration(seconds) {
 
 
     if (uren)
-        output.push(`${uren}u`);
+        output.push(tr("{0}u", uren));
 
 
     if (minuten)

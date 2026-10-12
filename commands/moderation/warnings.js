@@ -1,8 +1,9 @@
-const { MessageFlags } = require("discord.js");
+const { tr, send } = require("../../utils/localization");
+const { MessageFlags } = require("../../utils/discord");
 const {
     SlashCommandBuilder,
     EmbedBuilder
-} = require("discord.js");
+} = require("../../utils/discord");
 
 const warnings =
     require("../../database/warnings");
@@ -81,10 +82,10 @@ module.exports = {
         ) {
 
 
-            return interaction.reply({
+            return send(interaction, "reply", {
 
                 content:
-                `✅ ${user} heeft geen waarschuwingen.`,
+                tr("✅ {0} heeft geen waarschuwingen.", user),
 
                 flags: MessageFlags.Ephemeral
 
@@ -133,7 +134,9 @@ module.exports = {
 
                 .setDescription(
 
-                    `Gebruiker: ${user}\n\n${warningText}`
+                    `Gebruiker: ${user}
+
+${warningText}`
 
                 )
 
@@ -150,7 +153,7 @@ module.exports = {
 
 
 
-        return interaction.reply({
+        return send(interaction, "reply", {
 
             embeds:[
                 embed

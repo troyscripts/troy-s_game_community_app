@@ -1,8 +1,9 @@
-const { MessageFlags } = require("discord.js");
+const { tr, send } = require("../../utils/localization");
+const { MessageFlags } = require("../../utils/discord");
 const {
     SlashCommandBuilder,
     EmbedBuilder
-} = require("discord.js");
+} = require("../../utils/discord");
 
 const config =
     require("../../config/config");
@@ -73,10 +74,10 @@ module.exports = {
         if (!data) {
 
 
-            return interaction.reply({
+            return send(interaction, "reply", {
 
                 content:
-                `❌ ${user.username} heeft nog geen verjaardag ingesteld.`,
+                tr("❌ {0} heeft nog geen verjaardag ingesteld.", user.username),
 
                 flags: MessageFlags.Ephemeral
 
@@ -103,7 +104,9 @@ module.exports = {
 
                 .setDescription(
 
-                    `🎉 De verjaardag van **${user.username}** is:\n\n` +
+                    `🎉 De verjaardag van **${user.username}** is:
+
+` +
 
                     `📅 **${data.birthday}**`
 
@@ -133,7 +136,7 @@ module.exports = {
 
 
 
-        return interaction.reply({
+        return send(interaction, "reply", {
 
             embeds:[
 

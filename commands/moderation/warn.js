@@ -1,8 +1,9 @@
-const { MessageFlags } = require("discord.js");
+const { tr, send } = require("../../utils/localization");
+const { MessageFlags } = require("../../utils/discord");
 const {
     SlashCommandBuilder,
     EmbedBuilder
-} = require("discord.js");
+} = require("../../utils/discord");
 
 const warnings =
     require("../../database/warnings");
@@ -90,10 +91,10 @@ module.exports = {
         ) {
 
 
-            return interaction.reply({
+            return send(interaction, "reply", {
 
                 content:
-                "❌ Je kunt geen bots waarschuwen.",
+                tr("❌ Je kunt geen bots waarschuwen."),
 
                 flags: MessageFlags.Ephemeral
 
@@ -123,7 +124,7 @@ module.exports = {
 
 
                 .setTitle(
-                    "⚠️ Waarschuwing gegeven"
+                    tr("⚠️ Waarschuwing gegeven")
                 )
 
 
@@ -132,7 +133,7 @@ module.exports = {
                     {
 
                         name:
-                        "Gebruiker",
+                        tr("Gebruiker"),
 
                         value:
                         `${user}`,
@@ -158,7 +159,7 @@ module.exports = {
                     {
 
                         name:
-                        "Reden",
+                        tr("Reden"),
 
                         value:
                         reason
@@ -169,7 +170,7 @@ module.exports = {
                     {
 
                         name:
-                        "Waarschuwing ID",
+                        tr("Waarschuwing ID"),
 
                         value:
                         `${id}`
@@ -191,7 +192,7 @@ module.exports = {
 
 
 
-        await interaction.reply({
+        await send(interaction, "reply", {
 
             embeds:[
                 embed
@@ -201,7 +202,7 @@ module.exports = {
 
 
 
-        await user.send({
+        await send(user, "send", {
 
             embeds:[
 
@@ -217,7 +218,9 @@ module.exports = {
 
                     .setDescription(
 
-                        `Server: ${interaction.guild.name}\n\n` +
+                        `Server: ${interaction.guild.name}
+
+` +
 
                         `Reden: ${reason}`
 

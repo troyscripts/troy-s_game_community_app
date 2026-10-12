@@ -1,3 +1,4 @@
+const { tr, send } = require("../utils/localization");
 const fs = require('node:fs/promises');
 const path = require('node:path');
 const { AttachmentBuilder } = require('discord.js');
@@ -14,14 +15,14 @@ async function deliverTranscript(client, channel, ticket) {
     await fs.mkdir(directory, { recursive: true });
     await fs.writeFile(path.join(directory, filename), buffer);
     const payload = () => ({
-        content: `📄 Transcript van je ticket #${channel.name} in ${channel.guild.name}.`,
+        content: tr("📄 Transcript van je ticket #{0} in {1}.", channel.name, channel.guild.name),
         files: [new AttachmentBuilder(buffer, { name: filename })], allowedMentions: { parse: [] }
     });
     let dmSent = Boolean(ticket.transcript_dm_sent_at);
     if (!dmSent) {
         try {
             const owner = await client.users.fetch(ticket.user_id);
-            await owner.send(payload());
+            await send(owner, "send", payload());
             tickets.markTranscriptSent(channel.id);
             dmSent = true;
         } catch (error) { logger.error(`Transcript-DM voor ticket ${channel.id} mislukt: ${error.message}`); }
@@ -30,7 +31,7 @@ async function deliverTranscript(client, channel, ticket) {
     try {
         const log = config.Tickets.LogChannel ? await channel.guild.channels.fetch(config.Tickets.LogChannel) : null;
         if (log?.isTextBased()) {
-            await log.send({ ...payload(), content: `📄 Ticket <#${channel.id}> | eigenaar <@${ticket.user_id}>\n${dmSent ? '✅ Transcript via DM afgeleverd (eventueel bij eerder sluiten).' : '⚠️ DM mislukt. Lokale kopie bewaard; geef het transcript handmatig aan de eigenaar.'}` });
+            await send(log, "send", { ...payload(), content: tr("📄 Ticket <#{0}> | eigenaar <@{1}>\n{2}", channel.id, ticket.user_id, dmSent ? tr("✅ Transcript via DM afgeleverd (eventueel bij eerder sluiten).") : tr("⚠️ DM mislukt. Lokale kopie bewaard; geef het transcript handmatig aan de eigenaar.")) });
             logged = true;
         }
     } catch (error) { logger.error(`Transcriptlog voor ticket ${channel.id} mislukt: ${error.message}`); }

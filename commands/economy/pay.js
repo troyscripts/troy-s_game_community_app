@@ -1,9 +1,10 @@
+const { tr } = require("../../utils/localization");
 const { replyAfterDefer } = require("../../utils/deferredReply");
-const { MessageFlags } = require("discord.js");
+const { MessageFlags } = require("../../utils/discord");
 const {
     SlashCommandBuilder,
     EmbedBuilder
-} = require("discord.js");
+} = require("../../utils/discord");
 
 const config =
     require("../../config/config");
@@ -105,7 +106,7 @@ module.exports = {
             return replyAfterDefer(interaction, {
 
                 content:
-                "❌ Je kunt geen geld naar jezelf sturen.",
+                tr("❌ Je kunt geen geld naar jezelf sturen."),
 
                 flags: MessageFlags.Ephemeral
 
@@ -162,7 +163,7 @@ module.exports = {
             return replyAfterDefer(interaction, {
 
                 content:
-                "❌ Je hebt niet genoeg geld in je portemonnee.",
+                tr("❌ Je hebt niet genoeg geld in je portemonnee."),
 
                 flags: MessageFlags.Ephemeral
 
@@ -193,7 +194,7 @@ module.exports = {
             return replyAfterDefer(interaction, {
 
                 content:
-                "❌ De betaling kon niet worden uitgevoerd.",
+                tr("❌ De betaling kon niet worden uitgevoerd."),
 
                 flags: MessageFlags.Ephemeral
 

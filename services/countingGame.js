@@ -1,3 +1,4 @@
+const { tr, send } = require("../utils/localization");
 const { applyRewardBonus, messageRewardMember } = require("./rewardBonus");
 const config = require("../config/config");
 const counting = require("../database/counting");
@@ -41,9 +42,9 @@ async function sendFeedback(message, result) {
 
     await message.react("❌").catch(() => {});
     const content = result.status === "repeat"
-        ? "🚫 Niet 2x achter elkaar!"
-        : "💥 Fout! Reset naar **0**";
-    const reply = await message.reply({
+        ? tr("🚫 Niet 2x achter elkaar!")
+        : tr("💥 Fout! Reset naar **0**");
+    const reply = await send(message, "reply", {
         content,
         allowedMentions: { repliedUser: false }
     }).catch(() => null);

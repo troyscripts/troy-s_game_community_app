@@ -1,4 +1,5 @@
-const { EmbedBuilder } = require("discord.js");
+const { tr, send } = require("../utils/localization");
+const { EmbedBuilder } = require("../utils/discord");
 
 const agenda = require("../database/agenda");
 const config = require("../config/config");
@@ -23,7 +24,7 @@ function buildAgendaEmbeds(guildId) {
     const configuredMaximum = Number(config.Agenda?.MaxVisibleItems) || 80;
     const maximum = Math.min(80, Math.max(1, configuredMaximum));
     const items = allItems.slice(0, maximum);
-    const title = config.Agenda?.Title || "📅 YouTube-planning";
+    const title = config.Agenda?.Title || tr("📅 YouTube-planning");
     const youtubeUrl = config.Agenda?.YouTubeUrl;
 
     if (!items.length) {
@@ -31,8 +32,8 @@ function buildAgendaEmbeds(guildId) {
                 .setColor(config.Bot.Color)
                 .setTitle(title)
                 .setDescription(
-                    "Er staan momenteel nog geen video's of streams op de planning." +
-                    (youtubeUrl ? `\n\n🔗 [Bekijk het YouTube-kanaal](${youtubeUrl})` : "")
+                    tr("Er staan momenteel nog geen video's of streams op de planning.") +
+                    (youtubeUrl ? tr("\n\n🔗 [Bekijk het YouTube-kanaal]({0})", youtubeUrl) : "")
                 )
                 .setFooter({ text: config.Bot.Footer })
                 .setTimestamp();
@@ -49,12 +50,12 @@ function buildAgendaEmbeds(guildId) {
         const part = items.slice(index, index + ITEMS_PER_EMBED);
         const embed = new EmbedBuilder()
             .setColor(config.Bot.Color)
-            .setTitle(index === 0 ? title : `${title} • vervolg`)
+            .setTitle(index === 0 ? title : tr("{0} • vervolg", title))
             .addFields(part.map(agendaField))
             .setFooter({
                 text: index + ITEMS_PER_EMBED >= items.length
                     ? config.Bot.Footer
-                    : `${config.Bot.Footer} • wordt vervolgd`
+                    : tr("{0} • wordt vervolgd", config.Bot.Footer)
             })
             .setTimestamp();
 
@@ -64,8 +65,8 @@ function buildAgendaEmbeds(guildId) {
 
         if (index === 0) {
             embed.setDescription(
-                `Dit staat er binnenkort gepland voor het YouTube-kanaal van ${config.Bot.Name}.` +
-                (youtubeUrl ? `\n\n🔗 [Bekijk het YouTube-kanaal](${youtubeUrl})` : "")
+                tr("Dit staat er binnenkort gepland voor het YouTube-kanaal van {0}.", config.Bot.Name) +
+                (youtubeUrl ? tr("\n\n🔗 [Bekijk het YouTube-kanaal]({0})", youtubeUrl) : "")
             );
         }
 
@@ -74,7 +75,7 @@ function buildAgendaEmbeds(guildId) {
 
     if (allItems.length > items.length) {
         embeds.at(-1).setFooter({
-            text: `${config.Bot.Footer} • ${allItems.length - items.length} extra item(s) niet getoond`
+            text: tr("{0} • {1} extra item(s) niet getoond", config.Bot.Footer, allItems.length - items.length)
         });
     }
 
@@ -92,14 +93,14 @@ async function publishAgenda(channel) {
             .catch(() => null);
 
         if (oldMessage) {
-            await oldMessage.edit({ embeds, allowedMentions: { parse: [] } });
+            await send(oldMessage, "edit", { embeds, allowedMentions: { parse: [] } });
             return { message: oldMessage, updated: true };
         }
 
         agenda.removePublication(guildId, channel.id);
     }
 
-    const message = await channel.send({
+    const message = await send(channel, "send", {
         embeds,
         allowedMentions: { parse: [] }
     });
@@ -137,7 +138,7 @@ async function refreshPublishedAgendas(client, guildId) {
         }
 
         try {
-            await message.edit({ embeds, allowedMentions: { parse: [] } });
+            await send(message, "edit", { embeds, allowedMentions: { parse: [] } });
             updated++;
         } catch (error) {
             logger.warn(

@@ -1,3 +1,4 @@
+const { tr, send } = require("../utils/localization");
 const settings = require('../database/guildSettings');
 const taskState = require('../database/taskState');
 const logger = require('../utils/logger');
@@ -34,12 +35,12 @@ async function tick(client) {
                 if (state.nextAt > Date.now()) continue;
                 const channel = await client.channels.fetch(channelId);
                 if (!channel || channel.guildId !== guild.id || !channel.isTextBased?.() || typeof channel.send !== 'function') {
-                    throw new Error('Bump.Channel is geen bereikbaar tekstkanaal in deze server.');
+                    throw new Error(tr("Bump.Channel is geen bereikbaar tekstkanaal in deze server."));
                 }
                 // Een kanaalwijziging tijdens het ophalen mag geen bericht naar het oude kanaal sturen.
                 if ((settings.getGuildConfig(guild.id).Bump?.Channel || '') !== channelId) continue;
-                await channel.send({
-                    content: '🔔 **Bump-herinnering**\nHet is weer tijd om de server te bumpen! Gebruik `/bump` in dit kanaal. Bedankt voor je hulp! 💙',
+                await send(channel, "send", {
+                    content: tr("🔔 **Bump-herinnering**\nHet is weer tijd om de server te bumpen! Gebruik `/bump` in dit kanaal. Bedankt voor je hulp! 💙"),
                     allowedMentions: { parse: [] }
                 });
                 // Alleen een bevestigde verzending schuift de volgende herinnering op.

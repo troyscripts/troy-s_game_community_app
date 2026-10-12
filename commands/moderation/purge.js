@@ -1,8 +1,9 @@
+const { tr, send } = require("../../utils/localization");
 const {
     SlashCommandBuilder,
     EmbedBuilder,
     MessageFlags
-} = require("discord.js");
+} = require("../../utils/discord");
 
 const config =
     require("../../config/config");
@@ -112,7 +113,7 @@ module.exports = {
                 .addFields({
 
                     name:
-                    "Uitgevoerd door",
+                    tr("Uitgevoerd door"),
 
                     value:
                     `${interaction.user}`
@@ -133,7 +134,7 @@ module.exports = {
 
 
         const reply =
-            await interaction.editReply({
+            await send(interaction, "editReply", {
 
                 embeds:[
 

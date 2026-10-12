@@ -1,10 +1,11 @@
+const { tr } = require("../../utils/localization");
 const { replyAfterDefer } = require("../../utils/deferredReply");
 const { applyRewardBonus, rewardMultiplier } = require("../../services/rewardBonus");
-const { MessageFlags } = require("discord.js");
+const { MessageFlags } = require("../../utils/discord");
 const {
     SlashCommandBuilder,
     EmbedBuilder
-} = require("discord.js");
+} = require("../../utils/discord");
 
 const config =
     require("../../config/config");
@@ -77,7 +78,7 @@ module.exports = {
                 return replyAfterDefer(interaction, {
 
                     content:
-                    `⏳ Je hebt je daily reward al gebruikt.\nProbeer opnieuw over **${hours} uur en ${minutes} minuten**.`,
+                    tr("⏳ Je hebt je daily reward al gebruikt.\nProbeer opnieuw over **{0} uur en {1} minuten**.", hours, minutes),
 
                     flags: MessageFlags.Ephemeral
 
@@ -124,7 +125,7 @@ module.exports = {
 
                 .setDescription(
 
-                    `Je hebt je dagelijkse beloning ontvangen!\n\n` +
+                    "Je hebt je dagelijkse beloning ontvangen!\n\n" +
 
                     `💰 Je kreeg **€${reward}**` +
                     (rewardMultiplier(interaction.member) === 2 ? "\n✨ 2× beloning dankzij je VIP- of verjaardagsrol." : "")

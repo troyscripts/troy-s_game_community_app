@@ -1,3 +1,4 @@
+const { tr, send } = require("../utils/localization");
 const config = require('../config/config');
 const logger = require('../utils/logger');
 const birthdays = require('../database/birthday');
@@ -33,7 +34,7 @@ async function checkGuild(guild) {
     if (settings.Role) {
         try {
             role = await guild.roles.fetch(settings.Role);
-            if (!role) throw new Error('Ingestelde verjaardagsrol bestaat niet.');
+            if (!role) throw new Error(tr("Ingestelde verjaardagsrol bestaat niet."));
             const previous = snapshots.get(guild.id);
             // A full fetch is necessary after restart and day rollover, including offline members.
             // Refresh periodically for missed member updates; do not fetch every minute.
@@ -45,7 +46,7 @@ async function checkGuild(guild) {
             for (const member of members.values()) {
                 if (member.roles.cache.has(role.id) && !ids.has(member.id)) {
                     try {
-                        await member.roles.remove(role.id, 'Verjaardagsdag afgelopen');
+                        await member.roles.remove(role.id, "Verjaardagsdag afgelopen");
                     } catch (error) {
                         logger.warn(`Verjaardagsrol verwijderen mislukt [server ${guild.id}, lid ${member.id}]: ${error.message}. Controleer Rollen beheren en rolvolgorde; volgende minuut opnieuw.`);
                     }
@@ -64,7 +65,7 @@ async function checkGuild(guild) {
         try { channel = await guild.channels.fetch(settings.Channel); }
         catch (error) { logger.warn(`Verjaardagskanaal ophalen mislukt [${guild.id}]: ${error.message}`); }
     }
-    const messages = settings.Messages?.length ? settings.Messages : ['Van harte gefeliciteerd, {user}! 🎉'];
+    const messages = settings.Messages?.length ? settings.Messages : [tr("Van harte gefeliciteerd, {user}! 🎉")];
     for (const record of records) {
         let member;
         try {
@@ -79,7 +80,7 @@ async function checkGuild(guild) {
         }
         if (!member) continue;
         if (roleReady && !member.roles.cache.has(role.id)) {
-            try { await member.roles.add(role.id, 'Vandaag jarig'); }
+            try { await member.roles.add(role.id, "Vandaag jarig"); }
             catch (error) { logger.warn(`Verjaardagsrol geven mislukt [${guild.id}, ${member.id}]: ${error.message}. Volgende minuut opnieuw.`); }
         }
         // Preserve the legacy daily marker, and remember individual successes on partial failures.
@@ -92,8 +93,8 @@ async function checkGuild(guild) {
             continue;
         }
         try {
-            const text = String(messages[Math.floor(Math.random() * messages.length)]).replaceAll('{user}', `<@${member.id}>`);
-            await channel.send({content: text, allowedMentions: {parse: [], users: [member.id]}});
+            const text = tr(String(messages[Math.floor(Math.random() * messages.length)])).replaceAll('{user}', `<@${member.id}>`);
+            await send(channel, "send", {content: text, allowedMentions: {parse: [], users: [member.id]}});
             taskState.setLastRun(deliveryKey, guild.id, today);
         } catch (error) {
             allMessagesDone = false;

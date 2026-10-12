@@ -1,8 +1,9 @@
-const { MessageFlags } = require("discord.js");
+const { tr, send } = require("../../utils/localization");
+const { MessageFlags } = require("../../utils/discord");
 const {
     SlashCommandBuilder,
     EmbedBuilder
-} = require("discord.js");
+} = require("../../utils/discord");
 
 const config =
     require("../../config/config");
@@ -119,10 +120,10 @@ module.exports = {
         if (!member) {
 
 
-            return interaction.editReply({
+            return send(interaction, "editReply", {
 
                 content:
-                "❌ Deze gebruiker zit niet op de server.",
+                tr("❌ Deze gebruiker zit niet op de server."),
 
                 flags: MessageFlags.Ephemeral
 
@@ -138,10 +139,10 @@ module.exports = {
         ) {
 
 
-            return interaction.editReply({
+            return send(interaction, "editReply", {
 
                 content:
-                "❌ Je kunt jezelf geen timeout geven.",
+                tr("❌ Je kunt jezelf geen timeout geven."),
 
                 flags: MessageFlags.Ephemeral
 
@@ -157,10 +158,10 @@ module.exports = {
         ) {
 
 
-            return interaction.editReply({
+            return send(interaction, "editReply", {
 
                 content:
-                "❌ Deze gebruiker heeft al een timeout.",
+                tr("❌ Deze gebruiker heeft al een timeout."),
 
                 flags: MessageFlags.Ephemeral
 
@@ -177,10 +178,10 @@ module.exports = {
         ) {
 
 
-            return interaction.editReply({
+            return send(interaction, "editReply", {
 
                 content:
-                "❌ Je kunt deze gebruiker niet modereren. Controleer de rollenhiërarchie van jou en de bot."
+                tr("❌ Je kunt deze gebruiker niet modereren. Controleer de rollenhiërarchie van jou en de bot.")
 
             });
 
@@ -210,7 +211,7 @@ module.exports = {
 
 
                 .setTitle(
-                    "🔇 Timeout gegeven"
+                    tr("🔇 Timeout gegeven")
                 )
 
 
@@ -219,7 +220,7 @@ module.exports = {
                     {
 
                         name:
-                        "Gebruiker",
+                        tr("Gebruiker"),
 
                         value:
                         `${user}`,
@@ -232,10 +233,10 @@ module.exports = {
                     {
 
                         name:
-                        "Duur",
+                        tr("Duur"),
 
                         value:
-                        `${duration} minuten`,
+                        tr("{0} minuten", duration),
 
                         inline:true
 
@@ -245,7 +246,7 @@ module.exports = {
                     {
 
                         name:
-                        "Reden",
+                        tr("Reden"),
 
                         value:
                         reason
@@ -278,7 +279,7 @@ module.exports = {
 
 
 
-        await interaction.editReply({
+        await send(interaction, "editReply", {
 
             embeds:[
 
@@ -290,7 +291,7 @@ module.exports = {
 
 
 
-        await user.send({
+        await send(user, "send", {
 
             embeds:[
 
@@ -306,9 +307,12 @@ module.exports = {
 
                     .setDescription(
 
-                        `Server: ${interaction.guild.name}\n\n` +
+                        `Server: ${interaction.guild.name}
 
-                        `Duur: ${duration} minuten\n` +
+` +
+
+                        `Duur: ${duration} minuten
+` +
 
                         `Reden: ${reason}`
 

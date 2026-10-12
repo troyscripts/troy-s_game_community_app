@@ -1,4 +1,5 @@
-const { EmbedBuilder } = require("discord.js");
+const { tr } = require("./localization");
+const { EmbedBuilder } = require("./discord");
 const config = require("../config/config");
 
 
@@ -170,7 +171,7 @@ class EmbedUtils {
     /**
      * Loading embed
      */
-    loading(description = "Even geduld...") {
+    loading(description = tr("Even geduld...")) {
 
         return this.create({
 
@@ -192,7 +193,7 @@ class EmbedUtils {
     commandError(error) {
 
         return this.error(
-            `Er ging iets fout tijdens het uitvoeren van dit command.\n\n\`\`\`${error}\`\`\``
+            tr("Er ging iets fout tijdens het uitvoeren van dit command.\n\n```{0}```", error)
         );
 
     }

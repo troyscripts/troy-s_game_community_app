@@ -1,0 +1,154 @@
+Troy’s Game Community — update 2.9.9-beta
+
+Dit pakket bevat alleen gewijzigde en nieuwe bestanden ten opzichte van 2.6.2.
+
+Installeren
+1. Stop de bot en maak een back-up van je database en botmap.
+2. Pak deze bestanden uit over je bestaande 2.6.2-installatie, met behoud van de mapstructuur.
+3. Behoud je eigen .env en database. .env.example is uitsluitend een voorbeeld.
+4. Geen nieuwe dependencies. Gebruik de al bestaande GROQ_API_KEY in .env voor automatische vertaling.
+5. Start de bot opnieuw. Nieuwe tabellen worden automatisch aangemaakt; slashcommands worden automatisch bijgewerkt. Zo nodig: npm run deploy.
+6. npm run check en npm run test:languages controleren de installatie lokaal.
+
+Gebruik
+- /language taal:English: persoonlijke antwoorden in het Engels (per lid en server).
+- Openbare botteksten: Nederlands met Engels eronder. Knoppen tonen korte labels naast elkaar.
+- /help gebruikt je taalvoorkeur voor de handleiding; het openbare bericht is tweetalig.
+- /poll maken vertaalt vraag en antwoorden automatisch. Eigen vertaling: vraag-en én antwoorden-en.
+- /poll wijzigen vertaalt gewijzigde inhoud. Ook handmatig gewijzigde vertalingen wissen stemmen; een timerwijziging behoudt de stemmen.
+- /welkomstbericht vertalen vertaalt de opgeslagen welkomsttekst. Met engels kun je zelf de vertaling invoeren of corrigeren. Na een Nederlandse tekstwijziging opnieuw vertalen.
+- /say vertalen:True vertaalt je bericht en plaatst beide talen, als gewone tekst of embed. Met engels kun je zelf de vertaling invoeren. Zonder deze opties blijft jouw tekst intact.
+- Bij een mislukte vertaling blijft bestaande inhoud bewaard en wordt geen nieuw bericht geplaatst. Handmatige vertalingen hebben geen Groq nodig.
+- Zeer lange berichten krijgen de volledige ingekorte tekst als bijlage; geef de bot daarvoor Bestanden bijvoegen.
+
+De Engelse Discord-interface toont Engelse commandnamen en opties. De oorspronkelijke Nederlandse identifiers blijven geldig voor de bot. /language verandert niet de taalinstelling van Discord zelf.
+
+Gecontroleerd
+Syntax, alle 56 commanddefinities met echte Discord-builders, taalscheiding, berichtlimieten, tijdelijke echte SQLite-opslag, pollvertalingen, welkomstinvulvelden, gelijktijdige wijzigingen en /say-foutafhandeling. Bestaande poll-, giveaway-, store- en bumpregressies slagen ook met nagebootste Discord-aanroepen.
+Niet live getest op Discord of met een echte Groq-aanvraag.
+
+Gewijzigde/nieuwe bestanden
+.env.example
+CHANGELOG.md
+HANDLEIDING.md
+MANUAL-EN.md
+README.md
+UPDATE-2.9.9-beta.txt
+buttons/roles.js
+buttons/ticket-claim.js
+buttons/ticket-delete.js
+buttons/ticket-discuss.js
+buttons/ticket-open.js
+buttons/ticket-transcript.js
+buttons/ticketClose.js
+buttons/verify.js
+commands/administration/bot-avatar.js
+commands/administration/config.js
+commands/administration/notify.js
+commands/administration/reset-voortgang.js
+commands/administration/selfrollen.js
+commands/administration/welkomstbericht.js
+commands/birthday/birthday.js
+commands/birthday/birthdays.js
+commands/birthday/removebirthday.js
+commands/birthday/setbirthday.js
+commands/economy/balance.js
+commands/economy/daily.js
+commands/economy/deposit.js
+commands/economy/economy-reset.js
+commands/economy/give.js
+commands/economy/leaderboard.js
+commands/economy/pay.js
+commands/economy/rekening.js
+commands/economy/stelen.js
+commands/economy/withdraw.js
+commands/economy/work.js
+commands/fun/8ball.js
+commands/fun/avatar.js
+commands/fun/banner.js
+commands/fun/coinflip.js
+commands/fun/dice.js
+commands/fun/giveaway.js
+commands/fun/meme.js
+commands/fun/ping.js
+commands/fun/poll.js
+commands/fun/say.js
+commands/fun/ship.js
+commands/general/help.js
+commands/general/language.js
+commands/levels/leaderboard.js
+commands/levels/level.js
+commands/levels/rank.js
+commands/levels/resetxp.js
+commands/levels/setxp.js
+commands/moderation/ban.js
+commands/moderation/clear.js
+commands/moderation/kick.js
+commands/moderation/purge.js
+commands/moderation/timeout.js
+commands/moderation/unban.js
+commands/moderation/untimeout.js
+commands/moderation/warn.js
+commands/moderation/warnings.js
+commands/tickets/ticket-add.js
+commands/tickets/ticket-claim.js
+commands/tickets/ticket-info.js
+commands/tickets/ticket-panel.js
+commands/tickets/ticket-remove.js
+commands/youtube/agenda.js
+database/economy.js
+database/economyActions.js
+database/guildSettings.js
+database/languages.js
+database/progressReset.js
+database/store.js
+database/ticketPanels.js
+database/welcomeTranslations.js
+deploy-commands.js
+events/guildMemberAdd.js
+events/guildMemberRemove.js
+events/interactionCreate.js
+events/messageCreate.js
+events/messageDelete.js
+locales/en.json
+locales/names-en.json
+modals/ticketCreate.js
+package-lock.json
+package.json
+scripts/test-languages.js
+selectmenus/ticketCategory.js
+services/aiChat.js
+services/birthdayScheduler.js
+services/botAvatar.js
+services/bumpReminder.js
+services/commandRegistration.js
+services/configStaffRoles.js
+services/connectionMonitor.js
+services/countingGame.js
+services/giveaways.js
+services/groqConnection.js
+services/notify/providers.js
+services/notify/twitch.js
+services/notifyService.js
+services/pollTranslation.js
+services/polls.js
+services/selfRoles.js
+services/startupReporter.js
+services/store.js
+services/textTranslation.js
+services/ticketDiscussion.js
+services/ticketLifecycle.js
+services/ticketPanelSetup.js
+services/ticketStaff.js
+services/ticketTranscript.js
+services/versionReporter.js
+services/welcomeTranslation.js
+services/youtubeAgenda.js
+utils/deferredReply.js
+utils/discord.js
+utils/embeds.js
+utils/eventEmbeds.js
+utils/functions.js
+utils/localization.js
+utils/logger.js
+utils/welcomeMessage.js

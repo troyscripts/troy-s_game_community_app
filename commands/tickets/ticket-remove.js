@@ -1,9 +1,10 @@
-const { MessageFlags } = require("discord.js");
+const { tr, send } = require("../../utils/localization");
+const { MessageFlags } = require("../../utils/discord");
 const {
     SlashCommandBuilder,
     PermissionFlagsBits,
     EmbedBuilder
-} = require("discord.js");
+} = require("../../utils/discord");
 
 const tickets = require("../../database/tickets");
 
@@ -69,10 +70,10 @@ module.exports = {
         if (!ticket) {
 
 
-            return interaction.editReply({
+            return send(interaction, "editReply", {
 
                 content:
-                "❌ Dit kanaal is geen ticket.",
+                tr("❌ Dit kanaal is geen ticket."),
 
                 flags: MessageFlags.Ephemeral
 
@@ -100,10 +101,10 @@ module.exports = {
         if (!member) {
 
 
-            return interaction.editReply({
+            return send(interaction, "editReply", {
 
                 content:
-                "❌ Deze gebruiker zit niet op deze server.",
+                tr("❌ Deze gebruiker zit niet op deze server."),
 
                 flags: MessageFlags.Ephemeral
 
@@ -123,10 +124,10 @@ module.exports = {
         ) {
 
 
-            return interaction.editReply({
+            return send(interaction, "editReply", {
 
                 content:
-                "❌ Deze gebruiker heeft geen toegang tot dit ticket.",
+                tr("❌ Deze gebruiker heeft geen toegang tot dit ticket."),
 
                 flags: MessageFlags.Ephemeral
 
@@ -167,7 +168,7 @@ module.exports = {
                 .addFields({
 
                     name:
-                    "Uitgevoerd door",
+                    tr("Uitgevoerd door"),
 
                     value:
                     `${interaction.user}`
@@ -184,7 +185,7 @@ module.exports = {
 
 
 
-        return interaction.editReply({
+        return send(interaction, "editReply", {
 
             embeds:[
                 embed

@@ -1,8 +1,9 @@
-const { MessageFlags } = require("discord.js");
+const { tr, send } = require("../../utils/localization");
+const { MessageFlags } = require("../../utils/discord");
 const {
     SlashCommandBuilder,
     EmbedBuilder
-} = require("discord.js");
+} = require("../../utils/discord");
 
 const levels =
     require("../../database/levels");
@@ -52,10 +53,10 @@ module.exports = {
         if (!users.length) {
 
 
-            return interaction.editReply({
+            return send(interaction, "editReply", {
 
                 content:
-                "❌ Er zijn nog geen level gegevens.",
+                tr("❌ Er zijn nog geen level gegevens."),
 
                 flags: MessageFlags.Ephemeral
 
@@ -93,7 +94,7 @@ module.exports = {
             const username =
                 member
                     ? member.user.username
-                    : "Onbekende gebruiker";
+                    : tr("Onbekende gebruiker");
 
 
 
@@ -161,7 +162,7 @@ module.exports = {
 
 
 
-        return interaction.editReply({
+        return send(interaction, "editReply", {
 
             embeds:[
 

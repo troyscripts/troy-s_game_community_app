@@ -1,3 +1,4 @@
+const { send } = require("../utils/localization");
 const fs = require('node:fs');
 const path = require('node:path');
 const { createHash } = require('node:crypto');
@@ -17,7 +18,7 @@ function commandPayload(client) {
                 if (!command.data?.toJSON || typeof command.execute !== 'function') {
                     throw new Error(`Ongeldig slashcommand: ${entry.name}`);
                 }
-                const data = command.data.toJSON();
+                const data = require('../utils/localization').commandData(command.data.toJSON());
                 if (client.commands.get(data.name) !== command) {
                     throw new Error(`Command niet correct geladen: ${data.name}`);
                 }

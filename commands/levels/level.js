@@ -1,8 +1,9 @@
-const { MessageFlags } = require("discord.js");
+const { tr, send } = require("../../utils/localization");
+const { MessageFlags } = require("../../utils/discord");
 const {
     SlashCommandBuilder,
     EmbedBuilder
-} = require("discord.js");
+} = require("../../utils/discord");
 
 const levels =
     require("../../database/levels");
@@ -71,10 +72,10 @@ module.exports = {
         if (!data) {
 
 
-            return interaction.reply({
+            return send(interaction, "reply", {
 
                 content:
-                `❌ ${user} heeft nog geen level gegevens.`,
+                tr("❌ {0} heeft nog geen level gegevens.", user),
 
                 flags: MessageFlags.Ephemeral
 
@@ -124,7 +125,7 @@ module.exports = {
 
 
                 .setTitle(
-                    "📊 Level informatie"
+                    tr("📊 Level informatie")
                 )
 
 
@@ -142,7 +143,7 @@ module.exports = {
                     {
 
                         name:
-                        "Gebruiker",
+                        tr("Gebruiker"),
 
                         value:
                         `${user}`,
@@ -181,7 +182,7 @@ module.exports = {
                     {
 
                         name:
-                        "Voortgang",
+                        tr("Voortgang"),
 
                         value:
                         `${progress} ${percentage}%`
@@ -192,7 +193,7 @@ module.exports = {
                     {
 
                         name:
-                        "Berichten",
+                        tr("Berichten"),
 
                         value:
                         `${data.messages}`,
@@ -216,7 +217,7 @@ module.exports = {
 
 
 
-        return interaction.reply({
+        return send(interaction, "reply", {
 
             embeds:[
 

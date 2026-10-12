@@ -1,3 +1,4 @@
+const { tr, send } = require("../utils/localization");
 const fs = require('node:fs');
 const path = require('node:path');
 const config = require('../config/config');
@@ -46,17 +47,17 @@ async function checkVersions(client) {
                     }
                     const channel = await guild.channels.fetch(config.Logging.Channel);
                     if (!channel || channel.guild?.id !== guild.id || !channel.isTextBased?.() || typeof channel.send !== 'function') {
-                        throw new Error('Logging.Channel is geen bereikbaar tekstkanaal van deze server.');
+                        throw new Error(tr("Logging.Channel is geen bereikbaar tekstkanaal van deze server."));
                     }
                     const description = notes.length > 3500
-                        ? notes.slice(0, 3440) + '\n\nVolledige wijzigingen staan in de bijlage.'
+                        ? notes.slice(0, 3440) + tr("\n\nVolledige wijzigingen staan in de bijlage.")
                         : notes;
-                    await channel.send({
+                    await send(channel, "send", {
                         embeds: [{
-                            title: `🆕 Bot bijgewerkt naar ${version}`,
+                            title: tr("🆕 Bot bijgewerkt naar {0}", version),
                             description,
                             color: 0x57F287,
-                            footer: {text: previous ? `Vorige gemelde versie: ${previous}` : 'Eerste automatische versiemelding'},
+                            footer: {text: previous ? tr("Vorige gemelde versie: {0}", previous) : tr("Eerste automatische versiemelding")},
                             timestamp: new Date().toISOString()
                         }],
                         files: [{attachment: Buffer.from(markdown, 'utf8'), name: 'CHANGELOG.md'}],

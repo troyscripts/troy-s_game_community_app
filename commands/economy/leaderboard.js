@@ -1,8 +1,9 @@
-const { MessageFlags } = require("discord.js");
+const { tr, send } = require("../../utils/localization");
+const { MessageFlags } = require("../../utils/discord");
 const {
     SlashCommandBuilder,
     EmbedBuilder
-} = require("discord.js");
+} = require("../../utils/discord");
 
 const config =
     require("../../config/config");
@@ -52,10 +53,10 @@ module.exports = {
         if (!users || users.length === 0) {
 
 
-            return interaction.editReply({
+            return send(interaction, "editReply", {
 
                 content:
-                "❌ Er zijn nog geen economie gegevens.",
+                tr("❌ Er zijn nog geen economie gegevens."),
 
                 flags: MessageFlags.Ephemeral
 
@@ -94,7 +95,7 @@ module.exports = {
             const username =
                 member
                     ? member.user.username
-                    : "Onbekende gebruiker";
+                    : tr("Onbekende gebruiker");
 
 
 
@@ -126,7 +127,7 @@ module.exports = {
 
                 `${medal} ${username}\n` +
 
-                `💰 Totaal: **€${total}**\n` +
+                tr("💰 Totaal: **€{0}**\n", total) +
 
                 `💵 Wallet: €${userData.wallet} | 🏦 Bank: €${userData.bank}\n\n`;
 
@@ -168,7 +169,7 @@ module.exports = {
 
 
 
-        return interaction.editReply({
+        return send(interaction, "editReply", {
 
             embeds:[
 

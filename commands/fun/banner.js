@@ -1,8 +1,9 @@
-const { MessageFlags } = require("discord.js");
+const { tr, send } = require("../../utils/localization");
+const { MessageFlags } = require("../../utils/discord");
 const {
     SlashCommandBuilder,
     EmbedBuilder
-} = require("discord.js");
+} = require("../../utils/discord");
 
 const config =
     require("../../config/config");
@@ -85,10 +86,10 @@ module.exports = {
         if (!banner) {
 
 
-            return interaction.editReply({
+            return send(interaction, "editReply", {
 
                 content:
-                `❌ ${user.tag} heeft geen Discord banner.`,
+                tr("❌ {0} heeft geen Discord banner.", user.tag),
 
                 flags: MessageFlags.Ephemeral
 
@@ -109,7 +110,7 @@ module.exports = {
 
 
                 .setTitle(
-                    `🖼️ Banner van ${user.tag}`
+                    tr("🖼️ Banner van {0}", user.tag)
                 )
 
 
@@ -130,7 +131,7 @@ module.exports = {
 
 
 
-        return interaction.editReply({
+        return send(interaction, "editReply", {
 
             embeds:[
 

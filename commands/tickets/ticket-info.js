@@ -1,8 +1,9 @@
-const { MessageFlags } = require("discord.js");
+const { tr, send } = require("../../utils/localization");
+const { MessageFlags } = require("../../utils/discord");
 const {
     SlashCommandBuilder,
     EmbedBuilder
-} = require("discord.js");
+} = require("../../utils/discord");
 
 const tickets = require("../../database/tickets");
 
@@ -53,10 +54,10 @@ module.exports = {
         if (!ticket) {
 
 
-            return interaction.editReply({
+            return send(interaction, "editReply", {
 
                 content:
-                "❌ Dit kanaal is geen ticket.",
+                tr("❌ Dit kanaal is geen ticket."),
 
                 flags: MessageFlags.Ephemeral
 
@@ -83,7 +84,7 @@ module.exports = {
 
             :
 
-            "Niemand";
+            tr("Niemand");
 
 
 
@@ -96,7 +97,7 @@ module.exports = {
 
             :
 
-            "🔴 Gesloten";
+            tr("🔴 Gesloten");
 
 
 
@@ -110,7 +111,7 @@ module.exports = {
 
 
                 .setTitle(
-                    "🎫 Ticket informatie"
+                    tr("🎫 Ticket informatie")
                 )
 
 
@@ -119,7 +120,7 @@ module.exports = {
                     {
 
                         name:
-                        "👤 Ticket eigenaar",
+                        tr("👤 Ticket eigenaar"),
 
                         value:
                         member
@@ -139,7 +140,7 @@ module.exports = {
                     {
 
                         name:
-                        "📂 Categorie",
+                        tr("📂 Categorie"),
 
                         value:
                         ticket.category || "Support",
@@ -165,7 +166,7 @@ module.exports = {
                     {
 
                         name:
-                        "🛠 Behandelaar",
+                        tr("🛠 Behandelaar"),
 
                         value:
                         claimed,
@@ -178,7 +179,7 @@ module.exports = {
                     {
 
                         name:
-                        "📅 Aangemaakt",
+                        tr("📅 Aangemaakt"),
 
                         value:
                         `<t:${ticket.created_at}:F>`,
@@ -199,7 +200,7 @@ module.exports = {
 
 
 
-        return interaction.editReply({
+        return send(interaction, "editReply", {
 
             embeds:[
                 embed

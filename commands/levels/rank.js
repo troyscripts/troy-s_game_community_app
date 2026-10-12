@@ -1,8 +1,9 @@
-const { MessageFlags } = require("discord.js");
+const { tr, send } = require("../../utils/localization");
+const { MessageFlags } = require("../../utils/discord");
 const {
     SlashCommandBuilder,
     EmbedBuilder
-} = require("discord.js");
+} = require("../../utils/discord");
 
 const levels =
     require("../../database/levels");
@@ -71,10 +72,10 @@ module.exports = {
         if (!user) {
 
 
-            return interaction.reply({
+            return send(interaction, "reply", {
 
                 content:
-                `❌ ${target} heeft nog geen XP.`,
+                tr("❌ {0} heeft nog geen XP.", target),
 
                 flags: MessageFlags.Ephemeral
 
@@ -141,7 +142,7 @@ module.exports = {
                     {
 
                         name:
-                        "Gebruiker",
+                        tr("Gebruiker"),
 
                         value:
                         `${target}`,
@@ -180,7 +181,7 @@ module.exports = {
                     {
 
                         name:
-                        "Voortgang",
+                        tr("Voortgang"),
 
                         value:
                         `${progress} ${percentage}%`
@@ -191,7 +192,7 @@ module.exports = {
                     {
 
                         name:
-                        "Berichten",
+                        tr("Berichten"),
 
                         value:
                         `${user.messages}`,
@@ -215,7 +216,7 @@ module.exports = {
 
 
 
-        return interaction.reply({
+        return send(interaction, "reply", {
 
             embeds:[
 

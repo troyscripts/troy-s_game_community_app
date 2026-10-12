@@ -1,3 +1,4 @@
+const { tr } = require("../utils/localization");
 const { Events } = require("discord.js");
 const logger = require("../utils/logger");
 
@@ -68,12 +69,12 @@ function classifyWithHysteresis(ping, previous = lastStatus) {
 
 function statusLabel(status) {
     return {
-        normal: "Normaal",
-        elevated: "Verhoogd",
-        high: "Hoog",
-        critical: "Kritiek",
-        unknown: "Onbekend"
-    }[status] || "Onbekend";
+        normal: tr("Normaal"),
+        elevated: tr("Verhoogd"),
+        high: tr("Hoog"),
+        critical: tr("Kritiek"),
+        unknown: tr("Onbekend")
+    }[status] || tr("Onbekend");
 }
 
 function recordSample(client, { announce = true } = {}) {
@@ -106,7 +107,7 @@ function isTimeout(error) {
 }
 
 function formatDuration(ms) {
-    if (!Number.isFinite(ms) || ms < 0) return "n.v.t.";
+    if (!Number.isFinite(ms) || ms < 0) return tr("n.v.t.");
     const seconds = Math.round(ms / 1000);
     if (seconds < 60) return `${seconds}s`;
     const minutes = Math.floor(seconds / 60);
@@ -121,7 +122,7 @@ function reconnectDiagnostics(client, shardId) {
     const memory = process.memoryUsage();
     const heapMb = Math.round(memory.heapUsed / 1024 / 1024);
     const rssMb = Math.round(memory.rss / 1024 / 1024);
-    const ping = Number.isFinite(Number(client?.ws?.ping)) ? Math.round(Number(client.ws.ping)) : "onbekend";
+    const ping = Number.isFinite(Number(client?.ws?.ping)) ? Math.round(Number(client.ws.ping)) : tr("onbekend");
     const uptime = formatDuration(process.uptime() * 1000);
     return `shard=${shardId}, gateway=${ping}ms, sinds-vorige=${sincePrevious}, event-loop-delay=${Math.round(eventLoopDelayMs)}ms, heap=${heapMb}MB, rss=${rssMb}MB, uptime=${uptime}`;
 }
@@ -139,8 +140,8 @@ function startConnectionMonitor(client) {
         },
         shardDisconnect: (event, shardId) => {
             disconnects += 1;
-            const code = Number.isFinite(Number(event?.code)) ? event.code : "onbekend";
-            const reason = String(event?.reason || "geen reden").replace(/\s+/g, " ").slice(0, 180);
+            const code = Number.isFinite(Number(event?.code)) ? event.code : tr("onbekend");
+            const reason = String(event?.reason || tr("geen reden")).replace(/\s+/g, " ").slice(0, 180);
             logger.warn(`[Discord Connection Monitor] Gateway disconnect op shard ${shardId}. Code: ${code}; reden: ${reason}. Totaal: ${disconnects}.`);
         },
         shardReconnecting: (shardId) => {

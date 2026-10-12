@@ -1,7 +1,8 @@
+const { tr, send } = require("../../utils/localization");
 const {
     SlashCommandBuilder,
     EmbedBuilder
-} = require("discord.js");
+} = require("../../utils/discord");
 
 const config =
     require("../../config/config");
@@ -126,28 +127,28 @@ module.exports = {
         if (percentage >= 90) {
 
             message =
-                "💖 Perfecte match!";
+                tr("💖 Perfecte match!");
 
         }
 
         else if (percentage >= 70) {
 
             message =
-                "❤️ Mooie combinatie!";
+                tr("❤️ Mooie combinatie!");
 
         }
 
         else if (percentage >= 40) {
 
             message =
-                "💛 Er is potentie!";
+                tr("💛 Er is potentie!");
 
         }
 
         else {
 
             message =
-                "💔 Misschien vrienden blijven...";
+                tr("💔 Misschien vrienden blijven...");
 
         }
 
@@ -190,7 +191,7 @@ module.exports = {
 
 
 
-        return interaction.reply({
+        return send(interaction, "reply", {
 
             embeds:[
 

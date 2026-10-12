@@ -1,8 +1,9 @@
-const { MessageFlags } = require("discord.js");
+const { tr, send } = require("../../utils/localization");
+const { MessageFlags } = require("../../utils/discord");
 const {
     SlashCommandBuilder,
     EmbedBuilder
-} = require("discord.js");
+} = require("../../utils/discord");
 
 const config =
     require("../../config/config");
@@ -94,10 +95,10 @@ module.exports = {
         if (!member) {
 
 
-            return interaction.editReply({
+            return send(interaction, "editReply", {
 
                 content:
-                "❌ Deze gebruiker zit niet op de server.",
+                tr("❌ Deze gebruiker zit niet op de server."),
 
                 flags: MessageFlags.Ephemeral
 
@@ -113,10 +114,10 @@ module.exports = {
         ) {
 
 
-            return interaction.editReply({
+            return send(interaction, "editReply", {
 
                 content:
-                "❌ Je kunt jezelf niet kicken.",
+                tr("❌ Je kunt jezelf niet kicken."),
 
                 flags: MessageFlags.Ephemeral
 
@@ -133,10 +134,10 @@ module.exports = {
         ) {
 
 
-            return interaction.editReply({
+            return send(interaction, "editReply", {
 
                 content:
-                "❌ Je kunt geen gebruiker kicken met een gelijke of hogere rol.",
+                tr("❌ Je kunt geen gebruiker kicken met een gelijke of hogere rol."),
 
                 flags: MessageFlags.Ephemeral
 
@@ -152,10 +153,10 @@ module.exports = {
         ) {
 
 
-            return interaction.editReply({
+            return send(interaction, "editReply", {
 
                 content:
-                "❌ Ik kan deze gebruiker niet kicken. Controleer mijn rolpositie.",
+                tr("❌ Ik kan deze gebruiker niet kicken. Controleer mijn rolpositie."),
 
                 flags: MessageFlags.Ephemeral
 
@@ -166,7 +167,7 @@ module.exports = {
 
 
 
-        await user.send({
+        await send(user, "send", {
 
             embeds:[
 
@@ -182,7 +183,9 @@ module.exports = {
 
                     .setDescription(
 
-                        `Je bent verwijderd uit **${interaction.guild.name}**.\n\n` +
+                        `Je bent verwijderd uit **${interaction.guild.name}**.
+
+` +
 
                         `Reden: ${reason}`
 
@@ -214,7 +217,7 @@ module.exports = {
 
 
                 .setTitle(
-                    "👢 Gebruiker gekickt"
+                    tr("👢 Gebruiker gekickt")
                 )
 
 
@@ -223,7 +226,7 @@ module.exports = {
                     {
 
                         name:
-                        "Gebruiker",
+                        tr("Gebruiker"),
 
                         value:
                         `${user.tag}`,
@@ -249,7 +252,7 @@ module.exports = {
                     {
 
                         name:
-                        "Reden",
+                        tr("Reden"),
 
                         value:
                         reason
@@ -271,7 +274,7 @@ module.exports = {
 
 
 
-        return interaction.editReply({
+        return send(interaction, "editReply", {
 
             embeds:[
 

@@ -1,3 +1,4 @@
+const { tr } = require("../utils/localization");
 const { db } = require('./database');
 // Zorg dat ook de aanvullende economy-tabellen bestaan.
 require('./economyActions');
@@ -5,7 +6,7 @@ require('./economyActions');
 // Eén transactie: een fout draait alle wijzigingen terug.
 const resetProgress = db.transaction((guildId) => {
     if (typeof guildId !== 'string' || !guildId.trim()) {
-        throw new Error('Een Discord-server is verplicht.');
+        throw new Error(tr("Een Discord-server is verplicht."));
     }
     const levels = db.prepare(`
         UPDATE levels SET xp = 0, level = 1, messages = 0, last_xp = 0

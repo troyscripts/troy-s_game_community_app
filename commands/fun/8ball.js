@@ -1,7 +1,8 @@
+const { tr, send } = require("../../utils/localization");
 const {
     SlashCommandBuilder,
     EmbedBuilder
-} = require("discord.js");
+} = require("../../utils/discord");
 
 const config =
     require("../../config/config");
@@ -55,25 +56,25 @@ module.exports = {
 
         const answers = [
 
-            "Ja, absoluut! ✅",
+            tr("Ja, absoluut! ✅"),
 
-            "Zeker weten! 😎",
+            tr("Zeker weten! 😎"),
 
-            "Dat ziet er goed uit! ✨",
+            tr("Dat ziet er goed uit! ✨"),
 
-            "Misschien... 🤔",
+            tr("Misschien... 🤔"),
 
-            "Vraag het later nog eens. ⏳",
+            tr("Vraag het later nog eens. ⏳"),
 
-            "Ik denk het niet. ❌",
+            tr("Ik denk het niet. ❌"),
 
-            "Mijn bronnen zeggen van niet. 😅",
+            tr("Mijn bronnen zeggen van niet. 😅"),
 
-            "Daar moet je zelf achter komen 😉",
+            tr("Daar moet je zelf achter komen 😉"),
 
-            "De toekomst is onzeker 🔮",
+            tr("De toekomst is onzeker 🔮"),
 
-            "100% zeker! 💯"
+            tr("100% zeker! 💯")
 
         ];
 
@@ -111,7 +112,7 @@ module.exports = {
                     {
 
                         name:
-                        "Vraag",
+                        tr("Vraag"),
 
                         value:
                         question
@@ -122,7 +123,7 @@ module.exports = {
                     {
 
                         name:
-                        "Antwoord",
+                        tr("Antwoord"),
 
                         value:
                         answer
@@ -144,7 +145,7 @@ module.exports = {
 
 
 
-        return interaction.reply({
+        return send(interaction, "reply", {
 
             embeds:[
 

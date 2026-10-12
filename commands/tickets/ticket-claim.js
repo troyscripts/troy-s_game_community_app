@@ -1,8 +1,9 @@
-const { MessageFlags } = require("discord.js");
+const { tr, send } = require("../../utils/localization");
+const { MessageFlags } = require("../../utils/discord");
 const {
     SlashCommandBuilder,
     EmbedBuilder
-} = require("discord.js");
+} = require("../../utils/discord");
 
 const tickets = require("../../database/tickets");
 
@@ -50,10 +51,10 @@ module.exports = {
         if (!ticket) {
 
 
-            return interaction.reply({
+            return send(interaction, "reply", {
 
                 content:
-                "❌ Dit kanaal is geen ticket.",
+                tr("❌ Dit kanaal is geen ticket."),
 
                 flags: MessageFlags.Ephemeral
 
@@ -69,10 +70,10 @@ module.exports = {
         ) {
 
 
-            return interaction.reply({
+            return send(interaction, "reply", {
 
                 content:
-                "❌ Dit ticket is gesloten.",
+                tr("❌ Dit ticket is gesloten."),
 
                 flags: MessageFlags.Ephemeral
 
@@ -88,11 +89,11 @@ module.exports = {
         ) {
 
 
-            return interaction.reply({
+            return send(interaction, "reply", {
 
                 content:
 
-                `❌ Dit ticket is al geclaimd door <@${ticket.claimed_by}>.`,
+                tr("❌ Dit ticket is al geclaimd door <@{0}>.", ticket.claimed_by),
 
                 flags: MessageFlags.Ephemeral
 
@@ -150,7 +151,7 @@ module.exports = {
 
 
 
-        return interaction.reply({
+        return send(interaction, "reply", {
 
             embeds:[
                 embed

@@ -1,3 +1,4 @@
+const { tr } = require("../../utils/localization");
 const fs = require('node:fs');
 const { platformRequest } = require('../../utils/platformRequest');
 const path = require('node:path');
@@ -9,25 +10,25 @@ function account(platform, input) {
     if (/^https?:\/\//i.test(value)) {
         const url = new URL(value);
         const hosts = platform === 'youtube' ? ['youtube.com','www.youtube.com'] : platform === 'twitch' ? ['twitch.tv','www.twitch.tv','m.twitch.tv'] : ['tiktok.com','www.tiktok.com'];
-        if (url.protocol !== 'https:' || !hosts.includes(url.hostname) || url.port || url.username || url.password) throw new Error('Gebruik een HTTPS-profiel-URL van het gekozen platform.');
+        if (url.protocol !== 'https:' || !hosts.includes(url.hostname) || url.port || url.username || url.password) throw new Error(tr("Gebruik een HTTPS-profiel-URL van het gekozen platform."));
         const parts = url.pathname.split('/').filter(Boolean);
         if (platform === 'youtube' && parts[0] === 'channel' && parts.length === 2) value = parts[1];
         else if (parts.length === 1 && (platform === 'twitch' || parts[0].startsWith('@'))) value = parts[0];
-        else throw new Error('Gebruik de creatorprofiel-URL, geen videolink.');
+        else throw new Error(tr("Gebruik de creatorprofiel-URL, geen videolink."));
     }
     if (platform === 'youtube') {
         if (/^UC[\w-]{22}$/.test(value)) return value;
         if (/^@[\p{L}\p{N}_.·-]{3,30}$/u.test(value)) return value.toLowerCase();
-        throw new Error('Gebruik een YouTube @handle of UC-kanaal-ID.');
+        throw new Error(tr("Gebruik een YouTube @handle of UC-kanaal-ID."));
     }
     if (platform === 'twitch') {
         value = value.replace(/^@/,'').toLowerCase();
-        if (!/^[a-z0-9_]{1,25}$/.test(value)) throw new Error('Gebruik een geldige Twitch-gebruikersnaam of profiel-URL.');
+        if (!/^[a-z0-9_]{1,25}$/.test(value)) throw new Error(tr("Gebruik een geldige Twitch-gebruikersnaam of profiel-URL."));
         return value;
     }
-    if (platform !== 'tiktok') throw new Error('Platform niet ondersteund.');
+    if (platform !== 'tiktok') throw new Error(tr("Platform niet ondersteund."));
     value = value.replace(/^@/,'').toLowerCase();
-    if (!/^[a-z0-9_.]{2,24}$/.test(value)) throw new Error('Gebruik een geldige TikTok @gebruikersnaam.');
+    if (!/^[a-z0-9_.]{2,24}$/.test(value)) throw new Error(tr("Gebruik een geldige TikTok @gebruikersnaam."));
     return value;
 }
 async function request(url, options = {}, json = true) {
@@ -44,13 +45,13 @@ async function request(url, options = {}, json = true) {
             try { return await response.json(); }
             catch (error) {
                 if (!(error instanceof SyntaxError)) throw error;
-                throw Object.assign(new Error(`${host}: ongeldige JSON ontvangen.`), {permanent:true});
+                throw Object.assign(new Error(tr("{0}: ongeldige JSON ontvangen.", host)), {permanent:true});
             }
         }
     });
-    if (!response.ok) throw Object.assign(new Error(`${host}: HTTP ${response.status}; controleer koppeling of probeer later opnieuw.`), {status:response.status});
-    if (json && (!data || typeof data !== 'object')) throw new Error(`${host}: ongeldig JSON-antwoord ontvangen.`);
-    if (json && data.error && data.error?.code !== 'ok') throw new Error('TikTok heeft de aanvraag geweigerd. Controleer toestemming, scopes en koppel zo nodig opnieuw.');
+    if (!response.ok) throw Object.assign(new Error(tr("{0}: HTTP {1}; controleer koppeling of probeer later opnieuw.", host, response.status)), {status:response.status});
+    if (json && (!data || typeof data !== 'object')) throw new Error(tr("{0}: ongeldig JSON-antwoord ontvangen.", host));
+    if (json && data.error && data.error?.code !== 'ok') throw new Error(tr("TikTok heeft de aanvraag geweigerd. Controleer toestemming, scopes en koppel zo nodig opnieuw."));
     return data;
 }
 
@@ -64,17 +65,17 @@ function decode(value) {
 }
 function tag(xml,name) { return decode(xml.match(new RegExp(`<${name}(?:\\s[^>]*)?>([\\s\\S]*?)<\\/${name}>`))?.[1] || '').trim(); }
 function parseFeed(xml, expectedId) {
-    if (!/<feed[\s>]/.test(xml) || !/<\/feed>/.test(xml) || /<!DOCTYPE/i.test(xml)) throw new Error('YouTube-feed is ongeldig; niets als verwerkt opgeslagen.');
+    if (!/<feed[\s>]/.test(xml) || !/<\/feed>/.test(xml) || /<!DOCTYPE/i.test(xml)) throw new Error(tr("YouTube-feed is ongeldig; niets als verwerkt opgeslagen."));
     const header = xml.split('<entry>')[0];
     const feedId = tag(header,'yt:channelId');
     // Live Atom feeds may omit the UC prefix; compare the exact remaining ID.
-    if (!/^UC[\w-]{22}$/.test(expectedId) || ![expectedId,expectedId.slice(2)].includes(feedId)) throw new Error('YouTube-feed hoort niet bij het ingestelde kanaal.');
+    if (!/^UC[\w-]{22}$/.test(expectedId) || ![expectedId,expectedId.slice(2)].includes(feedId)) throw new Error(tr("YouTube-feed hoort niet bij het ingestelde kanaal."));
     const blocks = [...xml.matchAll(/<entry>([\s\S]*?)<\/entry>/g)];
     return blocks.map(([,block]) => {
         const id = tag(block,'yt:videoId');
         const published = Date.parse(tag(block,'published'));
-        if (!/^[\w-]{11}$/.test(id) || !Number.isFinite(published)) throw new Error('YouTube-video bevat ongeldige gegevens.');
-        return {id, title:tag(block,'title') || 'Nieuwe video', published, url:`https://www.youtube.com/watch?v=${id}`, image:`https://i.ytimg.com/vi/${id}/hqdefault.jpg`};
+        if (!/^[\w-]{11}$/.test(id) || !Number.isFinite(published)) throw new Error(tr("YouTube-video bevat ongeldige gegevens."));
+        return {id, title:tag(block,'title') || tr("Nieuwe video"), published, url:`https://www.youtube.com/watch?v=${id}`, image:`https://i.ytimg.com/vi/${id}/hqdefault.jpg`};
     });
 }
 async function youtube(row) {
@@ -85,14 +86,14 @@ async function youtube(row) {
         id = html.match(/<link[^>]+href=["']https:\/\/www\.youtube\.com\/channel\/(UC[\w-]{22})["']/)?.[1]
             || html.match(/<meta[^>]+itemprop=["']identifier["'][^>]+content=["'](UC[\w-]{22})["']/)?.[1]
             || html.match(/"channelMetadataRenderer"\s*:\s*\{[^}]*?"externalId"\s*:\s*"(UC[\w-]{22})"/)?.[1];
-        if (!id) throw new Error('YouTube-kanaal-ID niet gevonden. Gebruik /notify youtube-id met het UC-kanaal-ID uit YouTube Studio.');
+        if (!id) throw new Error(tr("YouTube-kanaal-ID niet gevonden. Gebruik /notify youtube-id met het UC-kanaal-ID uit YouTube Studio."));
     }
     const xml = await request(`https://www.youtube.com/feeds/videos.xml?channel_id=${id}`,{},false);
     return {resolvedId:id,items:parseFeed(xml,id)};
 }
 function readTokens() {
     try { return JSON.parse(fs.readFileSync(tokenPath,'utf8')); }
-    catch (error) { if (error.code === 'ENOENT') return {}; throw new Error('TikTok-koppelbestand is ongeldig; herstel het bestand.'); }
+    catch (error) { if (error.code === 'ENOENT') return {}; throw new Error(tr("TikTok-koppelbestand is ongeldig; herstel het bestand.")); }
 }
 function saveToken(username, token) {
     const all = readTokens(); all[username] = token;
@@ -102,41 +103,41 @@ function saveToken(username, token) {
     fs.renameSync(tmp,tokenPath);
 }
 async function tokenRequest(fields) {
-    if (!process.env.TIKTOK_CLIENT_KEY || !process.env.TIKTOK_CLIENT_SECRET) throw new Error('TikTok-appgegevens ontbreken in .env; zie NOTIFY-HANDLEIDING.md.');
+    if (!process.env.TIKTOK_CLIENT_KEY || !process.env.TIKTOK_CLIENT_SECRET) throw new Error(tr("TikTok-appgegevens ontbreken in .env; zie NOTIFY-HANDLEIDING.md."));
     return request('https://open.tiktokapis.com/v2/oauth/token/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({client_key:process.env.TIKTOK_CLIENT_KEY,client_secret:process.env.TIKTOK_CLIENT_SECRET,...fields})});
 }
 function tokenRecord(data, previous = {}) {
     const scopes = (data.scope || previous.scope || '').split(',');
-    if (!data.access_token || !Number.isFinite(Number(data.expires_in)) || Number(data.expires_in) <= 0 || !['video.list','user.info.basic','user.info.profile'].every(s => scopes.includes(s))) throw new Error('TikTok-toestemming mist vereiste scopes. Koppel opnieuw met alle aangevraagde rechten.');
+    if (!data.access_token || !Number.isFinite(Number(data.expires_in)) || Number(data.expires_in) <= 0 || !['video.list','user.info.basic','user.info.profile'].every(s => scopes.includes(s))) throw new Error(tr("TikTok-toestemming mist vereiste scopes. Koppel opnieuw met alle aangevraagde rechten."));
     return {...previous,...data,expires_at:Date.now()+Number(data.expires_in)*1000};
 }
 async function tiktok(row) {
     let token = readTokens()[row.account];
-    if (!token) throw new Error('Wacht op TikTok-accountkoppeling. Zie NOTIFY-HANDLEIDING.md.');
+    if (!token) throw new Error(tr("Wacht op TikTok-accountkoppeling. Zie NOTIFY-HANDLEIDING.md."));
     if (!Number.isFinite(token.expires_at) || token.expires_at < Date.now()+300000) {
-        if (!token.refresh_token) throw new Error('TikTok-toestemming verlopen. Koppel het account opnieuw.');
+        if (!token.refresh_token) throw new Error(tr("TikTok-toestemming verlopen. Koppel het account opnieuw."));
         token = tokenRecord(await tokenRequest({grant_type:'refresh_token',refresh_token:token.refresh_token}),token);
         // Persist rotated refresh tokens before any further network operation.
         saveToken(row.account,token);
     }
     const headers = {Authorization:`Bearer ${token.access_token}`,'Content-Type':'application/json'};
     const profile = await request('https://open.tiktokapis.com/v2/user/info/?fields=open_id,username',{headers});
-    if (profile.data?.user?.username?.toLowerCase() !== row.account || profile.data?.user?.open_id !== token.open_id) throw new Error('TikTok-accountnaam gewijzigd of koppeling komt niet overeen. Koppel opnieuw.');
+    if (profile.data?.user?.username?.toLowerCase() !== row.account || profile.data?.user?.open_id !== token.open_id) throw new Error(tr("TikTok-accountnaam gewijzigd of koppeling komt niet overeen. Koppel opnieuw."));
     const items = [];
     let cursor;
     for (let page=0;page<50;page++) {
         const data = await request('https://open.tiktokapis.com/v2/video/list/?fields=id,title,create_time,cover_image_url',{method:'POST',headers,body:JSON.stringify({max_count:20,...(cursor ? {cursor} : {})})});
-        if (!Array.isArray(data.data?.videos)) throw new Error('TikTok gaf geen geldige videolijst terug.');
+        if (!Array.isArray(data.data?.videos)) throw new Error(tr("TikTok gaf geen geldige videolijst terug."));
         const batch = data.data.videos.map(v => {
-            if (!/^\d+$/.test(v.id) || !Number.isFinite(v.create_time)) throw new Error('TikTok-video bevat ongeldige gegevens.');
-            return {id:v.id,title:v.title || 'Nieuwe TikTok-video',published:v.create_time*1000,url:`https://www.tiktok.com/@${row.account}/video/${v.id}`,image:/^https:\/\//.test(v.cover_image_url || '') ? v.cover_image_url : undefined};
+            if (!/^\d+$/.test(v.id) || !Number.isFinite(v.create_time)) throw new Error(tr("TikTok-video bevat ongeldige gegevens."));
+            return {id:v.id,title:v.title || tr("Nieuwe TikTok-video"),published:v.create_time*1000,url:`https://www.tiktok.com/@${row.account}/video/${v.id}`,image:/^https:\/\//.test(v.cover_image_url || '') ? v.cover_image_url : undefined};
         });
         items.push(...batch);
         if (!data.data.has_more || row.baseline_at === null || batch.some(v => v.published < row.baseline_at)) return {items};
-        if (!data.data.cursor || data.data.cursor === cursor) throw new Error('TikTok-paginering is ongeldig.');
+        if (!data.data.cursor || data.data.cursor === cursor) throw new Error(tr("TikTok-paginering is ongeldig."));
         cursor = data.data.cursor;
     }
-    throw new Error('Te veel TikTok-pagina’s; koppel opnieuw of vraag beheer om hulp.');
+    throw new Error(tr("Te veel TikTok-pagina’s; koppel opnieuw of vraag beheer om hulp."));
 }
 module.exports = {account,parseFeed,youtube,tiktok,request,readTokens,saveToken,tokenRequest,tokenRecord};
 

@@ -1,3 +1,4 @@
+const { tr } = require("../utils/localization");
 const { db } = require('./database');
 const economy = require('./economy');
 const PACKAGES = Object.freeze({ 1: 500, 3: 1300, 7: 2700 });
@@ -26,15 +27,15 @@ const reserve = db.transaction((id,guild,user,role,days,source) => {
     init();
     const existing = get(id);
     if (existing) {
-        if (existing.guild_id !== guild || existing.user_id !== user) throw new Error('Deze bevestiging is niet van jou.');
+        if (existing.guild_id !== guild || existing.user_id !== user) throw new Error(tr("Deze bevestiging is niet van jou."));
         return existing;
     }
-    if (!Object.hasOwn(PACKAGES,days) || !['wallet','bank'].includes(source)) throw new Error('Ongeldig winkelpakket of betaalmiddel.');
-    if (pending(guild,user)) throw new Error('Een eerdere aankoop wordt nog verwerkt. Bekijk /store actie:status.');
+    if (!Object.hasOwn(PACKAGES,days) || !['wallet','bank'].includes(source)) throw new Error(tr("Ongeldig winkelpakket of betaalmiddel."));
+    if (pending(guild,user)) throw new Error(tr("Een eerdere aankoop wordt nog verwerkt. Bekijk /store actie:status."));
     const price=PACKAGES[days];
     economy.getOrCreate(user,guild);
     const paid=db.prepare(`UPDATE economy SET ${source}=${source}-? WHERE guild_id=? AND user_id=? AND ${source}>=?`).run(price,guild,user,price);
-    if (!paid.changes) throw new Error(`Onvoldoende spelgeld op je ${source==='bank'?'bankrekening':'portemonnee'}. Je hebt €${price} nodig.`);
+    if (!paid.changes) throw new Error(tr("Onvoldoende spelgeld op je {0}. Je hebt €{1} nodig.", source==='bank'?tr("bankrekening"):tr("portemonnee"), price));
     db.prepare("INSERT INTO store_orders (id,guild_id,user_id,role_id,days,price,source,status,created_at) VALUES (?,?,?,?,?,?,?,'pending',?)")
         .run(id,guild,user,role,days,price,source,Date.now());
     return get(id);

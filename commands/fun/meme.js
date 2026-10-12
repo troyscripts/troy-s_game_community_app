@@ -1,7 +1,8 @@
+const { tr, send } = require("../../utils/localization");
 const {
     SlashCommandBuilder,
     EmbedBuilder
-} = require("discord.js");
+} = require("../../utils/discord");
 
 const config =
     require("../../config/config");
@@ -83,7 +84,7 @@ module.exports = {
 
 
 
-            return interaction.editReply({
+            return send(interaction, "editReply", {
 
                 embeds:[
 
@@ -102,10 +103,10 @@ module.exports = {
 
 
 
-            return interaction.editReply({
+            return send(interaction, "editReply", {
 
                 content:
-                "❌ Er kon geen meme worden opgehaald."
+                tr("❌ Er kon geen meme worden opgehaald.")
 
             });
 

@@ -1,7 +1,8 @@
+const { tr, send } = require("../../utils/localization");
 const {
     SlashCommandBuilder,
     EmbedBuilder
-} = require("discord.js");
+} = require("../../utils/discord");
 
 const levels =
     require("../../database/levels");
@@ -83,7 +84,7 @@ module.exports = {
 
 
                 .setTitle(
-                    "🔄 XP gereset"
+                    tr("🔄 XP gereset")
                 )
 
 
@@ -92,7 +93,7 @@ module.exports = {
                     {
 
                         name:
-                        "Gebruiker",
+                        tr("Gebruiker"),
 
                         value:
                         `${user}`,
@@ -105,7 +106,7 @@ module.exports = {
                     {
 
                         name:
-                        "Uitgevoerd door",
+                        tr("Uitgevoerd door"),
 
                         value:
                         `${interaction.user}`,
@@ -118,10 +119,10 @@ module.exports = {
                     {
 
                         name:
-                        "Nieuwe status",
+                        tr("Nieuwe status"),
 
                         value:
-                        "Level 1\nXP 0\nBerichten 0"
+                        tr("Level 1\nXP 0\nBerichten 0")
 
                     }
 
@@ -140,7 +141,7 @@ module.exports = {
 
 
 
-        return interaction.reply({
+        return send(interaction, "reply", {
 
             embeds:[
 

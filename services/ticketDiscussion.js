@@ -1,3 +1,4 @@
+const { tr, send } = require("../utils/localization");
 const { ChannelType, PermissionFlagsBits } = require('discord.js');
 const tickets = require('../database/tickets');
 const config = require('../config/config');
@@ -8,7 +9,7 @@ async function createStaffThread(channel) {
         name: `staff-${channel.name}`.slice(0, 100), type: ChannelType.PrivateThread,
         invitable: false, autoArchiveDuration: 1440, reason: 'Privéoverleg voor ticketstaff'
     });
-    await thread.send({ content: '💬 Bespreek dit ticket hier met staff. Dit overleg wordt niet opgenomen in het transcript voor de ticketmaker.', allowedMentions: { parse: [] } });
+    await send(thread, "send", { content: tr("💬 Bespreek dit ticket hier met staff. Dit overleg wordt niet opgenomen in het transcript voor de ticketmaker."), allowedMentions: { parse: [] } });
     return thread;
 }
 function canDiscuss(ticket, member, channel) {
@@ -28,7 +29,7 @@ async function getStaffThread(channel, ticket) {
             throw error;
         });
         if (thread) {
-            if (thread.type !== ChannelType.PrivateThread || thread.parentId !== channel.id) throw new Error('Ongeldige staffthread.');
+            if (thread.type !== ChannelType.PrivateThread || thread.parentId !== channel.id) throw new Error(tr("Ongeldige staffthread."));
             return thread;
         }
     }

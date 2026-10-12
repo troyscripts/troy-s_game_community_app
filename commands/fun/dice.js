@@ -1,7 +1,8 @@
+const { tr, send } = require("../../utils/localization");
 const {
     SlashCommandBuilder,
     EmbedBuilder
-} = require("discord.js");
+} = require("../../utils/discord");
 
 const config =
     require("../../config/config");
@@ -83,7 +84,9 @@ module.exports = {
 
                 .setDescription(
 
-                    `${interaction.user} heeft gegooid:\n\n` +
+                    `${interaction.user} heeft gegooid:
+
+` +
 
                     `🎲 **${roll}** van **${sides}**`
 
@@ -102,7 +105,7 @@ module.exports = {
 
 
 
-        return interaction.reply({
+        return send(interaction, "reply", {
 
             embeds:[
 

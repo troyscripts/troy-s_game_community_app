@@ -1,10 +1,11 @@
+const { tr, send, pair } = require("../../utils/localization");
 const {
     SlashCommandBuilder,
     PermissionFlagsBits,
     EmbedBuilder,
     MessageFlags,
     ChannelType
-} = require("discord.js");
+} = require("../../utils/discord");
 
 const config =
     require("../../config/config");
@@ -78,6 +79,11 @@ module.exports = {
 
 
 
+        .addBooleanOption(o => o.setName('vertalen')
+            .setDescription('Vertaal je bericht naar het Engels en plaats beide talen. Standaard: nee.'))
+        .addStringOption(o => o.setName('engels')
+            .setDescription('Optioneel: eigen Engelse vertaling; plaats deze onder je bericht.').setMaxLength(4000))
+
         .setDefaultMemberPermissions(
 
             null
@@ -99,7 +105,7 @@ module.exports = {
         await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
 
-        const message =
+        let message =
             interaction.options.getString(
                 "bericht"
             );
@@ -132,10 +138,10 @@ module.exports = {
         ) {
 
 
-            return interaction.editReply({
+            return send(interaction, "editReply", {
 
                 content:
-                "❌ Je hebt geen toestemming om in dat kanaal te schrijven."
+                tr("❌ Je hebt geen toestemming om in dat kanaal te schrijven.")
 
             });
 
@@ -156,10 +162,10 @@ module.exports = {
         ) {
 
 
-            return interaction.editReply({
+            return send(interaction, "editReply", {
 
                 content:
-                "❌ De bot kan in dat kanaal geen bericht van dit type plaatsen."
+                tr("❌ De bot kan in dat kanaal geen bericht van dit type plaatsen.")
 
             });
 
@@ -167,6 +173,16 @@ module.exports = {
         }
 
 
+
+        const manualEnglish = interaction.options.getString('engels');
+        if (interaction.options.getBoolean('vertalen') || manualEnglish !== null) {
+            try {
+                const english = await require('../../services/textTranslation').translate(message, manualEnglish);
+                message = pair(message, english);
+            } catch (error) {
+                return send(interaction, 'editReply', {content:error.message,allowedMentions:{parse:[]}});
+            }
+        }
 
         const payload = useEmbed
             ? {
@@ -184,7 +200,7 @@ module.exports = {
                         .setFooter({
 
                             text:
-                            `Verstuurd door ${interaction.user.tag}`
+                            tr("Verstuurd door {0}", interaction.user.tag)
 
                         })
 
@@ -199,14 +215,14 @@ module.exports = {
 
 
 
-        await targetChannel.send(payload);
+        await send(targetChannel, "send", payload);
 
 
 
-        await interaction.editReply({
+        await send(interaction, "editReply", {
 
             content:
-            `✅ Bericht verstuurd in ${targetChannel}.`
+            tr("✅ Bericht verstuurd in {0}.", targetChannel)
 
         });
 

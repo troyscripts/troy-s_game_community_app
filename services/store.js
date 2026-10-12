@@ -1,3 +1,4 @@
+const { tr, send } = require("../utils/localization");
 const { MessageFlags, PermissionFlagsBits: P } = require('discord.js');
 const { randomBytes } = require('node:crypto');
 const store = require('../database/store');
@@ -19,19 +20,19 @@ async function guarded(i,fn) {
     try{return await locked(i.guildId,i.user.id,fn);}
     catch(e){
         if(!e.storeInput)logger.warn(`Store [${i.guildId}/${i.user.id}]: ${e.message}`);
-        return i.editReply({content:e.storeInput?e.message:'De winkel kon deze actie nog niet afronden. Kijk bij /store actie:status; een opgeslagen aankoop wordt automatisch verder verwerkt.',allowedMentions:{parse:[]}});
+        return send(i, "editReply", {content:e.storeInput?e.message:tr("De winkel kon deze actie nog niet afronden. Kijk bij /store actie:status; een opgeslagen aankoop wordt automatisch verder verwerkt."),allowedMentions:{parse:[]}});
     }
 }
 async function checkRole(guild,id) {
-    if(!id)fail('De winkel is nog niet ingesteld. Laat een beheerder Store.VIPRole instellen via /config.');
+    if(!id)fail(tr("De winkel is nog niet ingesteld. Laat een beheerder Store.VIPRole instellen via /config."));
     const role=await guild.roles.fetch(id);
-    if(!role)fail('De ingestelde VIP-rol bestaat niet meer.');
+    if(!role)fail(tr("De ingestelde VIP-rol bestaat niet meer."));
     const cfg=settings.getGuildConfig(guild.id);
     const reserved=[...Object.values(cfg.Roles||{}),...(cfg.StaffRoles||[]),cfg.Birthday?.Role,cfg.Welcome?.AutoRole];
     const unsafe=[P.Administrator,P.ManageGuild,P.ManageRoles,P.ManageChannels,P.KickMembers,P.BanMembers,P.ModerateMembers,P.ManageMessages,P.ManageWebhooks];
-    if(role.id===guild.id||role.managed||reserved.includes(id)||unsafe.some(bit=>role.permissions.has(bit)))fail('Gebruik een aparte VIP-rol zonder staff- of beheerrechten, niet een automatische leden- of verjaardagsrol.');
+    if(role.id===guild.id||role.managed||reserved.includes(id)||unsafe.some(bit=>role.permissions.has(bit)))fail(tr("Gebruik een aparte VIP-rol zonder staff- of beheerrechten, niet een automatische leden- of verjaardagsrol."));
     const me=await guild.members.fetchMe();
-    if(!me.permissions.has(P.ManageRoles)||me.roles.highest.comparePositionTo(role)<=0)fail('De bot heeft Rollen beheren nodig en zijn hoogste rol moet boven de VIP-rol staan.');
+    if(!me.permissions.has(P.ManageRoles)||me.roles.highest.comparePositionTo(role)<=0)fail(tr("De bot heeft Rollen beheren nodig en zijn hoogste rol moet boven de VIP-rol staan."));
     return role;
 }
 async function member(guild,user){return guild.members.fetch({user,force:true});}
@@ -39,17 +40,17 @@ async function cleanExpired(guild,user,m) {
     for(const v of store.memberships(guild.id,user)){
         if(v.expires_at>Date.now())continue;
         const role=await guild.roles.fetch(v.role_id);
-        if(role&&m?.roles.cache.has(v.role_id))await m.roles.remove(v.role_id,'Gekochte VIP-tijd afgelopen');
+        if(role&&m?.roles.cache.has(v.role_id))await m.roles.remove(v.role_id,"Gekochte VIP-tijd afgelopen");
         store.expire(guild.id,user,v.role_id);
     }
 }
 async function deliver(guild,o) {
     if(o.status!=='pending')return o;
     let m;
-    try{m=await member(guild,o.user_id);}catch(e){if(Number(e.code)===10007)return store.refund(o.id,'Lid is niet meer in deze server.');throw e;}
+    try{m=await member(guild,o.user_id);}catch(e){if(Number(e.code)===10007)return store.refund(o.id,tr("Lid is niet meer in deze server."));throw e;}
     try{
         await checkRole(guild,o.role_id);
-        if(!m.roles.cache.has(o.role_id))await m.roles.add(o.role_id,'VIP gekocht in de economywinkel');
+        if(!m.roles.cache.has(o.role_id))await m.roles.add(o.role_id,"VIP gekocht in de economywinkel");
         return store.complete(o.id);
     }catch(e){
         // Confirm the actual role state after an API error before refunding.
@@ -64,64 +65,64 @@ async function deliver(guild,o) {
     }
 }
 function receipt(o){
-    if(o.status==='complete')return `✅ **VIP-aankoop geslaagd!**\n${o.days} dag(en) voor **${money(o.price)}**, betaald uit je ${o.source==='bank'?'bankrekening':'portemonnee'}.\nVIP geldig tot <t:${Math.floor(o.expires_at/1000)}:f> (<t:${Math.floor(o.expires_at/1000)}:R>).`;
-    if(o.status==='refunded')return `De VIP-aankoop kon niet worden geleverd. **${money(o.price)} is teruggestort** op je ${o.source==='bank'?'bankrekening':'portemonnee'}.\n${o.note||''}`;
-    return '⏳ Je betaling is opgeslagen. De roltoekenning wordt opnieuw geprobeerd; er wordt niet nogmaals afgeschreven. Bekijk /store actie:status.';
+    if(o.status==='complete')return tr("✅ **VIP-aankoop geslaagd!**\n{0} dag(en) voor **{1}**, betaald uit je {2}.\nVIP geldig tot <t:{3}:f> (<t:{4}:R>).", o.days, money(o.price), o.source==='bank'?tr("bankrekening"):tr("portemonnee"), Math.floor(o.expires_at/1000), Math.floor(o.expires_at/1000));
+    if(o.status==='refunded')return tr("De VIP-aankoop kon niet worden geleverd. **{0} is teruggestort** op je {1}.\n{2}", money(o.price), o.source==='bank'?tr("bankrekening"):tr("portemonnee"), o.note||'');
+    return tr("⏳ Je betaling is opgeslagen. De roltoekenning wordt opnieuw geprobeerd; er wordt niet nogmaals afgeschreven. Bekijk /store actie:status.");
 }
 async function buy(i,days,source,nonce){
     const previous=store.get(nonce);
-    if(previous){if(previous.guild_id!==i.guildId||previous.user_id!==i.user.id)fail('Deze bevestiging is niet van jou.');return i.editReply({content:receipt(previous),allowedMentions:{parse:[]}});}
+    if(previous){if(previous.guild_id!==i.guildId||previous.user_id!==i.user.id)fail(tr("Deze bevestiging is niet van jou."));return send(i, "editReply", {content:receipt(previous),allowedMentions:{parse:[]}});}
     const cfg=settings.getGuildConfig(i.guildId);
-    if(!cfg.Economy.Enabled)fail('De economie staat uit in deze server.');
+    if(!cfg.Economy.Enabled)fail(tr("De economie staat uit in deze server."));
     const role=await checkRole(i.guild,cfg.Store?.VIPRole);
     let m=await member(i.guild,i.user.id);
-    if(m.user.bot)fail('Bots kunnen geen VIP kopen.');
-    if(store.pending(i.guildId,i.user.id))fail('Een eerdere aankoop wordt nog verwerkt. Bekijk /store actie:status.');
+    if(m.user.bot)fail(tr("Bots kunnen geen VIP kopen."));
+    if(store.pending(i.guildId,i.user.id))fail(tr("Een eerdere aankoop wordt nog verwerkt. Bekijk /store actie:status."));
     await cleanExpired(i.guild,i.user.id,m);
     m=await member(i.guild,i.user.id);
     const active=store.memberships(i.guildId,i.user.id).filter(v=>v.expires_at>Date.now());
-    if(active.some(v=>v.role_id!==role.id))fail('Je hebt nog VIP op een eerder ingestelde winkelrol. Wacht tot die afloopt voordat je een nieuwe rol koopt.');
-    if(m.roles.cache.has(role.id)&&!active.some(v=>v.role_id===role.id))fail('Je hebt deze VIP-rol al buiten de winkel gekregen. De winkel neemt die bestaande rol niet over.');
+    if(active.some(v=>v.role_id!==role.id))fail(tr("Je hebt nog VIP op een eerder ingestelde winkelrol. Wacht tot die afloopt voordat je een nieuwe rol koopt."));
+    if(m.roles.cache.has(role.id)&&!active.some(v=>v.role_id===role.id))fail(tr("Je hebt deze VIP-rol al buiten de winkel gekregen. De winkel neemt die bestaande rol niet over."));
     // Settings may have changed while Discord data was being fetched.
     const latest=settings.getGuildConfig(i.guildId);
-    if(!latest.Economy.Enabled||latest.Store?.VIPRole!==role.id)fail('De winkelinstellingen zijn gewijzigd. Open /store opnieuw.');
+    if(!latest.Economy.Enabled||latest.Store?.VIPRole!==role.id)fail(tr("De winkelinstellingen zijn gewijzigd. Open /store opnieuw."));
     let order;
     try{order=store.reserve(nonce,i.guildId,i.user.id,role.id,days,source);}catch(e){fail(e.message);}
     try{order=await deliver(i.guild,order);}catch(e){logger.warn(`VIP-levering ${order.id}: ${e.message}. Wordt opnieuw geprobeerd.`);}
-    return i.editReply({content:receipt(order),allowedMentions:{parse:[]}});
+    return send(i, "editReply", {content:receipt(order),allowedMentions:{parse:[]}});
 }
 async function show(i,action,source){
     const balance=economy.getOrCreate(i.user.id,i.guildId);
     const memberships=store.memberships(i.guildId,i.user.id);
     const pending=store.pending(i.guildId,i.user.id);
     if(action==='status'){
-        const text=memberships.map(v=>`<@&${v.role_id}>: ${v.expires_at>Date.now()?`tot <t:${Math.floor(v.expires_at/1000)}:f> (<t:${Math.floor(v.expires_at/1000)}:R>)`:'verlopen; rolverwijdering wordt verwerkt'}`).join('\n');
-        return i.editReply({content:`💎 **Mijn VIP**\n${text||'Je hebt geen lopend VIP-pakket uit de winkel.'}${pending?'\n⏳ Een betaalde aankoop wacht nog op roltoekenning.':''}\n\nPortemonnee: ${money(balance.wallet)} · Bank: ${money(balance.bank)}`,allowedMentions:{parse:[]}});
+        const text=memberships.map(v=>`<@&${v.role_id}>: ${v.expires_at>Date.now()?tr("tot <t:{0}:f> (<t:{1}:R>)", Math.floor(v.expires_at/1000), Math.floor(v.expires_at/1000)):tr("verlopen; rolverwijdering wordt verwerkt")}`).join('\n');
+        return send(i, "editReply", {content:tr("💎 **Mijn VIP**\n{0}{1}\n\nPortemonnee: {2} · Bank: {3}", text||tr("Je hebt geen lopend VIP-pakket uit de winkel."), pending?tr("\n⏳ Een betaalde aankoop wacht nog op roltoekenning."):'', money(balance.wallet), money(balance.bank)),allowedMentions:{parse:[]}});
     }
     if(action==='geschiedenis'){
-        const names={complete:'Geleverd',pending:'In behandeling',refunded:'Terugbetaald'};
-        return i.editReply({content:'🧾 **Laatste 10 aankopen**\n'+(store.history(i.guildId,i.user.id).map(o=>`<t:${Math.floor(o.created_at/1000)}:d> · VIP ${o.days} dag(en) · ${money(o.price)} · ${names[o.status]}`).join('\n')||'Je hebt nog geen aankopen.'),allowedMentions:{parse:[]}});
+        const names={complete:tr("Geleverd"),pending:tr("In behandeling"),refunded:tr("Terugbetaald")};
+        return send(i, "editReply", {content:tr("🧾 **Laatste 10 aankopen**\n")+(store.history(i.guildId,i.user.id).map(o=>tr("<t:{0}:d> · VIP {1} dag(en) · {2} · {3}", Math.floor(o.created_at/1000), o.days, money(o.price), names[o.status])).join('\n')||tr("Je hebt nog geen aankopen.")),allowedMentions:{parse:[]}});
     }
     const cfg=settings.getGuildConfig(i.guildId);
     const ready=Boolean(cfg.Economy.Enabled&&cfg.Store?.VIPRole);
-    return i.editReply({embeds:[{title:'🛍️ Community Store',color:0xF1C40F,description:
-        '**💎 VIP-pakketten**\n1 dag — **€500**\n3 dagen — **€1.300** (bespaar €200)\n7 dagen — **€2.700** (bespaar €800)\n\n'+
-        'VIP geeft 2× de bestaande chat-XP, counting-XP, daily- en workbeloningen wanneer bonusbeloningen aanstaan. Verlengingen sluiten aan op je huidige eindtijd.\n\n'+
-        `Portemonnee: **${money(balance.wallet)}** · Bank: **${money(balance.bank)}**\nBetalen uit: **${source==='bank'?'bankrekening':'portemonnee'}**.\n`+
-        'Je bevestigt de aankoop voordat er geld wordt afgeschreven.\nBekijk ook `/store actie:status` en `/store actie:geschiedenis`.'+
-        (ready?'':'\n\nDe winkel is nog niet ingesteld of de economie staat uit.')}],
-        components:ready?[{type:1,components:Object.entries(store.PACKAGES).map(([days,price])=>({type:2,style:1,label:`VIP ${days} dag${days==='1'?'':'en'} · ${money(price)}`,custom_id:`store:select:${i.user.id}:${days}:${source}`}))}]:[],allowedMentions:{parse:[]}});
+    return send(i, "editReply", {embeds:[{title:'🛍️ Community Store',color:0xF1C40F,description:
+        tr("**💎 VIP-pakketten**\n1 dag — **€500**\n3 dagen — **€1.300** (bespaar €200)\n7 dagen — **€2.700** (bespaar €800)\n\n")+
+        tr("VIP geeft 2× de bestaande chat-XP, counting-XP, daily- en workbeloningen wanneer bonusbeloningen aanstaan. Verlengingen sluiten aan op je huidige eindtijd.\n\n")+
+        tr("Portemonnee: **{0}** · Bank: **{1}**\nBetalen uit: **{2}**.\n", money(balance.wallet), money(balance.bank), source==='bank'?tr("bankrekening"):tr("portemonnee"))+
+        tr("Je bevestigt de aankoop voordat er geld wordt afgeschreven.\nBekijk ook `/store actie:status` en `/store actie:geschiedenis`.")+
+        (ready?'':tr("\n\nDe winkel is nog niet ingesteld of de economie staat uit."))}],
+        components:ready?[{type:1,components:Object.entries(store.PACKAGES).map(([days,price])=>({type:2,style:1,label:tr("VIP {0} dag{1} · {2}", days, days==='1'?'':'en', money(price)),custom_id:`store:select:${i.user.id}:${days}:${source}`}))}]:[],allowedMentions:{parse:[]}});
 }
 async function command(client,i){return guarded(i,()=>show(i,i.options.getString('actie')||'winkel',i.options.getString('betaalmiddel')||'wallet'));}
 async function button(client,i){return guarded(i,async()=>{
     const [,action,owner,daysText,source,nonce]=i.customId.split(':');
-    if(owner!==i.user.id)fail('Deze winkelknop is niet van jou. Open zelf /store.');
+    if(owner!==i.user.id)fail(tr("Deze winkelknop is niet van jou. Open zelf /store."));
     const days=Number(daysText);
-    if(!Object.hasOwn(store.PACKAGES,days)||!['wallet','bank'].includes(source))fail('Ongeldige winkelknop.');
-    if(action==='select')return i.editReply({content:`💎 **Aankoop bevestigen**\nVIP voor **${days} dag(en)** kost **${money(store.PACKAGES[days])} spelgeld** uit je ${source==='bank'?'bankrekening':'portemonnee'}. Bestaande winkel-VIP wordt verlengd.`,
-        components:[{type:1,components:[{type:2,style:3,label:'Kopen / verlengen',custom_id:`store:buy:${owner}:${days}:${source}:${randomBytes(12).toString('hex')}`},{type:2,style:2,label:'Annuleren',custom_id:`store:cancel:${owner}:${days}:${source}`}]}],allowedMentions:{parse:[]}});
-    if(action==='cancel')return i.editReply('Aankoop niet uitgevoerd. Er is niets afgeschreven.');
-    if(action!=='buy'||! /^[a-f0-9]{24}$/.test(nonce||''))fail('Ongeldige aankoopbevestiging.');
+    if(!Object.hasOwn(store.PACKAGES,days)||!['wallet','bank'].includes(source))fail(tr("Ongeldige winkelknop."));
+    if(action==='select')return send(i, "editReply", {content:tr("💎 **Aankoop bevestigen**\nVIP voor **{0} dag(en)** kost **{1} spelgeld** uit je {2}. Bestaande winkel-VIP wordt verlengd.", days, money(store.PACKAGES[days]), source==='bank'?tr("bankrekening"):tr("portemonnee")),
+        components:[{type:1,components:[{type:2,style:3,label:tr("Kopen / verlengen"),custom_id:`store:buy:${owner}:${days}:${source}:${randomBytes(12).toString('hex')}`},{type:2,style:2,label:tr("Annuleren"),custom_id:`store:cancel:${owner}:${days}:${source}`}]}],allowedMentions:{parse:[]}});
+    if(action==='cancel')return send(i, "editReply", tr("Aankoop niet uitgevoerd. Er is niets afgeschreven."));
+    if(action!=='buy'||! /^[a-f0-9]{24}$/.test(nonce||''))fail(tr("Ongeldige aankoopbevestiging."));
     return buy(i,days,source,nonce);
 });}
 async function tick(client){
@@ -135,7 +136,7 @@ async function tick(client){
             if(m)for(const v of store.memberships(guild.id,row.user_id)){
                 if(v.expires_at>Date.now()&&!m.roles.cache.has(v.role_id)){
                     await checkRole(guild,v.role_id);
-                    await m.roles.add(v.role_id,'Lopende winkel-VIP hersteld');
+                    await m.roles.add(v.role_id,"Lopende winkel-VIP hersteld");
                 }
             }
         }).catch(e=>logger.warn(`VIP-controle [${row.guild_id}/${row.user_id}]: ${e.message}. Volgende controle opnieuw.`));

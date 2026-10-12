@@ -1,9 +1,10 @@
-const { MessageFlags } = require("discord.js");
+const { tr, send } = require("../../utils/localization");
+const { MessageFlags } = require("../../utils/discord");
 const {
     SlashCommandBuilder,
     EmbedBuilder,
     PermissionFlagsBits
-} = require("discord.js");
+} = require("../../utils/discord");
 
 const config =
     require("../../config/config");
@@ -74,10 +75,10 @@ module.exports = {
         if (!member) {
 
 
-            return interaction.editReply({
+            return send(interaction, "editReply", {
 
                 content:
-                "❌ Deze gebruiker zit niet meer op de server.",
+                tr("❌ Deze gebruiker zit niet meer op de server."),
 
                 flags: MessageFlags.Ephemeral
 
@@ -93,10 +94,10 @@ module.exports = {
         ) {
 
 
-            return interaction.editReply({
+            return send(interaction, "editReply", {
 
                 content:
-                "❌ Deze gebruiker heeft momenteel geen timeout.",
+                tr("❌ Deze gebruiker heeft momenteel geen timeout."),
 
                 flags: MessageFlags.Ephemeral
 
@@ -113,10 +114,10 @@ module.exports = {
         ) {
 
 
-            return interaction.editReply({
+            return send(interaction, "editReply", {
 
                 content:
-                "❌ Je kunt deze gebruiker niet modereren. Controleer de rollenhiërarchie van jou en de bot."
+                tr("❌ Je kunt deze gebruiker niet modereren. Controleer de rollenhiërarchie van jou en de bot.")
 
             });
 
@@ -142,7 +143,7 @@ module.exports = {
 
 
                 .setTitle(
-                    "🔊 Timeout verwijderd"
+                    tr("🔊 Timeout verwijderd")
                 )
 
 
@@ -151,7 +152,7 @@ module.exports = {
                     {
 
                         name:
-                        "Gebruiker",
+                        tr("Gebruiker"),
 
                         value:
                         `${user}`,
@@ -164,7 +165,7 @@ module.exports = {
                     {
 
                         name:
-                        "Uitgevoerd door",
+                        tr("Uitgevoerd door"),
 
                         value:
                         `${interaction.user}`,
@@ -188,7 +189,7 @@ module.exports = {
 
 
 
-        return interaction.editReply({
+        return send(interaction, "editReply", {
 
             embeds:[
 

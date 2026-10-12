@@ -1,10 +1,11 @@
+const { tr, send } = require("../../utils/localization");
 const {
     SlashCommandBuilder,
     EmbedBuilder,
     ButtonBuilder,
     ButtonStyle,
     ActionRowBuilder
-} = require("discord.js");
+} = require("../../utils/discord");
 
 const config =
     require("../../config/config");
@@ -79,7 +80,7 @@ module.exports = {
 
 
                 .setTitle(
-                    `🖼️ Avatar van ${user.tag}`
+                    tr("🖼️ Avatar van {0}", user.tag)
                 )
 
 
@@ -104,7 +105,7 @@ module.exports = {
             new ButtonBuilder()
 
                 .setLabel(
-                    "Open afbeelding"
+                    tr("Open afbeelding")
                 )
 
                 .setStyle(
@@ -128,7 +129,7 @@ module.exports = {
 
 
 
-        return interaction.reply({
+        return send(interaction, "reply", {
 
             embeds:[
 

@@ -1,3 +1,4 @@
+const { tr, send } = require("../../utils/localization");
 const dayjs = require("dayjs");
 const customParseFormat = require("dayjs/plugin/customParseFormat");
 const utc = require("dayjs/plugin/utc");
@@ -136,8 +137,8 @@ module.exports = {
             const scheduledAt = parseScheduledAt(date, time);
 
             if (!scheduledAt) {
-                return interaction.editReply({
-                    content: "❌ Gebruik een geldige datum en tijd, bijvoorbeeld `15-09-2026` en `19:30`."
+                return send(interaction, "editReply", {
+                    content: tr("❌ Gebruik een geldige datum en tijd, bijvoorbeeld `15-09-2026` en `19:30`.")
                 });
             }
 
@@ -150,10 +151,10 @@ module.exports = {
             });
 
             const updated = await refreshPublishedAgendas(client, guildId);
-            return interaction.editReply({
+            return send(interaction, "editReply", {
                 content:
-                    `✅ Agendapunt **#${id}** is toegevoegd voor <t:${scheduledAt}:F>.` +
-                    (updated ? ` ${updated} geplaatste agenda('s) bijgewerkt.` : "")
+                    tr("✅ Agendapunt **#{0}** is toegevoegd voor <t:{1}:F>.", id, scheduledAt) +
+                    (updated ? tr(" {0} geplaatste agenda('s) bijgewerkt.", updated) : "")
             });
         }
 
@@ -162,18 +163,18 @@ module.exports = {
             const item = agenda.getItem(id, guildId);
 
             if (!item) {
-                return interaction.editReply({
-                    content: `❌ Agendapunt **#${id}** bestaat niet in deze server.`
+                return send(interaction, "editReply", {
+                    content: tr("❌ Agendapunt **#{0}** bestaat niet in deze server.", id)
                 });
             }
 
             agenda.removeItem(id, guildId);
             const updated = await refreshPublishedAgendas(client, guildId);
 
-            return interaction.editReply({
+            return send(interaction, "editReply", {
                 content:
-                    `✅ Agendapunt **#${id} – ${item.title}** is verwijderd.` +
-                    (updated ? ` ${updated} geplaatste agenda('s) bijgewerkt.` : "")
+                    tr("✅ Agendapunt **#{0} – {1}** is verwijderd.", id, item.title) +
+                    (updated ? tr(" {0} geplaatste agenda('s) bijgewerkt.", updated) : "")
             });
         }
 
@@ -181,28 +182,28 @@ module.exports = {
             const channel = interaction.options.getChannel("kanaal") || interaction.channel;
 
             if (!channel?.isTextBased?.()) {
-                return interaction.editReply({
-                    content: "❌ Kies een geldig tekst- of aankondigingskanaal."
+                return send(interaction, "editReply", {
+                    content: tr("❌ Kies een geldig tekst- of aankondigingskanaal.")
                 });
             }
 
             if (!canPublishIn(channel, interaction.guild.members.me)) {
-                return interaction.editReply({
+                return send(interaction, "editReply", {
                     content:
-                        "❌ De bot mist in dat kanaal één of meer rechten: " +
-                        "Kanaal bekijken, Berichten verzenden of Links insluiten."
+                        tr("❌ De bot mist in dat kanaal één of meer rechten: ") +
+                        tr("Kanaal bekijken, Berichten verzenden of Links insluiten.")
                 });
             }
 
             const result = await publishAgenda(channel);
-            return interaction.editReply({
+            return send(interaction, "editReply", {
                 content: result.updated
-                    ? `✅ De bestaande YouTube-agenda in ${channel} is vernieuwd.`
-                    : `✅ De YouTube-agenda is geplaatst in ${channel}.`
+                    ? tr("✅ De bestaande YouTube-agenda in {0} is vernieuwd.", channel)
+                    : tr("✅ De YouTube-agenda is geplaatst in {0}.", channel)
             });
         }
 
-        return interaction.editReply({
+        return send(interaction, "editReply", {
             embeds: buildAgendaEmbeds(guildId)
         });
     }

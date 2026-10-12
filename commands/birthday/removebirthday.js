@@ -1,8 +1,9 @@
-const { MessageFlags } = require("discord.js");
+const { tr, send } = require("../../utils/localization");
+const { MessageFlags } = require("../../utils/discord");
 const {
     SlashCommandBuilder,
     EmbedBuilder
-} = require("discord.js");
+} = require("../../utils/discord");
 
 const config =
     require("../../config/config");
@@ -49,10 +50,10 @@ module.exports = {
         if (!existing) {
 
 
-            return interaction.reply({
+            return send(interaction, "reply", {
 
                 content:
-                "❌ Je hebt geen verjaardag ingesteld.",
+                tr("❌ Je hebt geen verjaardag ingesteld."),
 
                 flags: MessageFlags.Ephemeral
 
@@ -106,7 +107,7 @@ module.exports = {
 
 
 
-        return interaction.reply({
+        return send(interaction, "reply", {
 
             embeds:[
 

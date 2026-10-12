@@ -1,3 +1,4 @@
+const { tr } = require("../utils/localization");
 const config = require("../config/config");
 const defaults = require("../config/defaults");
 const logger = require("../utils/logger");
@@ -304,7 +305,7 @@ function normalizePath(input) {
         const level = requested.split(".").at(-1);
         return `Levels.Roles.${level}`;
     }
-    throw new Error("Onbekende instelling. Kies een instelling uit de keuzelijst.");
+    throw new Error(tr("Onbekende instelling. Kies een instelling uit de keuzelijst."));
 }
 
 function extractDiscordId(value) {
@@ -315,59 +316,59 @@ function extractDiscordId(value) {
 function parseValue(path, rawValue, currentValue) {
     const raw = String(rawValue).trim();
     if (path === "AIChat.Mode" && !["all", "mention"].includes(raw)) {
-        throw new Error("Gebruik all (alle berichten) of mention (alleen @bot).");
+        throw new Error(tr("Gebruik all (alle berichten) of mention (alleen @bot)."));
     }
     if (path === "Welcome.Message" && (!raw || raw.length > 4000)) {
-        throw new Error("Gebruik een tekst van 1 tot 4000 tekens.");
+        throw new Error(tr("Gebruik een tekst van 1 tot 4000 tekens."));
     }
     if (path === "AIChat.Personality" && raw.length > 2000) {
-        throw new Error("Gebruik maximaal 2000 tekens voor de persoonlijkheid.");
+        throw new Error(tr("Gebruik maximaal 2000 tekens voor de persoonlijkheid."));
     }
     if (["AIChat.CooldownSeconds", "AIChat.HistoryTurns"].includes(path)) {
         const n = Number(raw);
         const min = path.endsWith("HistoryTurns") ? 0 : 1;
         const max = path.endsWith("HistoryTurns") ? 8 : 300;
         if (!Number.isInteger(n) || n < min || n > max) {
-            throw new Error(`Gebruik een heel getal tussen ${min} en ${max}.`);
+            throw new Error(tr("Gebruik een heel getal tussen {0} en {1}.", min, max));
         }
     }
 
     if (typeof currentValue === "boolean") {
         const normalized = raw.toLowerCase();
-        if (["ja", "true", "aan", "1"].includes(normalized)) return true;
-        if (["nee", "false", "uit", "0"].includes(normalized)) return false;
-        throw new Error("Gebruik `ja` of `nee` voor deze instelling.");
+        if (["ja", "yes", "true", "aan", "on", "1"].includes(normalized)) return true;
+        if (["nee", "no", "false", "uit", "off", "0"].includes(normalized)) return false;
+        throw new Error(tr("Gebruik `ja` of `nee` voor deze instelling."));
     }
 
     if (typeof currentValue === "number") {
         const number = Number(raw.replace(",", "."));
         if (!Number.isFinite(number) || number < 0) {
-            throw new Error("Vul een geldig positief getal of 0 in.");
+            throw new Error(tr("Vul een geldig positief getal of 0 in."));
         }
         return number;
     }
 
     if (Array.isArray(currentValue)) {
-        if (["leeg", "geen"].includes(raw.toLowerCase())) return [];
+        if (["leeg", "geen", "empty", "none"].includes(raw.toLowerCase())) return [];
 
         let values;
         if (raw.startsWith("[")) {
             try {
                 values = JSON.parse(raw);
             } catch {
-                throw new Error("De lijst is geen geldige JSON-lijst.");
+                throw new Error(tr("De lijst is geen geldige JSON-lijst."));
             }
         } else {
             values = raw.split(path === "Birthday.Messages" ? "|" : ",");
         }
 
-        if (!Array.isArray(values)) throw new Error("De waarde moet een lijst zijn.");
+        if (!Array.isArray(values)) throw new Error(tr("De waarde moet een lijst zijn."));
         values = values.map((item) => String(item).trim()).filter(Boolean);
 
         if (path === "StaffRoles" || path === "AIChat.Channels") {
             const ids = values.map(extractDiscordId);
             if (ids.some((id) => !id)) {
-                throw new Error("Gebruik geldige Discord-ID's of vermeldingen.");
+                throw new Error(tr("Gebruik geldige Discord-ID's of vermeldingen."));
             }
             return [...new Set(ids)];
         }
@@ -376,46 +377,46 @@ function parseValue(path, rawValue, currentValue) {
 
     const isIdPath = /^(Notify\.PingRole[1-4]|Roles\.[^.]+|SelfRoles\.[^.]+|Store\.VIPRole|Bump\.Channel|Logging\.Channel|Tickets\.(Category|LogChannel)|Levels\.Roles\.\d+|Counting\.Channel|Birthday\.(Role|Channel)|Welcome\.(Channel|AutoRole)|Leave\.Channel|StartupReport\.Channel)$/.test(path);
     if (isIdPath) {
-        if (["leeg", "geen", "uit"].includes(raw.toLowerCase())) return "";
+        if (["leeg", "geen", "uit", "empty", "none", "off"].includes(raw.toLowerCase())) return "";
         const id = extractDiscordId(raw);
-        if (!id) throw new Error("Gebruik een geldig Discord-ID of een kanaal-/rolvermelding.");
+        if (!id) throw new Error(tr("Gebruik een geldig Discord-ID of een kanaal-/rolvermelding."));
         return id;
     }
 
     if (path === "Bot.Color" && !/^#[0-9a-f]{6}$/i.test(raw)) {
-        throw new Error("Gebruik een hexkleur zoals `#c9a91b`.");
+        throw new Error(tr("Gebruik een hexkleur zoals `#c9a91b`."));
     }
 
     if (path === "Prefix" && (raw.length < 1 || raw.length > 5)) {
-        throw new Error("Een prefix moet tussen 1 en 5 tekens lang zijn.");
+        throw new Error(tr("Een prefix moet tussen 1 en 5 tekens lang zijn."));
     }
 
     if (["Agenda.YouTubeUrl"].includes(path) &&
-        ["leeg", "geen"].includes(raw.toLowerCase())) {
+        ["leeg", "geen", "empty", "none"].includes(raw.toLowerCase())) {
         return "";
     }
 
     if (["Bot.Name", "Bot.Footer", "Agenda.Title"].includes(path) && !raw) {
-        throw new Error("Deze tekstinstelling mag niet leeg zijn.");
+        throw new Error(tr("Deze tekstinstelling mag niet leeg zijn."));
     }
 
     if (path.endsWith(".Timezone")) {
         try {
             new Intl.DateTimeFormat("nl-NL", { timeZone: raw }).format();
         } catch {
-            throw new Error("Gebruik een geldige tijdzone, bijvoorbeeld `Europe/Amsterdam`.");
+            throw new Error(tr("Gebruik een geldige tijdzone, bijvoorbeeld `Europe/Amsterdam`."));
         }
     }
 
     if (path === "Birthday.CheckTime" && !/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(raw)) {
-        throw new Error("Gebruik een tijd in het formaat `UU:MM`, bijvoorbeeld `09:00`.");
+        throw new Error(tr("Gebruik een tijd in het formaat `UU:MM`, bijvoorbeeld `09:00`."));
     }
 
     if (path === "Agenda.YouTubeUrl" && raw) {
         try {
             new URL(raw);
         } catch {
-            throw new Error("Gebruik een geldige volledige URL.");
+            throw new Error(tr("Gebruik een geldige volledige URL."));
         }
     }
 
@@ -465,7 +466,7 @@ function exportGuild(guildId) {
 
 function setWelcomeMessage(guildId, message) {
     const value = String(message || "").replace(/\r\n?/g, "\n").replaceAll("\\n", "\n").trim();
-    if (!value || value.length > 4000) throw new Error("Gebruik een tekst van 1 tot 4000 tekens.");
+    if (!value || value.length > 4000) throw new Error(tr("Gebruik een tekst van 1 tot 4000 tekens."));
     updateValue(guildId, "Welcome.Message", value);
     cache.delete(String(guildId));
     return value;

@@ -1,10 +1,11 @@
+const { tr } = require("../../utils/localization");
 const { replyAfterDefer } = require("../../utils/deferredReply");
 const { applyRewardBonus, rewardMultiplier } = require("../../services/rewardBonus");
-const { MessageFlags } = require("discord.js");
+const { MessageFlags } = require("../../utils/discord");
 const {
     SlashCommandBuilder,
     EmbedBuilder
-} = require("discord.js");
+} = require("../../utils/discord");
 
 const config =
     require("../../config/config");
@@ -69,7 +70,7 @@ module.exports = {
                 return replyAfterDefer(interaction, {
 
                     content:
-                    `⏳ Je moet nog **${minutes} minuten** wachten voordat je weer kunt werken.`,
+                    tr("⏳ Je moet nog **{0} minuten** wachten voordat je weer kunt werken.", minutes),
 
                     flags: MessageFlags.Ephemeral
 
@@ -82,15 +83,15 @@ module.exports = {
 
         const jobs = [
 
-            "🍔 Je hebt gewerkt bij Burger Shot",
+            tr("🍔 Je hebt gewerkt bij Burger Shot"),
 
-            "🚕 Je hebt mensen rondgereden als taxichauffeur",
+            tr("🚕 Je hebt mensen rondgereden als taxichauffeur"),
 
-            "🔧 Je hebt auto's gerepareerd",
+            tr("🔧 Je hebt auto's gerepareerd"),
 
-            "📦 Je hebt pakketten bezorgd",
+            tr("📦 Je hebt pakketten bezorgd"),
 
-            "🚓 Je hebt geholpen met beveiliging"
+            tr("🚓 Je hebt geholpen met beveiliging")
 
         ];
 

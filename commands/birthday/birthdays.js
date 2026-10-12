@@ -1,8 +1,9 @@
-const { MessageFlags } = require("discord.js");
+const { tr, send } = require("../../utils/localization");
+const { MessageFlags } = require("../../utils/discord");
 const {
     SlashCommandBuilder,
     EmbedBuilder
-} = require("discord.js");
+} = require("../../utils/discord");
 
 const config =
     require("../../config/config");
@@ -50,10 +51,10 @@ module.exports = {
         if (!list || list.length === 0) {
 
 
-            return interaction.editReply({
+            return send(interaction, "editReply", {
 
                 content:
-                "🎂 Er zijn nog geen verjaardagen ingesteld.",
+                tr("🎂 Er zijn nog geen verjaardagen ingesteld."),
 
                 flags: MessageFlags.Ephemeral
 
@@ -92,7 +93,7 @@ module.exports = {
             const username =
                 member
                     ? member.user.username
-                    : "Onbekend lid";
+                    : tr("Onbekend lid");
 
 
 
@@ -131,7 +132,7 @@ module.exports = {
                 .setFooter({
 
                     text:
-                    `${config.Bot.Footer} • Eerste 10 resultaten`
+                    tr("{0} • Eerste 10 resultaten", config.Bot.Footer)
 
                 })
 
@@ -140,7 +141,7 @@ module.exports = {
 
 
 
-        return interaction.editReply({
+        return send(interaction, "editReply", {
 
             embeds:[
 

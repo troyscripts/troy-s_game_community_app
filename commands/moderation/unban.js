@@ -1,8 +1,9 @@
-const { MessageFlags } = require("discord.js");
+const { tr, send } = require("../../utils/localization");
+const { MessageFlags } = require("../../utils/discord");
 const {
     SlashCommandBuilder,
     EmbedBuilder
-} = require("discord.js");
+} = require("../../utils/discord");
 
 const config =
     require("../../config/config");
@@ -79,10 +80,10 @@ module.exports = {
         } catch(error) {
 
 
-            return interaction.editReply({
+            return send(interaction, "editReply", {
 
                 content:
-                "❌ Ongeldige Discord ID.",
+                tr("❌ Ongeldige Discord ID."),
 
                 flags: MessageFlags.Ephemeral
 
@@ -103,10 +104,10 @@ module.exports = {
         if (!ban) {
 
 
-            return interaction.editReply({
+            return send(interaction, "editReply", {
 
                 content:
-                `❌ ${user.tag} staat niet op de banlijst.`,
+                tr("❌ {0} staat niet op de banlijst.", user.tag),
 
                 flags: MessageFlags.Ephemeral
 
@@ -121,7 +122,7 @@ module.exports = {
 
             user.id,
 
-            `Unban door ${interaction.user.tag}`
+            tr("Unban door {0}", interaction.user.tag)
 
         );
 
@@ -137,7 +138,7 @@ module.exports = {
 
 
                 .setTitle(
-                    "🔓 Ban verwijderd"
+                    tr("🔓 Ban verwijderd")
                 )
 
 
@@ -146,7 +147,7 @@ module.exports = {
                     {
 
                         name:
-                        "Gebruiker",
+                        tr("Gebruiker"),
 
                         value:
                         `${user.tag}\n${user.id}`,
@@ -159,7 +160,7 @@ module.exports = {
                     {
 
                         name:
-                        "Uitgevoerd door",
+                        tr("Uitgevoerd door"),
 
                         value:
                         `${interaction.user}`,
@@ -183,7 +184,7 @@ module.exports = {
 
 
 
-        return interaction.editReply({
+        return send(interaction, "editReply", {
 
             embeds:[
 

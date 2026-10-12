@@ -1,3 +1,4 @@
+const { tr, send, clip } = require("../utils/localization");
 const fs = require('node:fs');
 const path = require('node:path');
 const { createHash } = require('node:crypto');
@@ -12,9 +13,9 @@ let stopped = true;
 const failures = new Map();
 
 function checkChannel(channel, guildId) {
-    if (!channel || channel.guild?.id !== guildId || ![ChannelType.GuildText,ChannelType.GuildAnnouncement].includes(channel.type)) throw new Error('Kies een tekst- of aankondigingskanaal in deze server.');
+    if (!channel || channel.guild?.id !== guildId || ![ChannelType.GuildText,ChannelType.GuildAnnouncement].includes(channel.type)) throw new Error(tr("Kies een tekst- of aankondigingskanaal in deze server."));
     const permissions = channel.permissionsFor(channel.guild.members.me);
-    if (!permissions?.has([PermissionFlagsBits.ViewChannel,PermissionFlagsBits.SendMessages,PermissionFlagsBits.EmbedLinks])) throw new Error('De bot mist Kanaal bekijken, Berichten verzenden of Links insluiten in het meldingskanaal.');
+    if (!permissions?.has([PermissionFlagsBits.ViewChannel,PermissionFlagsBits.SendMessages,PermissionFlagsBits.EmbedLinks])) throw new Error(tr("De bot mist Kanaal bekijken, Berichten verzenden of Links insluiten in het meldingskanaal."));
 }
 function withPingRole(row) {
     if (!row.role_slot) return row;
@@ -22,15 +23,15 @@ function withPingRole(row) {
 }
 function payload(row,item,test = false) {
     const names = {youtube:'YouTube',tiktok:'TikTok',twitch:'Twitch'};
-    const message = (row.message || (row.platform === 'twitch' ? '{creator} is live op Twitch! {url}' : '{creator} heeft een nieuwe video op {platform}!'))
+    const message = (row.message || (row.platform === 'twitch' ? tr("{creator} is live op Twitch! {url}") : tr("{creator} heeft een nieuwe video op {platform}!")))
         .replace(/\{creator\}/g,() => row.account).replace(/\{platform\}/g,() => names[row.platform]).replace(/\{titel\}/g,() => item.title).replace(/\{url\}/g,() => item.url);
-    const embed = {title:(test ? 'TEST — ' : '') + item.title.slice(0,245),url:item.url,color:row.platform === 'youtube' ? 0xff0000 : row.platform === 'twitch' ? 0x9146ff : 0x25f4ee,
+    const embed = {title:(test ? 'TEST — ' : '') + clip(item.title,245),url:item.url,color:row.platform === 'youtube' ? 0xff0000 : row.platform === 'twitch' ? 0x9146ff : 0x25f4ee,
         footer:{text:`${names[row.platform]} • ${row.account}`}};
-    if (item.game) embed.fields = [{name:'Game / categorie',value:item.game.slice(0,1024)}];
+    if (item.game) embed.fields = [{name:tr("Game / categorie"),value:item.game.slice(0,1024)}];
     if (item.image) embed.image = {url:item.image};
     // nonce + enforceNonce closes the normal retry window after an ambiguous send timeout.
     const nonce = createHash('sha256').update(`${row.guild_id}:${row.id}:${item.id}`).digest('hex').slice(0,24);
-    return {content:((test ? '**Testmelding**\n' : (row.role_id ? `<@&${row.role_id}> ` : ''))+message).slice(0,1900),embeds:[embed],
+    return {content:clip((test ? tr("**Testmelding**\n") : (row.role_id ? `<@&${row.role_id}> ` : ''))+message,1900),embeds:[embed],
         allowedMentions:{parse:[],roles:!test && row.role_id ? [row.role_id] : [],users:[]},
         ...(!test ? {nonce,enforceNonce:true} : {})};
 }
@@ -49,10 +50,10 @@ async function deliver(client,row) {
         checkChannel(channel,current.guild_id);
         if (fresh.role_id) {
             const role = await guild.roles.fetch(fresh.role_id);
-            if (!role || role.id === guild.id || role.managed || (!role.mentionable && !channel.permissionsFor(guild.members.me)?.has(PermissionFlagsBits.MentionEveryone))) throw new Error('De ingestelde pingrol bestaat niet of kan niet worden vermeld.');
+            if (!role || role.id === guild.id || role.managed || (!role.mentionable && !channel.permissionsFor(guild.members.me)?.has(PermissionFlagsBits.MentionEveryone))) throw new Error(tr("De ingestelde pingrol bestaat niet of kan niet worden vermeld."));
         }
         if (stopped) return;
-        await channel.send(payload(fresh,JSON.parse(pending.payload)));
+        await send(channel, "send", payload(fresh,JSON.parse(pending.payload)));
         store.sent(row.id,pending.item_id);
     }
 }
@@ -65,7 +66,7 @@ async function tick(client) {
         const presets = JSON.parse(fs.readFileSync(presetPath,'utf8'));
         for (const preset of presets) {
             if (store.seeded(preset.channelId)) continue;
-            if (!/^\d{17,20}$/.test(preset.channelId) || !Array.isArray(preset.creators)) throw new Error('Ongeldige notify-startinstellingen.');
+            if (!/^\d{17,20}$/.test(preset.channelId) || !Array.isArray(preset.creators)) throw new Error(tr("Ongeldige notify-startinstellingen."));
             for (const creator of preset.creators) creator.account = providers.account(creator.platform,creator.account);
             const channel = await client.channels.fetch(preset.channelId).catch(() => null);
             if (stopped) return;
@@ -103,7 +104,7 @@ async function tick(client) {
             failures.delete(row.id);
         } catch (error) {
             if (stopped) return;
-            const message = error.message || 'Onbekende notify-fout';
+            const message = error.message || tr("Onbekende notify-fout");
             const count = (failure?.count || 0)+1;
             store.error(row.id,message);
             failures.set(row.id,{count,until:Date.now()+Math.min(60,5*2**Math.min(count-1,4))*60000,message});

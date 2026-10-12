@@ -1,9 +1,10 @@
+const { tr } = require("../../utils/localization");
 const { replyAfterDefer } = require("../../utils/deferredReply");
-const { MessageFlags } = require("discord.js");
+const { MessageFlags } = require("../../utils/discord");
 const {
     SlashCommandBuilder,
     EmbedBuilder
-} = require("discord.js");
+} = require("../../utils/discord");
 
 const config =
     require("../../config/config");
@@ -89,7 +90,7 @@ module.exports = {
             return replyAfterDefer(interaction, {
 
                 content:
-                "❌ Je hebt geen toestemming om economie te resetten.",
+                tr("❌ Je hebt geen toestemming om economie te resetten."),
 
                 flags: MessageFlags.Ephemeral
 
@@ -142,7 +143,9 @@ module.exports = {
 
                 .setDescription(
 
-                    `${interaction.user} heeft de economie van ${target} gereset.\n\n` +
+                    `${interaction.user} heeft de economie van ${target} gereset.
+
+` +
 
                     "💵 Wallet: **€0**\n" +
 

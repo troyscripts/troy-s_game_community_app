@@ -13,7 +13,7 @@ function retrySeconds(value) {
     const seconds = Number.isFinite(number) ? number : (Date.parse(value) - Date.now()) / 1000;
     return Number.isFinite(seconds) ? Math.max(60, Math.min(86400, Math.ceil(seconds))) : 60;
 }
-async function requestChat({ model = getModel(), messages }) {
+async function requestChat({ model = getModel(), messages, maxTokens = 1024, json = false }) {
     const key = process.env.GROQ_API_KEY?.trim();
     if (!key || key === 'VUL_HIER_JE_GROQ_SLEUTEL_IN') {
         throw Object.assign(new Error('Groq key missing'), { code: 'AI_CONFIG' });
@@ -27,7 +27,8 @@ async function requestChat({ model = getModel(), messages }) {
         method: 'POST', redirect: 'error', signal: AbortSignal.timeout(45000),
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${key}` },
         body: JSON.stringify({
-            model, messages, stream: false, temperature: 0.5, max_completion_tokens: 1024,
+            model, messages, stream: false, temperature: 0.5, max_completion_tokens: Math.min(4096, Math.max(128, maxTokens)),
+            ...(json ? { response_format: { type: "json_object" } } : {}),
             ...(model.startsWith('openai/gpt-oss-') ? { reasoning_effort: 'low', include_reasoning: false } : {})
         })
     });

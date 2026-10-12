@@ -1,4 +1,5 @@
-const { EmbedBuilder } = require("discord.js");
+const { tr, send } = require("../utils/localization");
+const { EmbedBuilder } = require("../utils/discord");
 
 const config = require("../config/config");
 const logger = require("../utils/logger");
@@ -8,7 +9,7 @@ function createEmbed(client, status, color, scan = null) {
     const database = databaseManager.stats();
     const fields = [
         { name: "Status", value: status, inline: false },
-        { name: "Botversie", value: String(config.Version || "Onbekend"), inline: true },
+        { name: tr("Botversie"), value: String(config.Version || tr("Onbekend")), inline: true },
         { name: "Servers", value: String(client.guilds.cache.size), inline: true },
         { name: "Commands", value: String(client.commands.size), inline: true },
         {
@@ -16,21 +17,21 @@ function createEmbed(client, status, color, scan = null) {
             value: String(client.buttons.size + client.modals.size + client.selectMenus.size),
             inline: true
         },
-        { name: "Database", value: `✅ ${database.tables} tabellen`, inline: true }
+        { name: "Database", value: tr("✅ {0} tabellen", database.tables), inline: true }
     ];
 
     if (scan) {
         fields.push(
-            { name: "Kanalen gecontroleerd", value: String(scan.channelsScanned), inline: true },
-            { name: "Berichten geladen", value: String(scan.messagesLoaded), inline: true },
-            { name: "Nieuwe berichten verwerkt", value: String(scan.messagesProcessed), inline: true },
-            { name: "XP-momenten verwerkt", value: String(scan.xpAwards), inline: true }
+            { name: tr("Kanalen gecontroleerd"), value: String(scan.channelsScanned), inline: true },
+            { name: tr("Berichten geladen"), value: String(scan.messagesLoaded), inline: true },
+            { name: tr("Nieuwe berichten verwerkt"), value: String(scan.messagesProcessed), inline: true },
+            { name: tr("XP-momenten verwerkt"), value: String(scan.xpAwards), inline: true }
         );
     }
 
     return new EmbedBuilder()
         .setColor(color)
-        .setTitle("🤖 Bot-opstartcontrole")
+        .setTitle(tr("🤖 Bot-opstartcontrole"))
         .addFields(fields)
         .setFooter({ text: config.Bot.Footer })
         .setTimestamp();
@@ -50,8 +51,8 @@ async function startReport(client) {
                 return;
             }
 
-            const message = await channel.send({
-                embeds: [createEmbed(client, "⏳ Opstart en kanaalscan bezig...", "#FEE75C")]
+            const message = await send(channel, "send", {
+                embeds: [createEmbed(client, tr("⏳ Opstart en kanaalscan bezig..."), "#FEE75C")]
             }).catch((error) => {
                 logger.warn(`Opstartbericht plaatsen mislukt in ${guild.name}: ${error.message}`);
                 return null;
@@ -64,8 +65,8 @@ async function startReport(client) {
 
 async function finishReport(reports, client, scan) {
     for (const report of reports || []) {
-        await config.__context.run(report.guildId, () => report.message.edit({
-            embeds: [createEmbed(client, "✅ Opstart volledig voltooid", "#57F287", scan)]
+        await config.__context.run(report.guildId, () => send(report.message, "edit", {
+            embeds: [createEmbed(client, tr("✅ Opstart volledig voltooid"), "#57F287", scan)]
         }).catch((error) => {
             logger.warn(`Opstartbericht bijwerken mislukt: ${error.message}`);
         }));
@@ -75,9 +76,9 @@ async function finishReport(reports, client, scan) {
 async function failReport(reports, client, error) {
     for (const report of reports || []) {
         await config.__context.run(report.guildId, async () => {
-            const embed = createEmbed(client, "❌ Opstartscan bevat een fout", "#ED4245")
+            const embed = createEmbed(client, tr("❌ Opstartscan bevat een fout"), "#ED4245")
                 .setDescription(String(error?.message || error).slice(0, 1000));
-            await report.message.edit({ embeds: [embed] }).catch(() => {});
+            await send(report.message, "edit", { embeds: [embed] }).catch(() => {});
         });
     }
 }

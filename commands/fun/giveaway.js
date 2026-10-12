@@ -1,6 +1,7 @@
+const { tr } = require("../../utils/localization");
 const { SlashCommandBuilder } = require('discord.js');
 const giveaways = require('../../services/giveaways');
-const id = o => o.setName('id').setDescription('Het Giveaway-ID onder het giveawaybericht.').setMinValue(1).setRequired(true);
+const id = o => o.setName('id').setDescription("Het Giveaway-ID onder het giveawaybericht.").setMinValue(1).setRequired(true);
 module.exports = {
     data: new SlashCommandBuilder().setName('giveaway').setDescription('Start of beheer een giveaway.')
         .addSubcommand(s => s.setName('start').setDescription('Staff: start een giveaway met één of meerdere prijzen.')

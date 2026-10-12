@@ -29,7 +29,7 @@ function loadCommands(directory) {
             throw new Error(`${fullPath} is geen geldig slashcommand.`);
         }
 
-        commands.push(command.data.toJSON());
+        commands.push(require('./utils/localization').commandData(command.data.toJSON()));
     }
 
     return commands;

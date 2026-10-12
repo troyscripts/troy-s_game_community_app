@@ -1,3 +1,4 @@
+const { tr } = require("../utils/localization");
 const { db } = require("./database");
 const config = require("../config/config");
 
@@ -32,7 +33,7 @@ function setMoney(userId, guildId, wallet, bank) {
 
 function change(column, userId, guildId, amount) {
     if (!["wallet", "bank"].includes(column)) {
-        throw new Error("Ongeldige economy-kolom.");
+        throw new Error(tr("Ongeldige economy-kolom."));
     }
 
     createUser(userId, guildId);
@@ -87,7 +88,7 @@ const withdraw = db.transaction((userId, guildId, amount) => {
 
 function setCooldown(column, userId, guildId, timestamp) {
     if (!["last_daily", "last_work"].includes(column)) {
-        throw new Error("Ongeldige cooldown-kolom.");
+        throw new Error(tr("Ongeldige cooldown-kolom."));
     }
 
     createUser(userId, guildId);

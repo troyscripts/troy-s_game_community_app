@@ -1,3 +1,4 @@
+const { tr, send } = require("../utils/localization");
 const { Events, MessageFlags } = require("discord.js");
 
 const logger = require("../utils/logger");
@@ -11,19 +12,19 @@ function resolveDynamic(collection, customId) {
 async function sendPrivate(interaction, content) {
     const payload = {
         content: null,
-        embeds: [eventEmbed("Interactie niet uitgevoerd", 0xFF5722, content,
-            `Gebruiker-ID: ${interaction.user.id} | Interactie-ID: ${interaction.id}`)],
+        embeds: [eventEmbed(tr("Interactie niet uitgevoerd"), 0xFF5722, content,
+            tr("Gebruiker-ID: {0} | Interactie-ID: {1}", interaction.user.id, interaction.id))],
         allowedMentions: { parse: [] }
     };
     if (interaction.deferred) {
-        return interaction.editReply(payload);
+        return send(interaction, "editReply", payload);
     }
 
     if (interaction.replied) {
-        return interaction.followUp({ ...payload, flags: MessageFlags.Ephemeral });
+        return send(interaction, "followUp", { ...payload, flags: MessageFlags.Ephemeral });
     }
 
-    return interaction.reply({ ...payload, flags: MessageFlags.Ephemeral });
+    return send(interaction, "reply", { ...payload, flags: MessageFlags.Ephemeral });
 }
 
 module.exports = {
@@ -37,7 +38,7 @@ module.exports = {
                 if (command?.autocomplete && canUseCommand(interaction, command)) {
                     await command.autocomplete(client, interaction);
                 } else if (!interaction.responded) {
-                    await interaction.respond([]);
+                    await send(interaction, "respond", []);
                 }
                 return;
             }
@@ -50,14 +51,14 @@ module.exports = {
 
                 if (command.guildOnly && !interaction.inGuild()) {
                     state = "Alleen in server toegestaan";
-                    return await sendPrivate(interaction, "❌ Dit command werkt alleen in een server.");
+                    return await sendPrivate(interaction, tr("❌ Dit command werkt alleen in een server."));
                 }
 
                 if (!canUseCommand(interaction, command)) {
                     state = "Geen toestemming";
                     return await sendPrivate(
                         interaction,
-                        "❌ Je hebt geen toestemming om dit command te gebruiken."
+                        tr("❌ Je hebt geen toestemming om dit command te gebruiken.")
                     );
                 }
 
@@ -70,7 +71,7 @@ module.exports = {
                     const remaining = Math.ceil((expiresAt - Date.now()) / 1000);
                     return await sendPrivate(
                         interaction,
-                        `⏳ Wacht nog ${remaining} seconde(n) voordat je dit command opnieuw gebruikt.`
+                        tr("⏳ Wacht nog {0} seconde(n) voordat je dit command opnieuw gebruikt.", remaining)
                     );
                 }
 
@@ -111,7 +112,7 @@ module.exports = {
             state = "Fout";
             const location = interaction.commandName
                 ? `Command: ${interaction.commandName}`
-                : `Interaction: ${interaction.customId || "onbekend"}`;
+                : `Interaction: ${interaction.customId || tr("onbekend")}`;
 
             logger.error(`Fout in ${location} | Interactie-ID: ${interaction.id} | Leeftijd: ${Date.now() - interaction.createdTimestamp} ms | deferred=${interaction.deferred} | replied=${interaction.replied}`);
             logger.error(error.stack || error);
@@ -121,7 +122,7 @@ module.exports = {
                 try {
                     await sendPrivate(
                         interaction,
-                        "❌ Er ging iets fout tijdens deze actie. De fout is opgeslagen in de logs."
+                        tr("❌ Er ging iets fout tijdens deze actie. De fout is opgeslagen in de logs.")
                     );
                 } catch (replyError) {
                     logger.warn(`Foutmelding voor ${location} kon niet worden verstuurd (code ${replyError.code || "onbekend"}).`);

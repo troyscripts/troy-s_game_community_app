@@ -1,3 +1,4 @@
+const { tr, send } = require("../utils/localization");
 const { applyRewardBonus } = require("../services/rewardBonus");
 const { Events } = require("discord.js");
 
@@ -66,8 +67,8 @@ module.exports = {
             await giveLevelRole(message.guild, message.author.id, result.newLevel);
 
             if (config.Levels.AnnounceLevelUp) {
-                await message.channel.send({
-                    content: `🎉 ${message.author}, je bent nu **level ${result.newLevel}**!`,
+                await send(message.channel, "send", {
+                    content: tr("🎉 {0}, je bent nu **level {1}**!", message.author, result.newLevel),
                     allowedMentions: { users: [message.author.id] }
                 }).catch(() => {});
             }

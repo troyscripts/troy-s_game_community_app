@@ -1,3 +1,4 @@
+const { tr, send } = require("../utils/localization");
 const {
     ActionRowBuilder,
     ButtonBuilder,
@@ -7,7 +8,7 @@ const {
     MessageFlags,
     PermissionFlagsBits,
     escapeMarkdown
-} = require("discord.js");
+} = require("../utils/discord");
 
 const config = require("../config/config");
 const tickets = require("../database/tickets");
@@ -36,21 +37,21 @@ module.exports = {
         await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
         const key = `${interaction.guild.id}:${interaction.user.id}`;
-        if (creating.has(key)) return interaction.editReply({ content: "⏳ Je ticket wordt al aangemaakt." });
+        if (creating.has(key)) return send(interaction, "editReply", { content: tr("⏳ Je ticket wordt al aangemaakt.") });
         creating.add(key);
         try {
-        if (!config.Tickets.Enabled) return interaction.editReply({ content: "❌ Het ticketsysteem is momenteel uitgeschakeld." });
+        if (!config.Tickets.Enabled) return send(interaction, "editReply", { content: tr("❌ Het ticketsysteem is momenteel uitgeschakeld.") });
         const parts = interaction.customId.split(":");
         const panelId = parts.length === 3 ? parts[1] : undefined;
         const value = parts.length === 3 ? parts[2] : (parts[1] || "support");
         let category;
         try { category = panels.resolve(interaction.guild.id, panelId, value); }
-        catch (error) { return interaction.editReply({ content: `❌ ${error.message}`, allowedMentions: { parse: [] } }); }
+        catch (error) { return send(interaction, "editReply", { content: `❌ ${error.message}`, allowedMentions: { parse: [] } }); }
         const reason = interaction.fields.getTextInputValue("ticket_reason").trim();
-        if (reason.length < 10 || reason.length > 1000) return interaction.editReply({ content: "❌ Gebruik 10 tot 1000 tekens voor je vraag." });
+        if (reason.length < 10 || reason.length > 1000) return send(interaction, "editReply", { content: tr("❌ Gebruik 10 tot 1000 tekens voor je vraag.") });
         if (tickets.getOpenTicketCount(interaction.user.id, interaction.guild.id) >= config.Tickets.MaxOpenPerUser) {
             const existing = tickets.getOpenTicket(interaction.user.id, interaction.guild.id);
-            return interaction.editReply({ content: existing ? `❌ Je hebt het maximum van ${config.Tickets.MaxOpenPerUser} open tickets bereikt. Een van je tickets: <#${existing.channel_id}>` : "❌ Je hebt het maximale aantal open tickets bereikt." });
+            return send(interaction, "editReply", { content: existing ? tr("❌ Je hebt het maximum van {0} open tickets bereikt. Een van je tickets: <#{1}>", config.Tickets.MaxOpenPerUser, existing.channel_id) : tr("❌ Je hebt het maximale aantal open tickets bereikt.") });
         }
 
         const botMember = interaction.guild.members.me;
@@ -60,7 +61,7 @@ module.exports = {
             const minimumRole = panels.getMinimumRole(interaction.guild.id, panelId, value);
             staffRoles = selectStaffRoles(interaction.guild, config.StaffRoles, minimumRole);
         } catch (error) {
-            return interaction.editReply({ content: `❌ ${error.message}`, allowedMentions: { parse: [] } });
+            return send(interaction, "editReply", { content: `❌ ${error.message}`, allowedMentions: { parse: [] } });
         }
 
         const accessRoles = [...new Set([...staffRoles, config.Roles?.Owner, config.Roles?.Developer])]
@@ -108,7 +109,7 @@ module.exports = {
         const parentId = panels.getParentCategory(interaction.guild.id, panelId, value) || config.Tickets.Category;
         const parentChannel = parentId ? await interaction.guild.channels.fetch(parentId).catch(() => null) : null;
         if (parentId && parentChannel?.type !== ChannelType.GuildCategory) {
-            return interaction.editReply({ content: "❌ De ingestelde Discord-categorie ontbreekt. Laat staff het paneel of Tickets.Category aanpassen." });
+            return send(interaction, "editReply", { content: tr("❌ De ingestelde Discord-categorie ontbreekt. Laat staff het paneel of Tickets.Category aanpassen.") });
         }
         const parent = parentChannel?.id;
 
@@ -143,17 +144,17 @@ module.exports = {
 
         const embed = new EmbedBuilder()
             .setColor(config.Bot.Color)
-            .setTitle("🎫 Nieuw supportticket")
+            .setTitle(tr("🎫 Nieuw supportticket"))
             .setDescription(
-                `Welkom ${interaction.user}! Een medewerker helpt je zo snel mogelijk.\n\n` +
-                `**Categorie:** ${escapeMarkdown(category)}\n` +
-                `**Reden:** ${reason}`
+                tr("Welkom {0}! Een medewerker helpt je zo snel mogelijk.\n\n", interaction.user) +
+                tr("**Categorie:** {0}\n", escapeMarkdown(category)) +
+                tr("**Reden:** {0}", reason)
             )
             .setFooter({ text: config.Bot.Footer })
             .setTimestamp();
 
         const controls = new ActionRowBuilder().addComponents(
-            new ButtonBuilder().setCustomId("ticket-discuss").setLabel("Staffoverleg").setEmoji("💬").setStyle(ButtonStyle.Secondary),
+            new ButtonBuilder().setCustomId("ticket-discuss").setLabel(tr("Staffoverleg")).setEmoji("💬").setStyle(ButtonStyle.Secondary),
             new ButtonBuilder()
                 .setCustomId("ticket-claim")
                 .setLabel("Claim")
@@ -161,7 +162,7 @@ module.exports = {
                 .setStyle(ButtonStyle.Primary),
             new ButtonBuilder()
                 .setCustomId("ticket-close")
-                .setLabel("Sluiten")
+                .setLabel(tr("Sluiten"))
                 .setEmoji("🔒")
                 .setStyle(ButtonStyle.Danger),
             new ButtonBuilder()
@@ -171,12 +172,12 @@ module.exports = {
                 .setStyle(ButtonStyle.Secondary),
             new ButtonBuilder()
                 .setCustomId("ticket-delete")
-                .setLabel("Verwijderen")
+                .setLabel(tr("Verwijderen"))
                 .setEmoji("🗑️")
                 .setStyle(ButtonStyle.Danger)
         );
 
-        await channel.send({
+        await send(channel, "send", {
             content: `${interaction.user} ${staffRoles.map((id) => `<@&${id}>`).join(" ")}`.trim(),
             embeds: [embed],
             components: [controls],
@@ -188,15 +189,15 @@ module.exports = {
 
         const logChannel = interaction.guild.channels.cache.get(config.Tickets.LogChannel);
         if (logChannel?.isTextBased?.()) {
-            await logChannel.send({
-                content: `🎫 Ticket ${channel} geopend door ${interaction.user} (${escapeMarkdown(category)}).`,
+            await send(logChannel, "send", {
+                content: tr("🎫 Ticket {0} geopend door {1} ({2}).", channel, interaction.user, escapeMarkdown(category)),
                 allowedMentions: { parse: [] }
             }).catch(() => {});
         }
 
         logger.event(`Ticket ${channel.name} geopend door ${interaction.user.tag}.`);
-        return interaction.editReply({
-            content: `✅ Je ticket is aangemaakt: ${channel}`
+        return send(interaction, "editReply", {
+            content: tr("✅ Je ticket is aangemaakt: {0}", channel)
         });
         } finally { creating.delete(key); }
     }

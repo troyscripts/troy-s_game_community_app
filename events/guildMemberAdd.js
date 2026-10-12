@@ -1,3 +1,4 @@
+const { tr } = require("../utils/localization");
 const logger = require('../utils/logger');
 const settings = require('../database/guildSettings');
 const users = require('../database/users');
@@ -20,9 +21,9 @@ module.exports = {
                 } catch (error) { logger.error(error); }
             }
         }
-        const embed = eventEmbed('Lid toegetreden', 0x57F287,
+        const embed = eventEmbed(tr("Lid toegetreden"), 0x57F287,
             renderWelcome(config.Welcome?.Message, member),
-            `Gebruiker-ID: ${member.id} | Server-ID: ${member.guild.id}`);
+            tr("Gebruiker-ID: {0} | Server-ID: {1}", member.id, member.guild.id));
         let delivered;
         if (config.Welcome?.Enabled) {
             if (await sendEmbed(member.guild, config.Welcome.Channel, embed)) delivered = config.Welcome.Channel;

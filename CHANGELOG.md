@@ -1,5 +1,25 @@
 # Changelog
 
+## 2.9.9-beta — 12 oktober 2026
+
+- Openbare botberichten Nederlands en Engels; persoonlijke taal via `/language`, per lid en server opgeslagen.
+- Engelse slashnamen, beschrijvingen, keuzelabels, knoppen, formulieren en foutmeldingen. `/help` volgt de opgeslagen voorkeur.
+- Pollvragen en antwoorden automatisch vertaald en opgeslagen; handmatig instellen/corrigeren met `vraag-en` en `antwoorden-en`.
+- `/welkomstbericht vertalen`: vertaal de ingestelde tekst; `engels` biedt handmatige invoer. Invulvelden blijven behouden en verouderde vertalingen worden niet toegepast.
+- Automatische vertaling gebruikt de bestaande Groq-sleutel. Gewone botteksten hebben geen AI nodig. Bij een vertaalfout blijft bestaande inhoud behouden.
+- `/say vertalen:True` vertaalt de berichttekst; `engels` biedt handmatige invoer. Zonder deze opties blijft eigen tekst intact.
+- Discord-berichtlimieten gecontroleerd; volledige ingekorte tekst komt in een bijlage. Geen nieuwe dependencies.
+
+**English**
+
+- Public bot messages in Dutch and English; `/language` saves private reply preferences per member and server.
+- English command names, descriptions, choices, buttons, forms and errors. `/help` follows the saved preference.
+- Poll questions and answers translated and saved, with manual correction options.
+- `/welcome translate` translates the configured welcome text. Placeholders are preserved and stale translations are never reused for a different source.
+- Uses the existing Groq key for custom text translation; fixed bot messages need no AI. Failed translations preserve existing content.
+- Optional `/say translate:True` translates the message itself; manual English input is also available.
+- Discord message limits checked; full shortened text is attached. No new dependencies.
+
 ## 2.6.2 — 11 oktober 2026
 
 - `/store` toegevoegd: koop VIP voor 1 dag (€500), 3 dagen (€1.300) of 7 dagen (€2.700) met spelgeld.

@@ -1,3 +1,4 @@
+const { tr, send, getLanguage, pair } = require("../../utils/localization");
 const { SlashCommandBuilder } = require("discord.js");
 const { readFile } = require("node:fs/promises");
 const path = require("node:path");
@@ -5,9 +6,9 @@ const path = require("node:path");
 const manuals = {
     nl: {
         filename: "HANDLEIDING.md",
-        support: "Voor support ga naar https://discord.gg/nTzVy5uMWX",
-        message: "📖 **Bot-handleiding**\nDownload de bijlage voor uitleg over de commando’s en instellingen.",
-        missing: "De Nederlandse handleiding ontbreekt. Vraag de botbeheerder om HANDLEIDING.md in de hoofdmap van de bot te plaatsen."
+        support: tr("Voor support ga naar https://discord.gg/nTzVy5uMWX"),
+        message: tr("📖 **Bot-handleiding**\nDownload de bijlage voor uitleg over de commando’s en instellingen."),
+        missing: tr("De Nederlandse handleiding ontbreekt. Vraag de botbeheerder om HANDLEIDING.md in de hoofdmap van de bot te plaatsen.")
     },
     en: {
         filename: "MANUAL-EN.md",
@@ -28,10 +29,10 @@ module.exports = {
         .addStringOption(option => option
             .setName("taal")
             .setNameLocalizations({ "en-US": "language", "en-GB": "language" })
-            .setDescription("Taal van de handleiding. Standaard: Nederlands.")
+            .setDescription("Taal van de handleiding. Standaard: je /language-voorkeur.")
             .setDescriptionLocalizations({
-                "en-US": "Manual language. Default: Dutch.",
-                "en-GB": "Manual language. Default: Dutch."
+                "en-US": "Manual language. Default: your /language preference.",
+                "en-GB": "Manual language. Default: your /language preference."
             })
             .setRequired(false)
             .addChoices({ name: "Nederlands", value: "nl" }, { name: "English", value: "en" })),
@@ -41,20 +42,20 @@ module.exports = {
 
     async execute(client, interaction) {
         await interaction.deferReply();
-        const language = interaction.options.getString("taal") === "en" ? "en" : "nl";
-        const selected = manuals[language];
+        const language = interaction.options.getString("taal") || getLanguage(interaction.guildId, interaction.user.id);
+        const selected = manuals[language] || manuals.nl;
         let manual;
         try {
             manual = await readFile(path.join(__dirname, "..", "..", selected.filename));
         } catch (error) {
             if (error.code !== "ENOENT") throw error;
-            return interaction.editReply({
+            return send(interaction, "editReply", {
                 content: `${selected.missing}\n\n${selected.support}`,
                 allowedMentions: { parse: [] }
             });
         }
-        return interaction.editReply({
-            content: `${selected.message}\n\n${selected.support}`,
+        return send(interaction, "editReply", {
+            content: `${manuals.nl.message}\n\n${manuals.nl.support}`,
             files: [{ attachment: manual, name: selected.filename }],
             allowedMentions: { parse: [] }
         });
