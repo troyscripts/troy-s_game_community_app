@@ -7,6 +7,10 @@ module.exports={
  .setDescription('Nederlands of Engels').setDescriptionLocalizations({'en-US':'Dutch or English','en-GB':'Dutch or English'})
  .setRequired(true).addChoices({name:'Nederlands',value:'nl'},{name:'English',value:'en'})),
  category:'Algemeen',cooldown:3,
- async execute(client,i){const language=i.options.getString('taal');languages.set(i.guildId,i.user.id,language);
- return i.reply({content:language==='en'?'✅ Your private replies are now in English. Public messages follow the server language setting.':'✅ Je privéantwoorden zijn nu Nederlands. Openbare berichten volgen de taalinstelling van de server.',flags:MessageFlags.Ephemeral});}
+ async execute(client,i){
+ // Bevestig eerst: SQLite-opslag mag de initiële Discord-reactie niet vertragen.
+ await i.deferReply({flags:MessageFlags.Ephemeral});
+ const language=i.options.getString('taal');
+ languages.set(i.guildId,i.user.id,language);
+ return i.editReply({content:language==='en'?'✅ Your private replies are now in English. Public messages follow the server language setting.':'✅ Je privéantwoorden zijn nu Nederlands. Openbare berichten volgen de taalinstelling van de server.'});}
 };

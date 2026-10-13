@@ -2,6 +2,11 @@
 
 ## 3.0.0 — 13 oktober 2026
 
+**Hotfix — `/language`**
+- `/language` bevestigt de interactie privé vóór het opslaan van de taalkeuze en werkt daarna het antwoord bij. Zo vertraagt SQLite-opslag de eerste Discord-reactie niet.
+- Bij een mislukte ontvangstbevestiging wordt de taalkeuze niet gewijzigd.
+- English: `/language` now defers its private reply before saving the preference, then edits the reply. Failed acknowledgement leaves the preference unchanged.
+
 - `Bot.Language`: nl, en of both per server; standaard both behouden.
 - `Logging.Language`: Discord-logs standaard nl, optioneel en/both.
 - Gebruikers, rollen en everyone/here worden eenmaal per bericht vermeld; herhalingen tonen gewone tekst.
