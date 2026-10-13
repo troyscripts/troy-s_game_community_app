@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.0.0 — 13 oktober 2026
+
+- `Bot.Language`: nl, en of both per server; standaard both behouden.
+- `Logging.Language`: Discord-logs standaard nl, optioneel en/both.
+- Gebruikers, rollen en everyone/here worden eenmaal per bericht vermeld; herhalingen tonen gewone tekst.
+- Privéantwoorden zonder persoonlijke taalkeuze volgen Engels bij een Engelse server.
+- AI-chat volgt de openbare servertaal. Versie verhoogd naar 3.0.0.
+
+
 ## 2.9.9-beta — 12 oktober 2026
 
 **Vertaalfix — 13 oktober 2026**

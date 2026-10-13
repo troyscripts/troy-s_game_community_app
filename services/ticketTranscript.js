@@ -1,4 +1,4 @@
-const { tr, send } = require("../utils/localization");
+const { tr, send, sendLogMessage } = require("../utils/localization");
 const fs = require('node:fs/promises');
 const path = require('node:path');
 const { AttachmentBuilder } = require('discord.js');
@@ -31,7 +31,7 @@ async function deliverTranscript(client, channel, ticket) {
     try {
         const log = config.Tickets.LogChannel ? await channel.guild.channels.fetch(config.Tickets.LogChannel) : null;
         if (log?.isTextBased()) {
-            await send(log, "send", { ...payload(), content: tr("📄 Ticket <#{0}> | eigenaar <@{1}>\n{2}", channel.id, ticket.user_id, dmSent ? tr("✅ Transcript via DM afgeleverd (eventueel bij eerder sluiten).") : tr("⚠️ DM mislukt. Lokale kopie bewaard; geef het transcript handmatig aan de eigenaar.")) });
+            await sendLogMessage(log, "send", { ...payload(), content: tr("📄 Ticket <#{0}> | eigenaar <@{1}>\n{2}", channel.id, ticket.user_id, dmSent ? tr("✅ Transcript via DM afgeleverd (eventueel bij eerder sluiten).") : tr("⚠️ DM mislukt. Lokale kopie bewaard; geef het transcript handmatig aan de eigenaar.")) });
             logged = true;
         }
     } catch (error) { logger.error(`Transcriptlog voor ticket ${channel.id} mislukt: ${error.message}`); }

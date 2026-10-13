@@ -6,6 +6,7 @@ module.exports = {
     Version: require("../package.json").version,
 
     Bot: {
+        Language: "both", // nl, en of both; openbare botberichten
         Name: "Troy's Gamecommunity",
         Color: "#c9a91b",
         Footer: "Troy's Gamecommunity Discord",
@@ -56,6 +57,7 @@ module.exports = {
     },
 
     Logging: {
+        Language: "nl", // Discord-logberichten: nl, en of both
         Enabled: true,
         Console: true,
         Files: true,

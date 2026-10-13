@@ -1,4 +1,4 @@
-const { tr, send } = require("../utils/localization");
+const { tr, send, sendLogMessage } = require("../utils/localization");
 const { EmbedBuilder } = require("../utils/discord");
 
 const config = require("../config/config");
@@ -51,7 +51,7 @@ async function startReport(client) {
                 return;
             }
 
-            const message = await send(channel, "send", {
+            const message = await sendLogMessage(channel, "send", {
                 embeds: [createEmbed(client, tr("⏳ Opstart en kanaalscan bezig..."), "#FEE75C")]
             }).catch((error) => {
                 logger.warn(`Opstartbericht plaatsen mislukt in ${guild.name}: ${error.message}`);
@@ -65,7 +65,7 @@ async function startReport(client) {
 
 async function finishReport(reports, client, scan) {
     for (const report of reports || []) {
-        await config.__context.run(report.guildId, () => send(report.message, "edit", {
+        await config.__context.run(report.guildId, () => sendLogMessage(report.message, "edit", {
             embeds: [createEmbed(client, tr("✅ Opstart volledig voltooid"), "#57F287", scan)]
         }).catch((error) => {
             logger.warn(`Opstartbericht bijwerken mislukt: ${error.message}`);
@@ -78,7 +78,7 @@ async function failReport(reports, client, error) {
         await config.__context.run(report.guildId, async () => {
             const embed = createEmbed(client, tr("❌ Opstartscan bevat een fout"), "#ED4245")
                 .setDescription(String(error?.message || error).slice(0, 1000));
-            await send(report.message, "edit", { embeds: [embed] }).catch(() => {});
+            await sendLogMessage(report.message, "edit", { embeds: [embed] }).catch(() => {});
         });
     }
 }

@@ -1,4 +1,4 @@
-const { tr, send, clip } = require("./localization");
+const { tr, send, sendLogMessage, clip } = require("./localization");
 const { EmbedBuilder } = require("./discord");
 const config = require('../config/config');
 const logger = require('./logger');
@@ -8,12 +8,12 @@ function eventEmbed(title, color, description, footer) {
         .setDescription(clip(description, 4000))
         .setFooter({ text: clip(footer, 2000) }).setTimestamp();
 }
-async function sendEmbed(guild, channelId, embed) {
+async function sendEmbed(guild, channelId, embed, log = false) {
     if (!channelId) return false;
     try {
         const channel = guild.channels.cache.get(channelId);
         if (!channel?.isTextBased?.()) return false;
-        await send(channel, "send", { embeds: [embed], allowedMentions: { parse: [], repliedUser: false } });
+        await (log ? sendLogMessage : send)(channel, "send", { embeds: [embed], allowedMentions: { parse: [], repliedUser: false } });
         return true;
     } catch {
         logger.warn('Event-embed kon niet worden geplaatst. Controleer het kanaal en de rechten Berichten verzenden en Links insluiten.');
@@ -22,7 +22,7 @@ async function sendEmbed(guild, channelId, embed) {
 }
 async function sendLog(guild, embed, alreadySentChannel) {
     if (!guild || config.Logging?.Enabled === false || config.Logging?.Channel === alreadySentChannel) return;
-    await sendEmbed(guild, config.Logging?.Channel, embed);
+    await sendEmbed(guild, config.Logging?.Channel, embed, true);
 }
 async function logInteraction(i, state) {
     if (!i.guild || i.isAutocomplete()) return;

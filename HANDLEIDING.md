@@ -1,18 +1,31 @@
 # Troy’s Game Community Bot — Gebruikershandleiding
 
-**Botversie 2.9.9-beta · Bijgewerkt op 12 oktober 2026**
+### Taal per server instellen
+De owner en bestaande bevoegde configuratiebeheerders kunnen kiezen:
+
+- `/config instellen instelling:Bot.Language waarde:nl` — openbare botberichten Nederlands.
+- Gebruik `en` voor Engels of `both` voor Nederlands en Engels. Standaard blijft `both`.
+- `/config instellen instelling:Logging.Language waarde:nl` — Discord-logs Nederlands (nieuwe standaard).
+- Gebruik voor logs `en` of `both` als vertaling gewenst is. Dit geldt ook voor ticketlogs en opstartrapporten.
+
+De keuze wordt per server opgeslagen en werkt direct voor nieuwe berichten. Oude berichten blijven staan. `/config herstellen` zet de betreffende standaard terug. Persoonlijke `/language`-keuzes blijven gelden voor privéantwoorden. Console- en bestandslogs blijven Nederlands. Zelfgeschreven tekst wordt alleen vertaald via de bestaande vertaalfuncties; transcriptbestanden bewaren de oorspronkelijke gesprekken.
+
+
+Gebruikers en rollen worden per bericht één keer getagd. Bij herhaling verschijnt alleen de naam als gewone tekst (of het ID als de naam niet beschikbaar is). Ook `@everyone` en `@here` worden niet herhaald als actieve vermelding.
+
+**Botversie 3.0.0 · Bijgewerkt op 13 oktober 2026**
 
 ## Nieuw in 2.9.9-beta: Nederlands en Engels
 
-- Openbare botberichten tonen Nederlands met de Engelse tekst eronder. Korte knoppen en keuzelabels tonen beide talen naast elkaar.
-- Gebruik `/language taal:English` of `/language taal:Nederlands` voor je persoonlijke antwoorden. De keuze wordt per lid, per server opgeslagen en blijft na een herstart bewaard. Zonder keuze is Nederlands de standaard.
+- Openbare botberichten volgen `Bot.Language`; standaard tonen ze Nederlands met de Engelse tekst eronder. Bij `both` tonen korte knoppen en keuzelabels beide talen naast elkaar.
+- Gebruik `/language taal:English` of `/language taal:Nederlands` voor je persoonlijke antwoorden. De keuze wordt per lid, per server opgeslagen en blijft na een herstart bewaard. Zonder persoonlijke keuze volgt een Engelse server Engels; anders Nederlands.
 - Slashcommando’s, subcommando’s en opties hebben Engelse namen en beschrijvingen als je Discord-interface Engels is. De voorbeelden in deze handleiding gebruiken de oorspronkelijke Nederlandse namen. `/language` wijzigt de taal van privéantwoorden, niet de taalinstelling van Discord zelf.
-- `/help` gebruikt standaard je opgeslagen taal voor de bijlage. Je kunt met `taal` een andere handleiding kiezen. Het openbare begeleidende bericht en de supportlink zijn altijd tweetalig.
+- `/help` gebruikt standaard je opgeslagen taal voor de bijlage. Je kunt met `taal` een andere handleiding kiezen. Het openbare begeleidende bericht en de supportlink volgen `Bot.Language`.
 - Eigen giveawayprijzen en selfrolpanelen worden niet automatisch herschreven. Pollinhoud, de welkomstvertaling en de optionele `/say`-vertaling hieronder zijn expliciete uitzonderingen.
 
 ### Pollvraag en antwoorden vertalen
 
-Bij `/poll maken` worden de vraag en antwoorden automatisch naar het Engels vertaald via de bestaande Groq-koppeling. Nederlands en Engels verschijnen in hetzelfde pollbericht; beide talen gebruiken dezelfde antwoordnummers, stemmen en timer. De Engelse tekst wordt opgeslagen en hoeft niet bij iedere stem of herstart opnieuw vertaald te worden.
+Bij `/poll maken` worden de vraag en antwoorden automatisch naar het Engels vertaald via de bestaande Groq-koppeling. De weergave volgt `Bot.Language`; beide talen gebruiken dezelfde antwoordnummers, stemmen en timer. De Engelse tekst wordt opgeslagen en hoeft niet bij iedere stem of herstart opnieuw vertaald te worden.
 
 Wil je zelf de vertaling invullen of verbeteren? Gebruik samen `vraag-en` en `antwoorden-en`. Scheid Engelse antwoorden met `|` en houd exact dezelfde volgorde en hetzelfde aantal aan. Dit werkt ook zonder Groq. De Engelse vraag mag 700 tekens bevatten, ieder Engels antwoord 120 tekens.
 
@@ -20,7 +33,7 @@ Bij `/poll wijzigen` wordt gewijzigde inhoud opnieuw vertaald. Een gewijzigde vr
 
 ### Een /say-bericht vertalen
 
-Gebruik bijvoorbeeld `/say bericht:Welkom allemaal! embed:False vertalen:True`. De bot plaatst je Nederlandse bericht met de Engelse vertaling eronder. Dit werkt voor gewone berichten en embeds, ook in een gekozen kanaal. Met `engels` kun je zelf de Engelse vertaling invullen. Zonder `vertalen` of `engels` blijft de opgegeven tekst ongewijzigd.
+Gebruik bijvoorbeeld `/say bericht:Welkom allemaal! embed:False vertalen:True`. De bot maakt de Engelse vertaling beschikbaar en volgt bij het plaatsen `Bot.Language`. Dit werkt voor gewone berichten en embeds, ook in een gekozen kanaal. Met `engels` kun je zelf de Engelse vertaling invullen. Zonder `vertalen` of `engels` blijft de opgegeven tekst ongewijzigd.
 
 Rechten worden gecontroleerd vóór het vertalen. Bij een vertaalfout wordt niets geplaatst. Lange vertaalde berichten kunnen de volledige tekst als bijlage bevatten; daarvoor heeft de bot **Bestanden bijvoegen** nodig.
 
@@ -28,10 +41,10 @@ Rechten worden gecontroleerd vóór het vertalen. Bij een vertaalfout wordt niet
 
 1. Stel je Nederlandse tekst in met `/welkomstbericht instellen` of via `Welcome.Message` in `/config`.
 2. Gebruik `/welkomstbericht vertalen`. De bot vertaalt de opgeslagen tekst één keer naar het Engels en bewaart het resultaat.
-3. Nieuwe leden krijgen Nederlands met Engels eronder. Namen, ledenaantallen, links en vermeldingen worden behouden.
+3. Nieuwe leden krijgen de ingestelde servertaal (bij `both`: Nederlands met Engels eronder). Namen, ledenaantallen, links en vermeldingen worden behouden.
 4. Met `/welkomstbericht vertalen engels:...` vul je zelf een Engelse vertaling in of corrigeer je deze. Behoud alle invulvelden, links en vermeldingen. Met `/welkomstbericht voorbeeld` bekijk je een voorbeeld in je persoonlijke taal.
 
-Na een wijziging van de Nederlandse welkomsttekst voer je `vertalen` opnieuw uit. Tot die tijd wordt de nieuwe Nederlandse tekst gebruikt; een oude Engelse vertaling wordt nooit aan een andere brontekst gekoppeld. De ingebouwde standaardwelkomsttekst is direct tweetalig.
+Na een wijziging van de Nederlandse welkomsttekst voer je `vertalen` opnieuw uit. Tot die tijd wordt de nieuwe Nederlandse tekst gebruikt; een oude Engelse vertaling wordt nooit aan een andere brontekst gekoppeld. De ingebouwde standaardwelkomsttekst heeft beide talen beschikbaar en volgt `Bot.Language`.
 
 **Automatische vertaling:** vul `GROQ_API_KEY` uitsluitend in `.env` in; `GROQ_MODEL` blijft optioneel. `AIChat.Enabled` hoeft voor vertalen niet aan te staan. Alleen de opgegeven polltekst of welkomstsjabloon wordt aan Groq gestuurd, geen kanaalgeschiedenis. Bij ontbrekende toegang, een limiet of een storing kun je zelf de Engelse tekst invullen. Controleer automatische vertalingen en corrigeer ze waar nodig.
 
@@ -52,7 +65,7 @@ Deze handleiding legt uit hoe je de bot in Discord gebruikt. Leden vinden hier d
 
 ## /help — Handleiding en support
 
-Gebruik `/help` of `/help taal:Nederlands` voor de Nederlandse handleiding. Kies `/help taal:English` voor de Engelse handleiding (`MANUAL-EN.md`). Zonder taalkeuze volgt de bijlage je `/language`-voorkeur (standaard Nederlands). In een Engelstalige Discord-interface heet de optie `language`. Het begeleidende bericht en de supporttekst verschijnen in beide talen.
+Gebruik `/help` of `/help taal:Nederlands` voor de Nederlandse handleiding. Kies `/help taal:English` voor de Engelse handleiding (`MANUAL-EN.md`). Zonder taalkeuze volgt de bijlage je `/language`-voorkeur (zonder persoonlijke keuze: Engels op een Engelse server, anders Nederlands). In een Engelstalige Discord-interface heet de optie `language`. Het begeleidende bericht en de supporttekst volgen `Bot.Language`.
 
 Je ontvangt de gekozen handleiding als downloadbare bijlage in het kanaal waar je het commando uitvoert. Het bericht is zichtbaar voor iedereen die toegang heeft tot dat kanaal. Iedereen kan dit commando gebruiken; de wachttijd is 10 seconden per gebruiker.
 

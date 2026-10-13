@@ -1,13 +1,26 @@
 # Troy’s Game Community Bot — User Manual
 
-**Bot version 2.9.9-beta · Updated 12 October 2026**
+### Server language
+The owner and existing authorized configuration managers can choose:
+
+- `/config instellen instelling:Bot.Language waarde:nl` — Dutch public bot messages.
+- Use `en` for English or `both` for Dutch and English. The default remains `both`.
+- `/config instellen instelling:Logging.Language waarde:nl` — Dutch Discord logs (new default).
+- Set logs to `en` or `both` to enable translated logs. This includes ticket logs and startup reports.
+
+Settings persist per server and apply immediately to new messages. Existing messages stay unchanged. `/config herstellen` restores the relevant default. Personal `/language` choices still control private replies. Without a personal choice, English servers use English; others use Dutch. Console and file logs remain Dutch. Custom text uses the existing opt-in translation features; transcript files preserve original conversations. Command option names follow your Discord interface language.
+
+
+Users and roles are mentioned once per message. Repeated references show a plain name (or ID if unavailable). Repeated `@everyone` and `@here` references are also made non-pinging.
+
+**Bot version 3.0.0 · Updated 13 October 2026**
 
 ## New in 2.9.9-beta: Dutch and English
 
-- Public bot messages show Dutch followed by English. Short buttons and selection labels show both languages side by side.
-- Use `/language taal:English` or `/language taal:Nederlands` for your private replies. The preference is saved per member and server and survives restarts. Dutch is the default.
+- Public bot messages follow `Bot.Language`, defaulting to Dutch followed by English. In `both` mode, short buttons and selection labels show both languages side by side.
+- Use `/language taal:English` or `/language taal:Nederlands` for your private replies. The preference is saved per member and server and survives restarts. Without a personal choice, English servers use English; other servers use Dutch.
 - Slash commands, subcommands and options have English display names and descriptions when your Discord interface is English. This manual retains the original command identifiers in examples. `/language` changes private replies, not your Discord interface language.
-- `/help` uses your saved language for its attachment unless you select a different `taal` option. Its public message and support link are always bilingual.
+- `/help` uses your saved language for its attachment unless you select a different `taal` option. Its public message and support link follow `Bot.Language`.
 - Custom giveaway prizes and self-role panels are not automatically rewritten. Poll content, welcome translations and the optional `/say` translation described below are explicit exceptions.
 
 ### Translate poll questions and answers
@@ -20,7 +33,7 @@ To provide or correct the translation yourself, supply both `vraag-en` and `antw
 
 ### Translate a /say message
 
-Use `/say bericht:Welkom allemaal! embed:False vertalen:True` to post Dutch followed by English. In an English Discord interface, use `/say message:Welkom allemaal! embed:False translate:True`. Both plain messages and embeds support translation, including the optional target channel. You can supply `engels` (English display name: `english`) instead to enter the English text yourself. Without these options, your message is posted unchanged.
+Use `/say bericht:Welkom allemaal! embed:False vertalen:True` to prepare an English translation; the posted message follows `Bot.Language`. In an English Discord interface, use `/say message:Welkom allemaal! embed:False translate:True`. Both plain messages and embeds support translation, including the optional target channel. You can supply `engels` (English display name: `english`) instead to enter the English text yourself. Without these options, your message is posted unchanged.
 
 Permissions are checked before translating. If translation fails, the message is not posted. Long translated messages may include the full text as an attachment; the bot needs **Attach Files** permission for this.
 
@@ -28,10 +41,10 @@ Permissions are checked before translating. If translation fails, the message is
 
 1. Save your Dutch text using `/welkomstbericht instellen` or `Welcome.Message` in `/config`.
 2. Run `/welkomstbericht vertalen` (shown as `/welcome translate` in English Discord). The bot translates the saved text once and stores it.
-3. New members receive Dutch followed by English. Names, member counts, links and mentions are preserved.
+3. New members receive the selected server language (`both`: Dutch followed by English). Names, member counts, links and mentions are preserved.
 4. Use `/welkomstbericht vertalen engels:...` to provide or correct the translation manually. Keep all placeholders, links and mentions. `/welkomstbericht voorbeeld` previews it in your preferred language.
 
-After editing the Dutch welcome text, run `vertalen` again. Until then, the new Dutch text is used; a stale English translation is never paired with a different source. The built-in default welcome is bilingual immediately.
+After editing the Dutch welcome text, run `vertalen` again. Until then, the new Dutch text is used; a stale English translation is never paired with a different source. The built-in default welcome supports both languages and follows `Bot.Language`.
 
 **Automatic translation:** configure `GROQ_API_KEY` only in `.env`; `GROQ_MODEL` remains optional. Translation does not require `AIChat.Enabled`. Only the provided poll text or welcome template is sent to Groq, never channel history. If access is missing or the provider is unavailable or rate-limited, enter the English text manually. Review machine translations and correct them when necessary.
 
@@ -56,7 +69,7 @@ This manual explains how to use the bot in Discord: birthdays, levels, virtual m
 
 Use `/help` to receive the manual in your saved `/language` preference, or choose **English** explicitly to receive this manual. In a Dutch Discord interface: `/help taal:English`. In an English interface the option is displayed as `language`.
 
-The manual is sent as a downloadable attachment in the channel where you run the command. Everyone with access to that channel can see it. Anyone can use `/help`, with a 10-second cooldown per user. The public response and support line are bilingual. The attachment follows your saved preference, which defaults to Dutch.
+The manual is sent as a downloadable attachment in the channel where you run the command. Everyone with access to that channel can see it. Anyone can use `/help`, with a 10-second cooldown per user. The public response and support line follow `Bot.Language`. The attachment follows your saved preference, or English on an English server and Dutch otherwise.
 
 For support, go to https://discord.gg/nTzVy5uMWX
 

@@ -100,14 +100,24 @@ function payload(input, language) {
     if(overflow.length && (result.files?.length||0)<10)result.files=[...(result.files||[]),{attachment:Buffer.from(overflow.join('\n\n---\n\n'),'utf8'),name:'complete-message.txt'}];
     return result;
 }
-function getLanguage(guildId, userId) { return require('../database/languages').get(guildId, userId); }
+function serverLanguage(guildId, logs = false) {
+    const config = require('../config/config');
+    const id = guildId || config.__context.getGuildId();
+    const current = id ? require('../database/guildSettings').getGuildConfig(id) : config;
+    const value = logs ? current.Logging?.Language : current.Bot?.Language;
+    return ['nl','en','both'].includes(value) ? value : logs ? 'nl' : 'both';
+}
+function getLanguage(guildId, userId) {
+    const fallback = serverLanguage(guildId) === 'en' ? 'en' : 'nl';
+    return require('../database/languages').get(guildId, userId, fallback);
+}
 function isEphemeral(flags) { return Boolean((Number(flags?.bitfield ?? flags) || 0) & 64); }
 function deliveryLanguage(target, method, input) {
     const interaction = target && typeof target.isRepliable === 'function';
     if(interaction) {
         const privateReply = method === 'showModal' || method === 'respond' ||
             (method === 'editReply' ? target.ephemeral : method === 'update' ? isEphemeral(target.message?.flags) : isEphemeral(input?.flags) || input?.ephemeral);
-        return privateReply ? getLanguage(target.guildId,target.user.id) : 'both';
+        return privateReply ? getLanguage(target.guildId,target.user.id) : serverLanguage(target.guildId || target.guild?.id);
     }
     const channel = target?.channel || target;
     if(channel?.isDMBased?.() || target?.recipient || target?.username || target?.user?.username) {
@@ -116,12 +126,49 @@ function deliveryLanguage(target, method, input) {
         const guildId = target.guild?.id || require('../config/config').__context.getGuildId();
         return getLanguage(guildId,userId);
     }
-    return 'both';
+    return serverLanguage(target?.guildId || target?.guild?.id || channel?.guildId || channel?.guild?.id);
+}
+// Keep one real mention per user/role in a message, including bilingual blocks.
+// Repeated references use a readable, non-pinging name; never fetch members here.
+function singleMentions(data, target) {
+    const guild = target?.guild || target?.channel?.guild;
+    const seen = new Set();
+    const replace = text => typeof text !== 'string' ? text : text.replace(/<@([!&]?)(\d+)>|@(everyone|here)\b/g, (token, kind, id, broadcast) => {
+        const key = broadcast || (kind === '&' ? 'role:' : 'user:') + id;
+        if (!seen.has(key)) { seen.add(key); return token; }
+        let name;
+        if (broadcast) return '@\u200b' + broadcast;
+        if (kind === '&') name = guild?.roles?.cache?.get?.(id)?.name;
+        else name = guild?.members?.cache?.get?.(id)?.displayName ||
+            (target?.user?.id === id ? target.user.globalName || target.user.username : null) ||
+            target?.client?.users?.cache?.get?.(id)?.username;
+        // Backticks make the replacement plain text; strip controls/mention syntax.
+        const safe = String(name || (kind === '&' ? 'role ' : 'user ') + id)
+            .replace(/[`<>\r\n]/g, '').replace(/@/g, '@\u200b').slice(0, 80);
+        return '`' + safe + '`';
+    });
+    if (!data || typeof data !== 'object') return data;
+    if (data.content) data.content = replace(data.content);
+    for (const e of data.embeds || []) {
+        if (e.title) e.title = replace(e.title);
+        if (e.description) e.description = replace(e.description);
+        if (e.author?.name) e.author.name = replace(e.author.name);
+        for (const field of e.fields || []) { field.name = replace(field.name); field.value = replace(field.value); }
+        if (e.footer?.text) e.footer.text = replace(e.footer.text);
+    }
+    return data;
 }
 function send(target, method, ...args) {
     const language=deliveryLanguage(target,method,args[0]);
     if(method==='respond') args[0]=args[0].map(c=>({...c,name:visible(c.name,language,100,true)}));
-    else args[0]=payload(args[0],language);
+    else args[0]=payload(singleMentions(payload(args[0],language),target),language);
+    return target[method](...args);
+}
+// Log intent is explicit: regular posts in a log channel keep the bot language.
+function sendLogMessage(target, method, ...args) {
+    const guildId = target?.guildId || target?.guild?.id || target?.channel?.guildId || target?.channel?.guild?.id;
+    const language = serverLanguage(guildId, true);
+    args[0] = payload(singleMentions(payload(args[0], language), target), language);
     return target[method](...args);
 }
 // Slash command identifiers remain stable; Discord translates descriptions and choice labels.
@@ -151,4 +198,4 @@ function commandData(data) {
     if(out.choices)out.choices=out.choices.map(c=>({...c,name_localizations:{...c.name_localizations,'en-US':render(tr(c.name),'en'),'en-GB':render(tr(c.name),'en')}}));
     return out;
 }
-module.exports={tr,pair,render,clip,visible,plain,textTree,payload,send,getLanguage,commandData};
+module.exports={tr,pair,render,clip,visible,plain,textTree,payload,send,sendLogMessage,serverLanguage,getLanguage,commandData};

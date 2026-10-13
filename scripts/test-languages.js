@@ -32,6 +32,63 @@ function interaction(action,args={}){return {guildId,guild,channelId:'c',user:{i
  const dm={id:userId,username:'Tester',async send(p){this.response=p;noMarkers(p);}};await require('../config/config').__context.run(guildId,()=>l.send(dm,'send',{embeds:[embed]}));assert.equal(dm.response.embeds[0].title,'🎂 Birthday');
 assert.equal(i.response.components[0].components[0].label,'Cancel');assert.equal(i.response.components[0].components[0].custom_id,'original:id');assert.equal(i.response.embeds[0].fields[0].value,userText);
  await l.send(i,'followUp',{embeds:[embed]});assert.match(i.response.embeds[0].description,/keuze.*\n\n.*selection/s);
+ // Repeated bilingual mentions become plain names; allowlists and distinct users survive.
+ guild.members={cache:new Map([[userId,{displayName:'Troy'}]])};
+ guild.roles={cache:new Map([['555555555555555555',{name:'VIP'}]])};
+ const mentions=l.pair(`<@${userId}> <@&555555555555555555> @everyone`, `<@!${userId}> <@&555555555555555555> @everyone`);
+ const allow={users:[userId],roles:['555555555555555555'],parse:[],repliedUser:false};
+ await l.send(i,'reply',{content:mentions,embeds:[{description:`<@${userId}> <@666666666666666666> <@666666666666666666>`}],allowedMentions:allow});
+ const mentionText=i.response.content+i.response.embeds[0].description;
+ assert.equal((mentionText.match(new RegExp('<@!?'+userId+'>','g'))||[]).length,1);
+ assert.equal((mentionText.match(/<@&555555555555555555>/g)||[]).length,1);
+ assert.equal((mentionText.match(/@everyone/g)||[]).length,1);
+ assert.equal((mentionText.match(/<@666666666666666666>/g)||[]).length,1);
+ assert.match(mentionText,/`Troy`/);assert.match(mentionText,/`VIP`/);
+ assert.deepEqual(i.response.allowedMentions,allow);
+ // Server language and log language are independent, persistent and scoped.
+ const config=require('../config/config');
+ const logChannel={guildId,guild,id:'333333333333333333',isTextBased:()=>true,async send(p){this.response=p;noMarkers(p);}};
+ guild.channels={cache:new Map([[logChannel.id,logChannel]])};
+ settings.updateValue(guildId,'Logging.Channel',logChannel.id);
+ settings.updateValue(guildId,'Logging.Enabled','yes');
+ assert.equal(settings.getGuildConfig(guildId).Bot.Language,'both');
+ assert.equal(settings.getGuildConfig(guildId).Logging.Language,'nl');
+ for(const mode of ['nl','en','both']) {
+     settings.updateValue(guildId,'Bot.Language',mode);
+     await l.send(i,'reply',{embeds:[embed]});
+     assert.equal(i.response.embeds[0].title,l.visible(embed.data.title,mode));
+     await l.send(logChannel,'send',{embeds:[embed]});
+     assert.equal(logChannel.response.embeds[0].title,l.visible(embed.data.title,mode));
+     // Logs remain Dutch even if public messages are English or bilingual.
+     await l.sendLogMessage(logChannel,'send',{embeds:[embed]});
+     assert.equal(logChannel.response.embeds[0].title,'🎂 Verjaardag');
+     assert.equal(l.getLanguage(guildId,'new-member'),mode==='en'?'en':'nl');
+     assert.equal(l.getLanguage(guildId,userId),'en');
+     settings.updateValue(guildId,'Logging.Language',mode);
+     await config.__context.run(guildId,()=>require('../utils/eventEmbeds').sendLog(guild,embed));
+     assert.equal(logChannel.response.embeds[0].title,l.visible(embed.data.title,mode));
+     settings.resetValue(guildId,'Logging.Language');
+ }
+ assert.equal(l.serverLanguage('another-guild'),'both');
+ assert.equal(l.serverLanguage('another-guild',true),'nl');
+ assert.throws(()=>settings.updateValue(guildId,'Bot.Language','xx'));
+ assert.throws(()=>settings.updateValue(guildId,'Logging.Language','xx'));
+ assert.equal(settings.updateValue(guildId,'Bot.Language','Engels').value,'en');
+ assert.equal(settings.exportGuild(guildId).Bot.Language,'en');
+ settings.resetValue(guildId,'Bot.Language');
+ assert.equal(l.serverLanguage(guildId),'both');
+ // Exercise the real config command and its access restriction.
+ const configCommand=require('../commands/administration/config');
+ const configInteraction=interaction('instellen',{instelling:'Bot.Language',waarde:'en'});
+ await config.__context.run(guildId,()=>configCommand.execute(null,configInteraction));
+ assert.equal(l.serverLanguage(guildId),'en');
+ const denied=interaction('instellen',{instelling:'Bot.Language',waarde:'nl'});
+ denied.user={id:'444444444444444444'};
+ await config.__context.run(guildId,()=>configCommand.execute(null,denied));
+ assert.equal(l.serverLanguage(guildId),'en');
+ assert.match(denied.response.content,/owner or a configured developer/);
+ settings.resetValue(guildId,'Bot.Language');
+ settings.updateValue(guildId,'Logging.Enabled','no');
  const modal=new d.ModalBuilder().setCustomId('test').setTitle(l.tr('Selfrolpaneel maken')).addComponents(new d.ActionRowBuilder().addComponents(new d.TextInputBuilder().setCustomId('text').setStyle(2).setLabel(l.tr('Titel'))));await l.send(i,'showModal',modal);assert.equal(i.response.title,'Create self-role panel');assert.equal(i.response.components[0].components[0].label,'Title');
  const long=l.pair('n'.repeat(4000),'e'.repeat(4000));const limit=l.payload({embeds:Array.from({length:10},()=>({title:long,description:long,fields:[{name:long,value:long}]}))},'both');
  let total=0;for(const e of limit.embeds){assert.ok(e.title.length<=256&&e.description.length<=4096);total+=e.title.length+e.description.length;for(const f of e.fields){assert.ok(f.name.length<=256&&f.value.length<=1024);total+=f.name.length+f.value.length;}}assert.ok(total<=6000);noMarkers(limit);

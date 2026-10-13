@@ -315,6 +315,12 @@ function extractDiscordId(value) {
 
 function parseValue(path, rawValue, currentValue) {
     const raw = String(rawValue).trim();
+    if (["Bot.Language", "Logging.Language"].includes(path)) {
+        const aliases = { nl: "nl", nederlands: "nl", dutch: "nl", en: "en", engels: "en", english: "en", both: "both", beide: "both", tweetalig: "both" };
+        const language = aliases[raw.toLowerCase()];
+        if (!language) throw new Error(tr("Gebruik nl (Nederlands), en (Engels) of both (beide talen)."));
+        return language;
+    }
     if (path === "AIChat.Mode" && !["all", "mention"].includes(raw)) {
         throw new Error(tr("Gebruik all (alle berichten) of mention (alleen @bot)."));
     }

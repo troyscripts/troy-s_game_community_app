@@ -1,4 +1,4 @@
-const { tr, send } = require("../utils/localization");
+const { tr, send, sendLogMessage } = require("../utils/localization");
 const { Events, EmbedBuilder, escapeMarkdown } = require("../utils/discord");
 
 const config = require("../config/config");
@@ -48,7 +48,7 @@ module.exports = {
             embed.addFields({ name: tr("Bijlagen"), value: names.join("\n") });
         }
 
-        await send(channel, "send", {
+        await sendLogMessage(channel, "send", {
             embeds: [embed],
             allowedMentions: { parse: [], repliedUser: false }
         });

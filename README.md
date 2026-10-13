@@ -1,4 +1,12 @@
-# Troy’s Game Community Bot — 2.9.9-beta
+# Troy’s Game Community Bot — 3.0.0
+
+## 3.0.0 — servertaal en logtaal
+
+- `/config instellen instelling:Bot.Language waarde:nl` kiest Nederlands; `en` kiest Engels en `both` beide talen (standaard).
+- `Logging.Language` kiest los de Discord-logtaal: standaard `nl`, optioneel `en` of `both`.
+- Gebruikers en rollen worden eenmaal per bericht vermeld; herhalingen tonen gewone namen.
+- Persoonlijke `/language`-keuzes blijven gelden. Zonder keuze volgt een Engelse server Engels, anders Nederlands.
+- Instellingen werken direct per server. Bestaande /config-bevoegdheden blijven gelden.
 
 ## 2.9.9-beta — tweetalige bot
 

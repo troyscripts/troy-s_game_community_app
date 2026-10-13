@@ -1,7 +1,8 @@
-const { MessageFlags } = require("discord.js");
+const { tr, send, sendLogMessage } = require("../utils/localization");
+const { MessageFlags } = require("../utils/discord");
 const {
     EmbedBuilder
-} = require("discord.js");
+} = require("../utils/discord");
 
 const config =
     require("../config/config");
@@ -31,10 +32,10 @@ module.exports = {
         if (!hasPermission) {
 
 
-            return interaction.reply({
+            return send(interaction, "reply", {
 
                 content:
-                "❌ Je hebt geen toestemming om tickets te claimen.",
+                tr("❌ Je hebt geen toestemming om tickets te claimen."),
 
                 flags: MessageFlags.Ephemeral
 
@@ -57,10 +58,10 @@ module.exports = {
         if (!ticket) {
 
 
-            return interaction.reply({
+            return send(interaction, "reply", {
 
                 content:
-                "❌ Dit kanaal is geen ticket.",
+                tr("❌ Dit kanaal is geen ticket."),
 
                 flags: MessageFlags.Ephemeral
 
@@ -74,10 +75,10 @@ module.exports = {
         if (ticket.claimed_by) {
 
 
-            return interaction.reply({
+            return send(interaction, "reply", {
 
                 content:
-                `❌ Dit ticket is al geclaimd door <@${ticket.claimed_by}>.`,
+                tr("❌ Dit ticket is al geclaimd door <@{0}>.", ticket.claimed_by),
 
                 flags: MessageFlags.Ephemeral
 
@@ -105,13 +106,13 @@ module.exports = {
 
 
                 .setTitle(
-                    "🎫 Ticket geclaimd"
+                    tr("🎫 Ticket geclaimd")
                 )
 
 
                 .setDescription(
 
-                    `Dit ticket wordt nu behandeld door ${interaction.user}.`
+                    tr("Dit ticket wordt nu behandeld door {0}.", interaction.user)
 
                 )
 
@@ -128,7 +129,7 @@ module.exports = {
 
 
 
-        await interaction.reply({
+        await send(interaction, "reply", {
 
             embeds:[
 
@@ -172,7 +173,7 @@ module.exports = {
 
                         `**Staff:** ${interaction.user}\n` +
 
-                        `**Eigenaar:** <@${ticket.user_id}>`
+                        tr("**Eigenaar:** <@{0}>", ticket.user_id)
 
                     )
 
@@ -180,7 +181,7 @@ module.exports = {
                     .setTimestamp();
 
 
-            logChannel.send({
+            sendLogMessage(logChannel, "send", {
 
                 embeds:[
 

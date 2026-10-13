@@ -1,4 +1,4 @@
-const { tr, send } = require("../utils/localization");
+const { tr, send, sendLogMessage } = require("../utils/localization");
 const {
     ActionRowBuilder,
     ButtonBuilder,
@@ -189,7 +189,7 @@ module.exports = {
 
         const logChannel = interaction.guild.channels.cache.get(config.Tickets.LogChannel);
         if (logChannel?.isTextBased?.()) {
-            await send(logChannel, "send", {
+            await sendLogMessage(logChannel, "send", {
                 content: tr("🎫 Ticket {0} geopend door {1} ({2}).", channel, interaction.user, escapeMarkdown(category)),
                 allowedMentions: { parse: [] }
             }).catch(() => {});

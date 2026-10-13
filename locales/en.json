@@ -963,5 +963,8 @@
   "Vertaal de opgeslagen welkomsttekst naar het Engels.": "Translate the saved welcome text into English.",
   "Optioneel: vul zelf een Engelse vertaling in of corrigeer deze.": "Optional: enter or correct the English translation yourself.",
   "Vertaal je bericht naar het Engels en plaats beide talen. Standaard: nee.": "Translate your message into English and post both languages. Default: no.",
-  "Optioneel: eigen Engelse vertaling; plaats deze onder je bericht.": "Optional: your English translation; post it below your message."
+  "Optioneel: eigen Engelse vertaling; plaats deze onder je bericht.": "Optional: your English translation; post it below your message.",
+  "Gebruik nl (Nederlands), en (Engels) of both (beide talen).": "Use nl (Dutch), en (English) or both (both languages).",
+  "`Bot.Language` → `nl`, `en` of `both` voor openbare berichten\n": "`Bot.Language` → `nl`, `en` or `both` for public messages\n",
+  "`Logging.Language` → `nl`, `en` of `both` voor Discord-logs (standaard `nl`)\n": "`Logging.Language` → `nl`, `en` or `both` for Discord logs (default `nl`)\n"
 }

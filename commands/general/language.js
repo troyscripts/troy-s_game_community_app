@@ -8,5 +8,5 @@ module.exports={
  .setRequired(true).addChoices({name:'Nederlands',value:'nl'},{name:'English',value:'en'})),
  category:'Algemeen',cooldown:3,
  async execute(client,i){const language=i.options.getString('taal');languages.set(i.guildId,i.user.id,language);
- return i.reply({content:language==='en'?'✅ Your private replies are now in English. Public messages appear in Dutch and English.':'✅ Je privéantwoorden zijn nu Nederlands. Openbare berichten verschijnen in het Nederlands en Engels.',flags:MessageFlags.Ephemeral});}
+ return i.reply({content:language==='en'?'✅ Your private replies are now in English. Public messages follow the server language setting.':'✅ Je privéantwoorden zijn nu Nederlands. Openbare berichten volgen de taalinstelling van de server.',flags:MessageFlags.Ephemeral});}
 };

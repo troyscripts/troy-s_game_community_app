@@ -1,4 +1,4 @@
-const { tr, send } = require("../utils/localization");
+const { tr, send, sendLogMessage } = require("../utils/localization");
 const fs = require('node:fs');
 const path = require('node:path');
 const config = require('../config/config');
@@ -52,7 +52,7 @@ async function checkVersions(client) {
                     const description = notes.length > 3500
                         ? notes.slice(0, 3440) + tr("\n\nVolledige wijzigingen staan in de bijlage.")
                         : notes;
-                    await send(channel, "send", {
+                    await sendLogMessage(channel, "send", {
                         embeds: [{
                             title: tr("🆕 Bot bijgewerkt naar {0}", version),
                             description,
