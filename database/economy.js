@@ -28,7 +28,7 @@ function setMoney(userId, guildId, wallet, bank) {
     db.prepare(`
         UPDATE economy SET wallet = ?, bank = ?
         WHERE user_id = ? AND guild_id = ?
-    `).run(Math.max(0, wallet), Math.max(0, bank), userId, guildId);
+    `).run(Math.max(0, wallet), bank, userId, guildId);
 }
 
 function change(column, userId, guildId, amount) {
@@ -39,7 +39,7 @@ function change(column, userId, guildId, amount) {
     createUser(userId, guildId);
     db.prepare(`
         UPDATE economy
-        SET ${column} = MAX(0, ${column} + ?)
+        SET ${column} = ${column === "bank" ? "bank + ?" : "MAX(0, wallet + ?)"}
         WHERE user_id = ? AND guild_id = ?
     `).run(Number(amount), userId, guildId);
 

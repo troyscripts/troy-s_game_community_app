@@ -11,7 +11,7 @@ module.exports = {
         .setDefaultMemberPermissions(null)
         .addBooleanOption(option => option
             .setName('bevestigen')
-            .setDescription('Ja: reset alle XP/levels, geld en cooldowns; annuleer openstaande rekeningen.')
+            .setDescription('Ja: reset alle XP/levels, geld en cooldowns; annuleer gewone rekeningen.')
             .setRequired(true)),
     category: 'Administration',
     guildOnly: true,
@@ -36,9 +36,9 @@ module.exports = {
         return send(interaction, "editReply", {
             content: tr("✅ **Leaderboard en economy van deze server gereset.**\n\n") +
                 tr("• {0} levelprofielen: level 1, 0 XP en 0 berichten.\n", result.levels) +
-                tr("• {0} economyprofielen: €0 wallet en €0 bank.\n", result.economy) +
+                tr("• {0} economyprofielen: geld gereset; bestaande bankschuld blijft behouden.\n", result.economy) +
                 tr("• XP-, daily-, work-, steel- en rekeningcooldowns gereset.\n") +
-                tr("• {0} openstaande rekeningen geannuleerd.\n\n", result.invoices) +
+                tr("• {0} gewone rekeningen geannuleerd; verplichte rekeningen en rente blijven behouden.\n\n", result.invoices) +
                 tr("Bestaande Discord-rollen blijven staan. Nieuwe activiteit bouwt weer voortgang op."),
             allowedMentions: { parse: [] }
         });

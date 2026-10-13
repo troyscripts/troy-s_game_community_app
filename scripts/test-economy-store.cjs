@@ -1,0 +1,70 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs'),os=require('node:os'),path=require('node:path');
+const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'troy-store-'));
+const defaults=require('../config/defaults');defaults.Database.File=path.join(tmp,'test.sqlite');defaults.Logging.Enabled=false;defaults.Economy.Enabled=true;
+const database=require('../database/database');database.initializeDatabase();
+const {db}=database;
+const economy=require('../database/economy'),actions=require('../database/economyActions'),credits=require('../database/storeCredits'),store=require('../database/store');
+const {resetEconomy}=require('../database/economyReset'),{resetProgress}=require('../database/progressReset');
+const guild='111111111111111111',other='222222222222222222',sender='709486570293559356',target='333333333333333333',DAY=86400000;
+const now=Date.now;let time=1800000000000;Date.now=()=>time;
+async function run(){
+ economy.setMoney(sender,guild,40000,2000);economy.setMoney(target,guild,100,20);economy.setMoney(sender,other,999,888);
+ credits.buy('credit1',guild,sender,'wallet');credits.buy('credit1',guild,sender,'wallet');assert.equal(economy.getBalance(sender,guild).wallet,35000);assert.equal(credits.available(guild,sender),1);
+ assert.throws(()=>credits.buy('credit1',guild,target,'wallet'));
+ assert.throws(()=>actions.createInvoice(sender,target,guild,7001,'reason','bad',true));assert.equal(credits.available(guild,sender),1);
+ assert.throws(()=>actions.createInvoice(sender,sender,guild,100,'reason','self',true));
+ assert.throws(()=>actions.createInvoice(target,sender,guild,100,'reason','nocredit',true));assert.equal(db.prepare('SELECT COUNT(*) n FROM economy_invoices').get().n,0);
+ const id=actions.createInvoice(sender,target,guild,7000,'reason','forced1',true);assert.equal(credits.available(guild,sender),0);
+ assert.throws(()=>actions.createInvoice(sender,target,guild,7000,'reason','forced1',true));
+ let row=actions.getInvoice(guild,id,target);assert.equal(actions.invoiceAmount(row,time+DAY-1),7000);assert.equal(actions.invoiceAmount(row,time+DAY),7700);assert.equal(actions.invoiceAmount(row,time+7*DAY),13641);assert.equal(actions.invoiceAmount(row,time+50*DAY),13641);
+ assert.throws(()=>actions.settleInvoice(guild,id,target,'declined'));assert.throws(()=>actions.settleInvoice(guild,id,sender,'cancelled'));assert.throws(()=>actions.settleInvoice(other,id,target,'paid'));
+ assert.throws(()=>actions.settleInvoice(guild,id,target,'paid'));assert.equal(actions.getInvoice(guild,id,target).status,'open');
+ time+=7*DAY;assert.equal(actions.collectDue(),1);assert.equal(economy.getBalance(target,guild).bank,-13621);assert.equal(economy.getBalance(sender,guild).bank,15641);assert.equal(actions.collectDue(),0);
+ economy.addWallet(target,guild,400);economy.deposit(target,guild,300);assert.equal(economy.getBalance(target,guild).bank,-13321);assert.equal(economy.withdraw(target,guild,1),false);
+ economy.setWallet(target,guild,1500);assert.equal(economy.getBalance(target,guild).bank,-13321);economy.addBank(target,guild,100);assert.equal(economy.getBalance(target,guild).bank,-13221);
+ credits.buy('credit2',guild,sender,'wallet');const early=actions.createInvoice(sender,target,guild,100,'early','forced2',true);time+=DAY;actions.settleInvoice(guild,early,target,'paid','wallet');time+=8*DAY;assert.equal(actions.invoiceAmount(actions.getInvoice(guild,early,target)),110);assert.equal(actions.collectDue(),0);
+ credits.buy('unused',guild,sender,'wallet');credits.buy('credit3',guild,sender,'wallet');const open=actions.createInvoice(sender,target,guild,100,'open','forced3',true);
+ store.reserve('vip',guild,sender,'role',1,'wallet');assert.equal(resetEconomy(guild).pending,1);assert.notEqual(economy.getBalance(sender,guild).wallet,0);store.complete('vip');
+ db.prepare('INSERT INTO levels (user_id,guild_id,xp,level,messages,last_xp) VALUES (?,?,?,?,?,?)').run(sender,guild,123,4,7,5);
+ const snapshot=()=>JSON.stringify({credits:db.prepare('SELECT * FROM store_invoice_credits').all(),orders:db.prepare('SELECT * FROM store_orders').all(),vip:db.prepare('SELECT * FROM store_vip').all(),xp:db.prepare('SELECT * FROM levels').all(),forced:db.prepare('SELECT * FROM economy_invoices WHERE forced=1').all(),other:economy.getBalance(sender,other)});
+ const before=snapshot();assert.equal(resetEconomy(guild).economy,2);assert.equal(snapshot(),before);assert.equal(credits.available(guild,sender),1);assert.equal(economy.getBalance(target,guild).bank,-13221);assert.equal(economy.getOrCreate(sender,guild).wallet,0);
+ resetProgress(guild);assert.equal(actions.getInvoice(guild,open,target).status,'open');assert.equal(economy.getBalance(target,guild).bank,-13221);assert.equal(credits.available(guild,sender),1);
+ time+=10*DAY;assert.equal(actions.collectDue(),1);assert.equal(actions.collectDue(),0);
+ economy.setMoney(sender,guild,123,456);db.exec("CREATE TRIGGER reset_failure BEFORE UPDATE ON economy_invoices BEGIN SELECT RAISE(ABORT,'test failure'); END");
+ db.prepare("INSERT INTO economy_invoices (guild_id,sender_id,recipient_id,amount,reason,created_at,request_id) VALUES (?,?,?,?,?,?,?)").run(guild,sender,target,1,'rollback',time,'rollback');
+ assert.throws(()=>resetEconomy(guild));assert.equal(economy.getBalance(sender,guild).wallet,123);db.exec('DROP TRIGGER reset_failure');
+ const cmd=require('../commands/administration/reset-economy');
+ function interaction(user,confirm){return {guild:{id:guild,ownerId:sender},guildId:guild,user:{id:user},member:{user:{id:user},roles:{cache:{has:()=>false}}},options:{getBoolean:()=>confirm},async deferReply(p){assert.equal(p.flags,64);this.deferred=true;this.ephemeral=true;},async editReply(p){this.response=p;}};}
+ await cmd.execute(null,interaction(target,true));assert.equal(economy.getBalance(sender,guild).wallet,123);
+ await cmd.execute(null,interaction(sender,false));assert.equal(economy.getBalance(sender,guild).wallet,123);
+ const failed=interaction(sender,true);failed.deferReply=async()=>{throw Error('expired');};await assert.rejects(cmd.execute(null,failed));assert.equal(economy.getBalance(sender,guild).wallet,123);
+ await cmd.execute(null,interaction(sender,true));assert.equal(economy.getBalance(sender,guild).wallet,0);
+ // Exercise store UI and the actual invoice command, including translated private replies.
+ const settings=require('../database/guildSettings');settings.initialize();
+ const server={id:guild,name:'Test',ownerId:sender,members:{fetch:async id=>({id,user:{id,bot:false}})}};settings.ensureGuild(server);
+ const service=require('../services/store');
+ economy.setMoney(sender,guild,15000,0);
+ function ui(user=sender){return {guild:server,guildId:guild,user:{id:user},options:{getString:()=>null},async deferReply(p){this.deferred=true;this.ephemeral=Boolean(p?.flags&64);},async editReply(p){this.response=p;}};}
+ const shop=ui();await service.command(null,shop);assert.ok(shop.response.components[0].components.some(b=>b.custom_id.includes(':invoice:')));
+ const select=ui();select.customId=`store:select:${sender}:invoice:wallet`;await service.button(null,select);
+ const buyId=select.response.components[0].components[0].custom_id;
+ const purchase=ui();purchase.customId=buyId;await service.button(null,purchase);await service.button(null,purchase);assert.equal(economy.getBalance(sender,guild).wallet,10000);
+ const wrong=ui(target);wrong.customId=buyId;await service.button(null,wrong);assert.equal(economy.getBalance(sender,guild).wallet,10000);
+ const beforeCredits=credits.available(guild,sender);
+ const issue=ui();issue.id='ui-invoice';issue.options={getSubcommand:()=> 'sturen',getUser:()=>({id:target,bot:false}),getInteger:()=>7000,getString:()=> 'UI test',getBoolean:()=>true};
+ await require('../commands/economy/rekening').execute(null,issue);assert.equal(credits.available(guild,sender),beforeCredits-1);assert.match(issue.response.content,/Verplichte rekening/);
+ require('../database/languages').set(guild,sender,'en');const status=ui();status.options.getString=k=>k==='actie'?'status':null;await service.command(null,status);assert.match(status.response.content,/Unused compulsory invoices/);assert.ok(!/[\uE000-\uE002]/.test(status.response.content));
+ time+=7*DAY;await service.tick({guilds:{cache:new Map()}});assert.equal(actions.getInvoice(guild,db.prepare("SELECT id FROM economy_invoices WHERE request_id='ui-invoice'").get().id,target).status,'paid');
+ // Personal reset clears existing debt, but cannot erase purchases or future invoices.
+ economy.setMoney(target,guild,50,-500);
+ const creditRows=JSON.stringify(credits.history(guild,sender));
+ const unpaid=actions.createInvoice(sender,target,guild,50,'still due','after-personal-reset',true);
+ const personal=ui();personal.member={roles:{cache:{some:()=>false}}};personal.options={getUser:()=>({id:target,toString:()=>`<@${target}>`})};
+ await require('../commands/economy/economy-reset').execute(null,personal);
+ assert.equal(economy.getBalance(target,guild).bank,0);assert.equal(economy.getBalance(target,guild).wallet,0);
+ assert.equal(actions.getInvoice(guild,unpaid,target).status,'open');
+ assert.equal(credits.history(guild,sender).length,JSON.parse(creditRows).length);
+ console.log('PASS: SQLite purchases/idempotency, atomic credits, interest, early/automatic settlement, debt, reset isolation/preservation/rollback, permissions.');
+}
+run().catch(e=>{console.error(e);process.exitCode=1;}).finally(()=>{Date.now=now;database.closeDatabase();fs.rmSync(tmp,{recursive:true,force:true});});

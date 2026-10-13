@@ -14,14 +14,14 @@ const resetProgress = db.transaction((guildId) => {
     `).run(guildId).changes;
     // Rijen behouden voorkomt dat bestaande gebruikers opnieuw startgeld krijgen.
     const economy = db.prepare(`
-        UPDATE economy SET wallet = 0, bank = 0, last_daily = 0, last_work = 0
+        UPDATE economy SET wallet = 0, bank = MIN(bank, 0), last_daily = 0, last_work = 0
         WHERE guild_id = ?
     `).run(guildId).changes;
     db.prepare('DELETE FROM economy_actions WHERE guild_id = ?').run(guildId);
-    // Oude openstaande rekeningen mogen na de reset geen geld meer verplaatsen.
+    // Gewone rekeningen annuleren; gekochte verplichte rekeningen blijven doorlopen.
     const invoices = db.prepare(`
         UPDATE economy_invoices SET status = 'cancelled', closed_at = ?, payment_source = NULL
-        WHERE guild_id = ? AND status = 'open'
+        WHERE guild_id = ? AND status = 'open' AND forced = 0
     `).run(Date.now(), guildId).changes;
     return { levels, economy, invoices };
 });

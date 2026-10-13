@@ -26,6 +26,36 @@ CREATE TABLE IF NOT EXISTS economy_robberies (
 );
 `);
 
+// Additive migration preserves existing invoice history.
+for (const [name, type] of [['forced', 'INTEGER NOT NULL DEFAULT 0'], ['settled_amount', 'INTEGER']]) {
+    if (!db.prepare('PRAGMA table_info(economy_invoices)').all().some(c => c.name === name))
+        db.exec(`ALTER TABLE economy_invoices ADD COLUMN ${name} ${type}`);
+}
+db.exec("CREATE INDEX IF NOT EXISTS idx_forced_due ON economy_invoices(created_at,guild_id) WHERE forced=1 AND status='open'");
+const credits = require('./storeCredits');
+const DAY = 86400000;
+function invoiceAmount(row, now = Date.now()) {
+    if (row.settled_amount != null) return row.settled_amount;
+    let amount = row.amount;
+    const end = row.status === 'cancelled' && row.closed_at ? row.closed_at : now;
+    const days = row.forced ? Math.min(7, Math.max(0, Math.floor((end - row.created_at) / DAY))) : 0;
+    // Whole game euros, rounded once per completed 24-hour period.
+    for (let n = 0; n < days; n++) amount = Math.floor((amount * 11 + 5) / 10);
+    return amount;
+}
+const collectDue = db.transaction((guild = null, now = Date.now()) => {
+    const rows = db.prepare("SELECT * FROM economy_invoices WHERE forced=1 AND status='open' AND created_at<=? AND (? IS NULL OR guild_id=?)").all(now - 7 * DAY, guild, guild);
+    for (const row of rows) {
+        const amount = invoiceAmount(row, now);
+        economy.getOrCreate(row.recipient_id, row.guild_id);
+        economy.getOrCreate(row.sender_id, row.guild_id);
+        db.prepare('UPDATE economy SET bank=bank-? WHERE guild_id=? AND user_id=?').run(amount,row.guild_id,row.recipient_id);
+        db.prepare('UPDATE economy SET bank=bank+? WHERE guild_id=? AND user_id=?').run(amount,row.guild_id,row.sender_id);
+        db.prepare("UPDATE economy_invoices SET status='paid',closed_at=?,payment_source='bank',settled_amount=? WHERE id=? AND status='open'").run(now,amount,row.id);
+    }
+    return rows.length;
+});
+
 const RULES = Object.freeze({ stealCooldown: 30 * 60 * 1000, stealChance: 35,
     maxSteal: 500, fine: 100, minimumWallet: 100, invoiceCooldown: 30000, maxInvoice: 1000000 });
 function checkEnabled() {
@@ -66,16 +96,17 @@ const steal=db.transaction((thief,target,guild,requestId) => {
     db.prepare('INSERT INTO economy_robberies VALUES (?,?,?,?,?,?,?)').run(requestId,guild,thief,target,Number(success),amount,now);
     return {success,amount};
 });
-const createInvoice=db.transaction((sender,recipient,guild,amount,reason,requestId) => {
+const createInvoice=db.transaction((sender,recipient,guild,amount,reason,requestId,forced=false) => {
     checkEnabled(); guardDifferent(sender,recipient);
-    if (!Number.isSafeInteger(amount) || amount<1 || amount>RULES.maxInvoice) throw new Error(tr("Gebruik een heel bedrag tussen €1 en €1.000.000."));
+    if (!Number.isSafeInteger(amount) || amount<1 || amount>(forced?7000:RULES.maxInvoice)) throw new Error(tr(forced ? 'Gebruik een heel bedrag tussen €1 en €7.000.' : "Gebruik een heel bedrag tussen €1 en €1.000.000."));
     reason=String(reason).trim();
     if (!reason || reason.length>200) throw new Error(tr("Geef een omschrijving van 1 tot 200 tekens."));
     if(db.prepare('SELECT 1 FROM economy_invoices WHERE request_id=?').get(requestId)) throw new Error(tr("Deze rekening is al aangemaakt."));
     const now=Date.now(); cooldown(guild,sender,'invoice',RULES.invoiceCooldown,now);
     const count=db.prepare("SELECT COUNT(*) AS n FROM economy_invoices WHERE guild_id=? AND sender_id=? AND status='open'").get(guild,sender).n;
     if(count>=20) throw new Error(tr("Je hebt al 20 openstaande verstuurde rekeningen."));
-    const result=db.prepare('INSERT INTO economy_invoices (guild_id,sender_id,recipient_id,amount,reason,created_at,request_id) VALUES (?,?,?,?,?,?,?)').run(guild,sender,recipient,amount,reason,now,requestId);
+    const result=db.prepare('INSERT INTO economy_invoices (guild_id,sender_id,recipient_id,amount,reason,created_at,request_id,forced) VALUES (?,?,?,?,?,?,?,?)').run(guild,sender,recipient,amount,reason,now,requestId,Number(Boolean(forced)));
+    if(forced) credits.consume(guild,sender,Number(result.lastInsertRowid),now);
     mark(guild,sender,'invoice',now);
     return Number(result.lastInsertRowid);
 });
@@ -91,13 +122,15 @@ const settleInvoice=db.transaction((guild,id,user,action,source='bank')=>{
     if(!['paid','declined','cancelled'].includes(action)) throw new Error(tr("Onbekende actie."));
     const allowed=action==='cancelled'?row.sender_id:row.recipient_id;
     if(user!==allowed) throw new Error(action==='cancelled'?tr("Alleen de afzender kan annuleren."):tr("Alleen de ontvanger kan betalen of weigeren."));
-    if(action==='paid') move(user,row.sender_id,guild,row.amount,source);
-    db.prepare('UPDATE economy_invoices SET status=?, closed_at=?, payment_source=? WHERE guild_id=? AND id=?').run(action,Date.now(),action==='paid'?source:null,guild,id);
-    return {...row,status:action};
+    if(row.forced && action !== 'paid') throw new Error(tr('Een verplichte rekening kan niet worden geweigerd of geannuleerd.'));
+    const amount=invoiceAmount(row);
+    if(action==='paid') move(user,row.sender_id,guild,amount,source);
+    db.prepare('UPDATE economy_invoices SET status=?, closed_at=?, payment_source=?, settled_amount=? WHERE guild_id=? AND id=?').run(action,Date.now(),action==='paid'?source:null,action==='paid'?amount:null,guild,id);
+    return {...row,status:action,amount};
 });
 function listInvoices(guild,user,direction='received',page=1) {
     const field=direction==='sent'?'sender_id':'recipient_id';
     page=Math.max(1,Math.floor(Number(page)||1));
     return db.prepare(`SELECT * FROM economy_invoices WHERE guild_id=? AND ${field}=? ORDER BY id DESC LIMIT 10 OFFSET ?`).all(guild,user,(page-1)*10);
 }
-module.exports={RULES,steal,createInvoice,getInvoice,settleInvoice,listInvoices};
+module.exports={invoiceAmount,collectDue,RULES,steal,createInvoice,getInvoice,settleInvoice,listInvoices};

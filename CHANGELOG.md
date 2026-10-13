@@ -1,11 +1,15 @@
 # Changelog
 
-## 3.0.0 — 13 oktober 2026
+## 3.0.1 — 13 oktober 2026
 
-**Hotfix — `/language`**
-- `/language` bevestigt de interactie privé vóór het opslaan van de taalkeuze en werkt daarna het antwoord bij. Zo vertraagt SQLite-opslag de eerste Discord-reactie niet.
-- Bij een mislukte ontvangstbevestiging wordt de taalkeuze niet gewijzigd.
-- English: `/language` now defers its private reply before saving the preference, then edits the reply. Failed acknowledgement leaves the preference unchanged.
+- `/reset-economy bevestigen:Ja`: reset positieve saldi en economy-cooldowns in de huidige server op nul en annuleer gewone rekeningen. Store-aankopen, ongebruikte én verstuurde verplichte rekeningen (inclusief rente en betaaldatum), VIP en XP blijven behouden. Ook `/reset-voortgang` bewaart verplichte rekeningen. Alleen owner-toegang; lopende VIP-leveringen blokkeren de reset.
+- Store: koop voor €5.000 één verplichte rekening. Verstuur met `/rekening sturen verplicht:Ja`, voor €1 t/m €7.000. Geen weigering of annulering door spelers.
+- Rente: elke volle 24 uur +10% over het actuele bedrag, dagelijks afgerond op hele spel-euro’s. Eerder betalen stopt rente. Na 7 dagen automatische bankoverschrijving inclusief maximaal 7 rentestappen, ook als de ontvanger daardoor negatief staat. Achterstallige betalingen worden na een herstart verwerkt.
+- Negatieve banksaldi blijven bij serverbrede resets behouden en worden door stortingen afgelost. Een persoonlijke `/economy-reset gebruiker:@lid` wist wél de bestaande bankschuld, maar behoudt aankopen en openstaande verplichte rekeningen. Store-aankopen en rekeningen zijn servergebonden; aankoopbevestigingen kunnen niet dubbel afschrijven.
+- `/language` bevestigt privé vóór databaseopslag en gebruikt daarna editReply.
+- English: added economy-only reset preserving purchases and XP, €5,000 compulsory invoice credits (up to €7,000 principal), daily compound interest and automatic settlement after seven days, persistent bank debt, and early acknowledgement for `/language`.
+
+## 3.0.0 — 13 oktober 2026
 
 - `Bot.Language`: nl, en of both per server; standaard both behouden.
 - `Logging.Language`: Discord-logs standaard nl, optioneel en/both.

@@ -1,4 +1,18 @@
-# Troy’s Game Community Bot — 3.0.0
+# Troy’s Game Community Bot — 3.0.1
+
+## Nieuw in 3.0.1: verplichte rekeningen en economy-reset
+
+**Kopen:** open `/store`, kies **Verplichte rekening · €5.000** en bevestig. Elke aankoop geeft één gebruik; je hoeft nog geen ontvanger te kiezen. Dit werkt ook zonder ingestelde VIP-rol. Betaling kan uit portemonnee of bank, met voldoende saldo.
+
+**Versturen:** `/rekening sturen gebruiker:@lid bedrag:7000 omschrijving:Voorbeeld verplicht:Ja`. De aankoop wordt pas verbruikt zodra de rekening succesvol is opgeslagen. Bedrag: €1 t/m €7.000 spelgeld. Niet naar jezelf, bots of iemand buiten de server. De bestaande rekeningcooldown en limiet van 20 openstaande rekeningen blijven gelden.
+
+**Rente en betaling:** vanaf het versturen stijgt het bedrag elke volle 24 uur met 10% over het actuele bedrag, telkens afgerond op hele spel-euro’s. Bij €7.000 is dat na 7 dagen €13.641. Eerder betalen via `/rekening betalen` stopt de rente; daarbij is voldoende saldo nodig. Weigeren en annuleren zijn bij verplichte rekeningen niet mogelijk. Na zeven dagen schrijft de bot automatisch het bedrag inclusief zeven rentestappen af van de bank van de ontvanger en bij op de bank van de afzender. De ontvanger mag hierdoor in de min komen. Controle iedere 30 seconden en bij opstarten; na uitval wordt de betaling ingehaald, zonder extra rente na dag 7. Bestaande verplichtingen worden ook verwerkt wanneer nieuwe economy-acties uitstaan.
+
+**Bekijken:** `/rekening overzicht` en `/rekening bekijken` tonen de actuele schuld. `/store actie:status` toont ongebruikte aankopen; `/store actie:geschiedenis` toont VIP en rekening-aankopen.
+
+**Reset iedereen:** `/reset-economy bevestigen:Ja`, met dezelfde owner-toegang als `/config`, werkt alleen voor de huidige server. Portemonnees en positieve banksaldi gaan naar €0; daily-, work-, steel- en rekeningcooldowns worden gewist. Gewone openstaande rekeningen worden geannuleerd. XP/levels blijven staan. Lopende VIP-leveringen moeten eerst afgerond zijn.
+
+**Behouden bij serverbrede reset:** VIP, aankoopgeschiedenis, ongebruikte verplichte rekeningen, verstuurde verplichte rekeningen inclusief rente en oorspronkelijke betaaldatum, en bestaande negatieve banksaldi. Dit geldt ook voor `/reset-voortgang`. Een persoonlijke `/economy-reset gebruiker:@lid` zet wél zowel de portemonnee als de bank op €0, inclusief bestaande bankschuld. Aankopen en nog openstaande verplichte rekeningen blijven daarbij intact en kunnen later opnieuw tot een afschrijving leiden. Nieuwe stortingen lossen bankschuld af. Een verstuurde rekening levert bij een reset geen nieuw ongebruikt aankooprecht op.
 
 ## 3.0.0 — servertaal en logtaal
 

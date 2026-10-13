@@ -13,7 +13,22 @@ Settings persist per server and apply immediately to new messages. Existing mess
 
 Users and roles are mentioned once per message. Repeated references show a plain name (or ID if unavailable). Repeated `@everyone` and `@here` references are also made non-pinging.
 
-**Bot version 3.0.0 · Updated 13 October 2026**
+**Bot version 3.0.1 · Updated 13 October 2026**
+
+## New in 3.0.1: compulsory invoices and economy reset
+
+Buy one compulsory invoice for €5,000 in `/store` and confirm. Each purchase gives one use, without choosing a recipient yet. No VIP role is required. Pay from wallet or bank with sufficient funds.
+
+Send with `/invoice send` and `compulsory:True` (Dutch: `/rekening sturen verplicht:Ja`). Principal: €1–€7,000. One credit is consumed only when the invoice is saved. Self-invoices, bots and recipients outside the server are excluded. Existing invoice cooldown and limit of 20 open sent invoices still apply.
+
+Every completed 24 hours after sending adds 10% to the current amount, rounded daily to whole game euros. €7,000 becomes €13,641 after seven days. Early payment through `/invoice pay` requires sufficient funds and stops interest. Neither party can decline or cancel the invoice. After seven days the bot transfers the full amount from the recipient's bank to the sender's bank, allowing the recipient's bank to become negative. Checks run every 30 seconds and at startup. Downtime is caught up with interest capped at seven daily steps. Existing obligations are collected even when new economy actions are disabled.
+
+Invoice overview/details show the current amount. Store status shows unused credits; history includes VIP and invoice purchases.
+
+`/reset-economy confirm:True` (Dutch: `bevestigen:Ja`) uses the same owner access as `/config` and affects only the current server. Wallets and positive bank balances are zeroed, economy cooldowns reset and ordinary open invoices cancelled. XP stays unchanged. Pending VIP deliveries block this reset until completed.
+
+Server-wide resets preserve store purchases, unused credits, sent compulsory invoices with interest and original due dates, VIP and existing negative bank balances. This also applies to `/reset-voortgang`. An individual `/economy-reset` does zero both wallet and bank, including existing debt. Purchases and open compulsory invoices remain intact and may cause a later debit. Deposits pay down debt. Resetting a sent invoice does not restore a purchase credit.
+
 
 ## New in 2.9.9-beta: Dutch and English
 
@@ -503,8 +518,8 @@ Access: the same Owner/Developer access as `/config`.
 Use `/reset-voortgang bevestigen:Ja` to permanently reset everyone’s progress in the current server. Choosing `Nee` makes no changes.
 
 - XP becomes level 1, 0 XP, 0 messages, with the XP cooldown reset.
-- Existing economy profiles receive €0 wallet and €0 bank. Daily, work, theft and billing cooldowns are cleared.
-- Pending bills are cancelled. Completed bills and theft history remain.
+- Existing profiles receive €0 wallet; positive bank balances become €0 and bank debt is preserved. Daily, work, theft and billing cooldowns are cleared.
+- Ordinary pending bills are cancelled; compulsory invoices continue unchanged. Completed bills and theft history remain.
 - Existing profiles remain, preventing them from receiving starting money again. New users still receive configured starting money.
 - Leaderboards show reset values. New activity earns fresh XP and money.
 - Discord roles, settings, counting, tickets, birthdays and other servers are unchanged.
