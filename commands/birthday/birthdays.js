@@ -118,7 +118,7 @@ module.exports = {
 
 
                 .setTitle(
-                    "🎂 Verjaardagen"
+                    tr("🎂 Verjaardagen")
                 )
 
 

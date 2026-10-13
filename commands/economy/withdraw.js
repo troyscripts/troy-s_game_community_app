@@ -161,17 +161,15 @@ module.exports = {
 
 
                 .setTitle(
-                    "🏧 Geld opgenomen"
+                    tr("🏧 Geld opgenomen")
                 )
 
 
                 .setDescription(
 
-                    `Je hebt **€${amount}** opgenomen van je bank.
+                    tr("Je hebt **€{0}** opgenomen van je bank.\n\n", amount) +
 
-` +
-
-                    `💵 Portemonnee: **€${updatedBalance.wallet}**`
+                    tr("💵 Portemonnee: **€{0}**", updatedBalance.wallet)
 
                 )
 

@@ -98,13 +98,13 @@ module.exports = {
 
 
                 .setTitle(
-                    "🧹 Chat opgeschoond"
+                    tr("🧹 Chat opgeschoond")
                 )
 
 
                 .setDescription(
 
-                    `Er zijn **${deleted.size}** berichten verwijderd.`
+                    tr("Er zijn **{0}** berichten verwijderd.", deleted.size)
 
                 )
 

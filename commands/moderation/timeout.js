@@ -302,19 +302,16 @@ module.exports = {
                     )
 
                     .setTitle(
-                        "🔇 Je hebt een timeout ontvangen"
+                        tr("🔇 Je hebt een timeout ontvangen")
                     )
 
                     .setDescription(
 
-                        `Server: ${interaction.guild.name}
+                        tr("Server: {0}\n\n", interaction.guild.name) +
 
-` +
+                        tr("Duur: {0} minuten\n", duration) +
 
-                        `Duur: ${duration} minuten
-` +
-
-                        `Reden: ${reason}`
+                        tr("Reden: {0}", reason)
 
                     )
 

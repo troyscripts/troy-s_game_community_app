@@ -98,15 +98,13 @@ module.exports = {
 
 
                 .setTitle(
-                    "🎂 Verjaardag"
+                    tr("🎂 Verjaardag")
                 )
 
 
                 .setDescription(
 
-                    `🎉 De verjaardag van **${user.username}** is:
-
-` +
+                    tr("🎉 De verjaardag van **{0}** is:\n\n", user.username) +
 
                     `📅 **${data.birthday}**`
 

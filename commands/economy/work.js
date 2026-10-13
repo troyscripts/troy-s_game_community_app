@@ -136,7 +136,7 @@ module.exports = {
 
 
                 .setTitle(
-                    "💼 Werk voltooid"
+                    tr("💼 Werk voltooid")
                 )
 
 
@@ -144,8 +144,8 @@ module.exports = {
 
                     `${job}\n\n` +
 
-                    `💰 Je verdiende **€${money}**` +
-                    (rewardMultiplier(interaction.member) === 2 ? "\n✨ 2× beloning dankzij je VIP- of verjaardagsrol." : "")
+                    tr("💰 Je verdiende **€{0}**", money) +
+                    (rewardMultiplier(interaction.member) === 2 ? tr("\n✨ 2× beloning dankzij je VIP- of verjaardagsrol.") : "")
 
                 )
 

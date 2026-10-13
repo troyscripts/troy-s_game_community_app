@@ -2,6 +2,12 @@
 
 ## 2.9.9-beta — 12 oktober 2026
 
+**Vertaalfix — 13 oktober 2026**
+- Ontbrekende vertaaltoepassingen hersteld in 24 commando’s: onder andere economy, verjaardagen, moderatie en tickets.
+- `/work` vertaalt nu ook de titel, het verdiende bedrag en de bonusregel. `/daily` en vergelijkbare antwoorden zijn eveneens hersteld.
+- Regressietest voert `/work` en `/daily` daadwerkelijk uit, inclusief dubbele beloning. De bedragen blijven in beide talen gelijk.
+- English: fixed untranslated titles, reward lines and other embed text across 24 commands. Added real command execution tests for `/work` and `/daily`.
+
 - Openbare botberichten Nederlands en Engels; persoonlijke taal via `/language`, per lid en server opgeslagen.
 - Engelse slashnamen, beschrijvingen, keuzelabels, knoppen, formulieren en foutmeldingen. `/help` volgt de opgeslagen voorkeur.
 - Pollvragen en antwoorden automatisch vertaald en opgeslagen; handmatig instellen/corrigeren met `vraag-en` en `antwoorden-en`.

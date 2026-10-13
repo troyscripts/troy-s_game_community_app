@@ -62,9 +62,7 @@ module.exports = {
 
                 .setDescription(
 
-                    `${interaction.user} gooide een muntje.
-
-` +
+                    tr("{0} gooide een muntje.\n\n", interaction.user) +
 
                     `${emoji} **${result}!**`
 

@@ -141,13 +141,13 @@ module.exports = {
 
 
                 .setTitle(
-                    "🎂 Verjaardag opgeslagen"
+                    tr("🎂 Verjaardag opgeslagen")
                 )
 
 
                 .setDescription(
 
-                    "Je verjaardag staat nu ingesteld op:\n\n" +
+                    tr("Je verjaardag staat nu ingesteld op:\n\n") +
 
                     `🎉 **${date}**`
 

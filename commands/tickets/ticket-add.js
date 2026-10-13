@@ -138,13 +138,13 @@ module.exports = {
 
 
                 .setTitle(
-                    "👤 Gebruiker toegevoegd"
+                    tr("👤 Gebruiker toegevoegd")
                 )
 
 
                 .setDescription(
 
-                    `${user} heeft toegang gekregen tot dit ticket.`
+                    tr("{0} heeft toegang gekregen tot dit ticket.", user)
 
                 )
 

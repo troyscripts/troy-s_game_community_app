@@ -78,17 +78,15 @@ module.exports = {
 
 
                 .setTitle(
-                    "🎲 Dobbelsteen"
+                    tr("🎲 Dobbelsteen")
                 )
 
 
                 .setDescription(
 
-                    `${interaction.user} heeft gegooid:
+                    tr("{0} heeft gegooid:\n\n", interaction.user) +
 
-` +
-
-                    `🎲 **${roll}** van **${sides}**`
+                    tr("🎲 **{0}** van **{1}**", roll, sides)
 
                 )
 

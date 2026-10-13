@@ -84,13 +84,13 @@ module.exports = {
 
 
                 .setTitle(
-                    "🗑️ Verjaardag verwijderd"
+                    tr("🗑️ Verjaardag verwijderd")
                 )
 
 
                 .setDescription(
 
-                    `Je verjaardag is succesvol verwijderd uit ${config.Bot.Name}.`
+                    tr("Je verjaardag is succesvol verwijderd uit {0}.", config.Bot.Name)
 
                 )
 

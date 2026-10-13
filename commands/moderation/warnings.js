@@ -128,15 +128,13 @@ module.exports = {
 
 
                 .setTitle(
-                    "⚠️ Waarschuwingen"
+                    tr("⚠️ Waarschuwingen")
                 )
 
 
                 .setDescription(
 
-                    `Gebruiker: ${user}
-
-${warningText}`
+                    tr("Gebruiker: {0}\n\n{1}", user, warningText)
 
                 )
 

@@ -137,15 +137,13 @@ module.exports = {
 
 
                 .setTitle(
-                    "♻️ Economy gereset"
+                    tr("♻️ Economy gereset")
                 )
 
 
                 .setDescription(
 
-                    `${interaction.user} heeft de economie van ${target} gereset.
-
-` +
+                    tr("{0} heeft de economie van {1} gereset.\n\n", interaction.user, target) +
 
                     "💵 Wallet: **€0**\n" +
 

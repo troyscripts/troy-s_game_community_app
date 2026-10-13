@@ -1,0 +1,42 @@
+Vertaalfix voor Troy’s Game Community 2.9.9-beta — 13 oktober 2026
+
+Installeer dit pakket over de reeds geïnstalleerde 2.9.9-beta.
+Stop de bot, overschrijf de bestanden met behoud van de mapstructuur en start de bot opnieuw.
+Geen bestanden verwijderen. Geen nieuwe dependencies, databasewijziging of wijziging aan .env nodig.
+Het versienummer blijft 2.9.9-beta. Een nieuwe registratie van slashcommands is niet nodig.
+
+Hersteld: titel, verdiensten en bonusregel van /work en ontbrekende vertaaltoepassingen in vergelijkbare commando-antwoorden.
+De bedragen, bonusberekening, rechten en andere spelregels zijn niet gewijzigd.
+Bestaande berichten veranderen niet automatisch; nieuwe antwoorden gebruiken de herstelde vertalingen.
+
+Gecontroleerd met echte Discord-builders en een tijdelijke SQLite-database.
+De test voert /work en /daily inclusief bonus uit en controleert de vertalingen en gelijke bedragen.
+Ook de bestaande taaltest en syntaxcontrole slagen. Geen live Discord-aanroepen uitgevoerd.
+
+Gewijzigde bestanden:
+commands/birthday/birthday.js
+commands/birthday/birthdays.js
+commands/birthday/removebirthday.js
+commands/birthday/setbirthday.js
+commands/economy/balance.js
+commands/economy/daily.js
+commands/economy/deposit.js
+commands/economy/economy-reset.js
+commands/economy/give.js
+commands/economy/pay.js
+commands/economy/withdraw.js
+commands/economy/work.js
+commands/fun/coinflip.js
+commands/fun/dice.js
+commands/moderation/ban.js
+commands/moderation/clear.js
+commands/moderation/kick.js
+commands/moderation/purge.js
+commands/moderation/timeout.js
+commands/moderation/warn.js
+commands/moderation/warnings.js
+commands/tickets/ticket-add.js
+commands/tickets/ticket-claim.js
+commands/tickets/ticket-remove.js
+scripts/test-languages.js
+CHANGELOG.md

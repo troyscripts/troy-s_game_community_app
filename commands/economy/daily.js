@@ -125,10 +125,10 @@ module.exports = {
 
                 .setDescription(
 
-                    "Je hebt je dagelijkse beloning ontvangen!\n\n" +
+                    tr("Je hebt je dagelijkse beloning ontvangen!\n\n") +
 
-                    `💰 Je kreeg **€${reward}**` +
-                    (rewardMultiplier(interaction.member) === 2 ? "\n✨ 2× beloning dankzij je VIP- of verjaardagsrol." : "")
+                    tr("💰 Je kreeg **€{0}**", reward) +
+                    (rewardMultiplier(interaction.member) === 2 ? tr("\n✨ 2× beloning dankzij je VIP- of verjaardagsrol.") : "")
 
                 )
 

@@ -154,13 +154,13 @@ module.exports = {
 
 
                 .setTitle(
-                    "🎫 Gebruiker verwijderd"
+                    tr("🎫 Gebruiker verwijderd")
                 )
 
 
                 .setDescription(
 
-                    `${user} is verwijderd uit dit ticket.`
+                    tr("{0} is verwijderd uit dit ticket.", user)
 
                 )
 

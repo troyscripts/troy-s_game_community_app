@@ -121,18 +121,17 @@ module.exports = {
 
 
                 .setTitle(
-                    `💰 Saldo van ${target.username}`
+                    tr("💰 Saldo van {0}", target.username)
                 )
 
 
                 .setDescription(
 
-                    `💵 Portemonnee: **€${user.wallet}**
-` +
+                    tr("💵 Portemonnee: **€{0}**\n", user.wallet) +
 
                     `🏦 Bank: **€${user.bank}**\n\n` +
 
-                    `💎 Totaal vermogen: **€${total}**`
+                    tr("💎 Totaal vermogen: **€{0}**", total)
 
                 )
 

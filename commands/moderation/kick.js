@@ -178,16 +178,14 @@ module.exports = {
                     )
 
                     .setTitle(
-                        "👢 Je bent verwijderd"
+                        tr("👢 Je bent verwijderd")
                     )
 
                     .setDescription(
 
-                        `Je bent verwijderd uit **${interaction.guild.name}**.
+                        tr("Je bent verwijderd uit **{0}**.\n\n", interaction.guild.name) +
 
-` +
-
-                        `Reden: ${reason}`
+                        tr("Reden: {0}", reason)
 
                     )
 

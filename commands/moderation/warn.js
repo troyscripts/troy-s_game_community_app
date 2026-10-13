@@ -213,16 +213,14 @@ module.exports = {
                     )
 
                     .setTitle(
-                        "⚠️ Je hebt een waarschuwing ontvangen"
+                        tr("⚠️ Je hebt een waarschuwing ontvangen")
                     )
 
                     .setDescription(
 
-                        `Server: ${interaction.guild.name}
+                        tr("Server: {0}\n\n", interaction.guild.name) +
 
-` +
-
-                        `Reden: ${reason}`
+                        tr("Reden: {0}", reason)
 
                     )
 

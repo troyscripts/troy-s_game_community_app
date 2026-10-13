@@ -67,6 +67,29 @@ assert.equal(i.response.components[0].components[0].label,'Cancel');assert.equal
  const rawSay=sayInteraction({bericht:'Welkom',embed:false});const calls=requests;await say.execute(client,rawSay);assert.equal(requests,calls);assert.equal(sent.at(-1).content,'Welkom');
  const embedSay=sayInteraction({bericht:'Welkom',embed:true,engels:'Welcome'});await say.execute(client,embedSay);assert.equal(sent.at(-1).embeds[0].description,'Welkom\n\nWelcome');
  failProvider=true;const sentBefore=sent.length;await say.execute(client,sayInteraction({bericht:'Fail',embed:false,vertalen:true}));assert.equal(sent.length,sentBefore);failProvider=false;
+ // Regression: execute actual /work and /daily, including the VIP/birthday bonus.
+ // Rendering synthetic embeds alone does not detect an unmarked command string.
+ settings.updateValue(guildId,'Birthday.Role','222222222222222222');
+ require('../config/rewardBonuses').Enabled=true;
+ for(const name of ['work','daily']) {
+     const rewardInteraction=interaction(name);
+     rewardInteraction.member.roles.cache.has=id=>id==='222222222222222222';
+     await require('../config/config').__context.run(guildId,()=>require('../commands/economy/'+name).execute(client,rewardInteraction));
+     const output=rewardInteraction.response.embeds[0];
+     noMarkers(output);
+     assert.equal((output.description.match(/2× beloning/g)||[]).length,1);
+     assert.equal((output.description.match(/2× reward/g)||[]).length,1);
+     if(name==='work') {
+         assert.equal(output.title,'💼 Werk voltooid\n\n💼 Work completed');
+         assert.equal((output.description.match(/Je verdiende/g)||[]).length,1);
+         const dutch=/Je verdiende \*\*€(\d+)\*\*/.exec(output.description);
+         const english=/You earned \*\*€(\d+)\*\*/.exec(output.description);
+         assert.ok(dutch&&english);assert.equal(dutch[1],english[1]);
+     } else {
+         assert.equal((output.description.match(/Je kreeg/g)||[]).length,1);
+         assert.match(output.description,/You received/);
+     }
+ }
  // /help follows stored preference; public response is always bilingual.
  const help=require('../commands/general/help');const hi=interaction('help');await help.execute(client,hi);assert.equal(hi.response.files[0].name,'MANUAL-EN.md');assert.match(hi.response.content,/Voor support/);assert.match(hi.response.content,/For support/);noMarkers(hi.response);
  console.log('PASS: 56 commands, native Discord builders, persistent server-scoped languages, public/private/DM rendering, limits, unchanged user text, translated polls and votes, safe failures, welcome placeholders/races, optional /say translation and bilingual help.');

@@ -215,13 +215,13 @@ module.exports = {
 
 
                 .setTitle(
-                    "💸 Betaling verzonden"
+                    tr("💸 Betaling verzonden")
                 )
 
 
                 .setDescription(
 
-                    `${interaction.user} heeft **€${amount}** gestuurd naar ${target}.`
+                    tr("{0} heeft **€{1}** gestuurd naar {2}.", interaction.user, amount, target)
 
                 )
 

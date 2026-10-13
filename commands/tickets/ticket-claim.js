@@ -128,13 +128,13 @@ module.exports = {
 
 
                 .setTitle(
-                    "🎫 Ticket geclaimd"
+                    tr("🎫 Ticket geclaimd")
                 )
 
 
                 .setDescription(
 
-                    `${interaction.user} behandelt vanaf nu dit ticket.`
+                    tr("{0} behandelt vanaf nu dit ticket.", interaction.user)
 
                 )
 
