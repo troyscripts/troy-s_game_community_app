@@ -1,5 +1,17 @@
 # Changelog
 
+## 3.0.2 — 16 oktober 2026
+
+- Makelaar met koop/huur voor starterwoning (€15.000 / €500 per dag), luxe woning (€75.000 / €2.000) en luxe villa (€250.000 / €7.500).
+- Automatische woningrollen in brons, zilver en goud; herstel bij tijdelijke Discord-fouten of verwijderde rollen.
+- Woningbonus +50% / +100% / +200% op verdiende XP en inkomen, boven op VIP/verjaardag.
+- Atomaire verhuizing met 15% verkoopvergoeding voor de vorige koopwoning en verwijdering van de oude rol.
+- Doorlopende bankhuur per 24 uur met eenmalige inhaalbetalingen na downtime; huur opzegbaar.
+- Supermarkt met zeven betaalbare producten, blijvende voorraad en eten/drinken.
+- Woningen, huurcontracten en voorraad beschermd tegen bestaande globale en persoonlijke resets.
+- Nederlandse en Engelse teksten, handleidingen en gerichte integratietests toegevoegd.
+- Configuratie en configversie ongewijzigd; geen nieuwe dependencies.
+
 ## 3.0.1 — 13 oktober 2026
 
 - `/reset-economy bevestigen:Ja`: reset positieve saldi en economy-cooldowns in de huidige server op nul en annuleer gewone rekeningen. Store-aankopen, ongebruikte én verstuurde verplichte rekeningen (inclusief rente en betaaldatum), VIP en XP blijven behouden. Ook `/reset-voortgang` bewaart verplichte rekeningen. Alleen owner-toegang; lopende VIP-leveringen blokkeren de reset.

@@ -145,7 +145,7 @@ module.exports = {
                     `${job}\n\n` +
 
                     tr("💰 Je verdiende **€{0}**", money) +
-                    (rewardMultiplier(interaction.member) === 2 ? tr("\n✨ 2× beloning dankzij je VIP- of verjaardagsrol.") : "")
+                    (rewardMultiplier(interaction.member) > 1 ? tr("\n✨ {0}× beloning inclusief je VIP-/verjaardags- en woningbonus.", rewardMultiplier(interaction.member)) : "")
 
                 )
 

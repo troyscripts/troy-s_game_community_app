@@ -8,7 +8,7 @@ function hasRole(member, id) {
     const roles = member?.roles;
     return Array.isArray(roles) ? roles.includes(id) : Boolean(roles?.cache?.has(id));
 }
-function rewardMultiplier(member) {
+function vipMultiplier(member) {
     if (!bonuses.Enabled) return 1;
     const guildId = member?.guild?.id || config.__context.getGuildId();
     const userId = member?.id || member?.user?.id;
@@ -21,10 +21,16 @@ function rewardMultiplier(member) {
     const purchasedRoles = guildId && userId ? shop.memberships(guildId, userId).map(v => v.role_id) : [];
     return hasRole(member, config.Birthday?.Role) || [...bonuses.VIPRoles, config.Store?.VIPRole, ...purchasedRoles].some(validVIP) ? 2 : 1;
 }
+function rewardMultiplier(member) {
+    const guildId = member?.guild?.id || config.__context.getGuildId();
+    const userId = member?.id || member?.user?.id;
+    const housing = guildId && userId ? require('../database/living').multiplier(guildId, userId) : 1;
+    return vipMultiplier(member) * housing;
+}
 function applyRewardBonus(amount, member) {
     // Called only for earned positive rewards, never for transfers or administrative edits.
     if (!Number.isSafeInteger(amount) || amount < 0) throw new RangeError('Ongeldige beloning');
-    const result = amount * rewardMultiplier(member);
+    const result = Math.floor(amount * rewardMultiplier(member));
     if (!Number.isSafeInteger(result)) throw new RangeError('Beloning te groot');
     return result;
 }

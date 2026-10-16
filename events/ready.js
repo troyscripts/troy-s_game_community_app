@@ -38,6 +38,7 @@ module.exports = {
 
         require("../services/polls").start(client);
         require("../services/store").start(client);
+        require("../services/living").start(client);
         require("../services/giveaways").start(client);
         require("../services/bumpReminder").start(client);
 

@@ -13,7 +13,41 @@ De keuze wordt per server opgeslagen en werkt direct voor nieuwe berichten. Oude
 
 Gebruikers en rollen worden per bericht één keer getagd. Bij herhaling verschijnt alleen de naam als gewone tekst (of het ID als de naam niet beschikbaar is). Ook `@everyone` en `@here` worden niet herhaald als actieve vermelding.
 
-**Botversie 3.0.1 · Bijgewerkt op 13 oktober 2026**
+**Botversie 3.0.2 · Bijgewerkt op 16 oktober 2026**
+
+## Nieuw in 3.0.2: makelaar en supermarkt
+
+Met `/makelaar` koop of huur je één woning per server. De bot maakt bij de eerste woningtransactie drie rollen zonder extra rechten aan:
+
+| Woning / rol | Kleur | Huur per 24 uur | Koop | Extra XP en inkomen |
+| --- | --- | ---: | ---: | ---: |
+| starterwoning | Brons (#CD7F32) | €500 | €15.000 | +50% |
+| luxe woning | Zilver (#C0C0C0) | €2.000 | €75.000 | +100% |
+| luxe villa | Goud (#FFD700) | €7.500 | €250.000 | +200% |
+
+Starterwoning: kleine woonkamer met open keuken en een kleine slaapkamer. Luxe woning: riante woonkamer, riante leefkeuken en twee slaapkamers. Luxe villa: gigantische woonkamer met bar, leefkeuken met kookeiland en een binnen-golfslagbad met sluis naar het buitenbad met prachtige tikibar.
+
+- `/makelaar actie:aanbod`: prijzen en voorwaarden.
+- `/makelaar actie:kopen woning:starter bevestigen:Ja`: starterwoning kopen.
+- `/makelaar actie:huren woning:luxe betaalmiddel:bank bevestigen:Ja`: luxe woning huren.
+- `/makelaar actie:status`: huidige woning en volgende huurbetaling.
+- `/makelaar actie:opzeggen bevestigen:Ja`: huur stoppen; reeds vervallen huur wordt nog afgerekend.
+
+Kies bij de eerste betaling portemonnee (standaard) of bank. Daarna gaat huur automatisch elke 24 uur van je bank, ook bij onvoldoende saldo. Je kunt daardoor negatief komen te staan. Na botuitval haalt de bot alle gemiste huurtermijnen eenmalig in. Huur loopt totdat je opzegt of verhuist. Je krijgt geen reeds betaalde huur terug. Huur wordt ook geïnd als de economy-module later is uitgezet; opzeggen blijft mogelijk. Zolang de bot uit een server is verwijderd, kan hij daar niet innen; na terugkeer worden gemiste termijnen ingehaald.
+
+Bij elke verhuizing, ook bij een andere woonvorm, wordt je vorige koopwoning automatisch voor **15% van de werkelijk betaalde aankoopprijs** verkocht. Dat bedrag gaat naar het gekozen betaalmiddel en telt mee voor de nieuwe betaling. Een huurwoning geeft geen verkoopvergoeding. De hele verhuizing gaat alleen door als je de nieuwe woning kunt betalen. De vorige woningrol wordt verwijderd. Een woning opnieuw in dezelfde woonvorm aanschaffen is geblokkeerd.
+
+Bonussen gelden voor bericht-XP, counting-XP en inkomsten uit `/work` en `/daily`. De woningfactor wordt vermenigvuldigd met de bestaande VIP-/verjaardagsfactor. Bij een basisbeloning van 100 krijg je zonder VIP 150 / 200 / 300; met 2× VIP krijg je 300 / 400 / 600. Gebroken XP/geldbedragen worden naar beneden afgerond. Overboekingen, verkoopvergoedingen en geld dat staff geeft krijgen geen bonus. Je opgeslagen woning bepaalt de bonus; jezelf handmatig een woningrol geven levert niets op.
+
+**Supermarkt:** `/supermarkt actie:aanbod` toont water €5, cola €8, koffie €10, appel €5, broodje kaas €15, hamburger €25 en pizza €35.
+
+- `/supermarkt actie:kopen product:water aantal:5 bevestigen:Ja`: vijf flesjes water kopen.
+- `/supermarkt actie:voorraad`: je blijvende voorraad bekijken.
+- `/supermarkt actie:gebruiken product:water aantal:1 bevestigen:Ja`: drinken/eten en het gekozen aantal uit je voorraad halen.
+
+Dit zijn rollenspelproducten, zonder extra bonus of verplicht honger-/dorst-systeem. Je kunt per actie 1–100 producten kopen/gebruiken. **Woningen, huurcontracten, woningrollen, aankopen en supermarktvoorraad blijven behouden bij alle bestaande economy- en voortgangsresets, ook persoonlijke resets.** Een persoonlijke economy-reset kan een bestaand negatief saldo wel wissen, maar stopt toekomstige huur niet. Serverbrede resets laten bestaande bankschuld staan.
+
+De bot heeft **Rollen beheren** nodig; zijn hoogste rol moet boven alle woningrollen staan. Woningrollen mogen geen extra rechten krijgen. Als een roltoekenning tijdelijk mislukt, blijft de woning opgeslagen en probeert de bot het opnieuw. Verwijderde woningrollen worden hersteld. De kleur van je Discord-naam hangt nog steeds af van je hoogste gekleurde rol.
 
 ## Nieuw in 3.0.1: verplichte rekeningen en economy-reset
 

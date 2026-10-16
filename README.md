@@ -1,4 +1,14 @@
-# Troy’s Game Community Bot — 3.0.1
+# Troy’s Game Community Bot — 3.0.2
+
+## Nieuw in 3.0.2: wonen en boodschappen
+
+- `/makelaar`: starterwoning, luxe woning en luxe villa kopen of huren.
+- Bronzen, zilveren en gouden woningrollen; +50%, +100% en +200% XP/inkomen boven op VIP.
+- Bij verhuizen 15% terug voor je vorige koopwoning; de oude woningrol vervalt.
+- Huur elke 24 uur via bank, ook na downtime en bij onvoldoende saldo; opzeggen via `/makelaar`.
+- `/supermarkt`: eten en drinken kopen, voorraad bekijken en producten gebruiken.
+- Woningen, contracten en voorraad blijven behouden bij alle bestaande resets.
+- Zie `UPDATE-3.0.2.txt`, `HANDLEIDING.md` en `MANUAL-EN.md` voor de voorwaarden en commando’s.
 
 ## Nieuw in 3.0.1: verplichte rekeningen en economy-reset
 

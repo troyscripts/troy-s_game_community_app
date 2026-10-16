@@ -13,7 +13,41 @@ Settings persist per server and apply immediately to new messages. Existing mess
 
 Users and roles are mentioned once per message. Repeated references show a plain name (or ID if unavailable). Repeated `@everyone` and `@here` references are also made non-pinging.
 
-**Bot version 3.0.1 · Updated 13 October 2026**
+**Bot version 3.0.2 · Updated 16 October 2026**
+
+## New in 3.0.2: estate agent and supermarket
+
+Use `/makelaar` to own or rent one home per server. The bot creates three roles without extra permissions on the first housing transaction:
+
+| Home / Discord role | Color | Rent per 24 hours | Purchase | Extra XP and income |
+| --- | --- | ---: | ---: | ---: |
+| Starter / starterwoning | Bronze (#CD7F32) | €500 | €15,000 | +50% |
+| Luxury / luxe woning | Silver (#C0C0C0) | €2,000 | €75,000 | +100% |
+| Villa / luxe villa | Gold (#FFD700) | €7,500 | €250,000 | +200% |
+
+The starter home has a small living room with an open kitchen and a small bedroom. The luxury home has a spacious living room, kitchen-diner and two bedrooms. The villa has a gigantic living room with a bar, kitchen island and an indoor wave pool connected to an outdoor pool with a tiki bar.
+
+- `/makelaar actie:aanbod`: offers and terms.
+- `/makelaar actie:kopen woning:starter bevestigen:True`: buy a starter home.
+- `/makelaar actie:huren woning:luxe betaalmiddel:bank bevestigen:True`: rent a luxury home.
+- `/makelaar actie:status`: current home and next rent payment.
+- `/makelaar actie:opzeggen bevestigen:True`: cancel rent, settling any overdue rent.
+
+The first payment comes from your selected wallet (default) or bank. Recurring rent is charged to your bank every 24 hours and may create debt. Missed periods are collected once after downtime. Rent continues until cancellation or moving, even if the economy module is disabled; cancellation remains available. The bot cannot collect while absent from a server and catches up after returning. Paid rent is not refunded.
+
+Moving automatically sells the previous owned home for **15% of its original paid price**, credited to your selected payment account before paying for the new home. Rentals have no resale value. The entire transaction rolls back if you cannot afford the new home. The old housing role is removed. Buying the same home in the same arrangement again is blocked.
+
+Housing multiplies the existing VIP/birthday bonus for message XP, counting XP, `/work` and `/daily`. A base reward of 100 becomes 150 / 200 / 300 without VIP, or 300 / 400 / 600 with 2× VIP. Fractions are rounded down. Transfers, home refunds and administrative gifts receive no bonus. Stored home ownership determines the bonus; manually assigning a role does not grant it.
+
+Use `/supermarkt actie:aanbod` for water €5, cola €8, coffee €10, apple €5, cheese sandwich €15, hamburger €25 and pizza €35.
+
+- `/supermarkt actie:kopen product:water aantal:5 bevestigen:True`: buy five bottles of water.
+- `/supermarkt actie:voorraad`: view your inventory.
+- `/supermarkt actie:gebruiken product:water aantal:1 bevestigen:True`: consume one item.
+
+Products are for roleplay, with no extra bonus or mandatory hunger/thirst system. Buy or consume 1–100 items per action. **All existing economy/progress resets, including personal resets, preserve homes, rental agreements, roles, purchases and inventory.** Personal economy resets can clear existing debt but do not cancel future rent. Server-wide resets preserve existing bank debt.
+
+The bot needs **Manage Roles**, with its highest role above the housing roles. Housing roles must have no extra permissions. Failed role updates retry automatically; deleted housing roles are recreated. Your displayed Discord name color still depends on your highest colored role.
 
 ## New in 3.0.1: compulsory invoices and economy reset
 

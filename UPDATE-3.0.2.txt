@@ -1,0 +1,20 @@
+TROY’S GAME COMMUNITY — UPDATE 3.0.2
+
+Dit pakket bevat uitsluitend nieuwe en gewijzigde bestanden voor versie 3.0.1.
+1. Stop de bot en maak een back-up van je database en huidige botbestanden.
+2. Pak dit pakket uit in de hoofdmap van je bestaande bot en overschrijf de meegeleverde bestanden. Behoud de mappenstructuur.
+3. Geef de bot Rollen beheren en zet zijn hoogste rol boven de woningrollen. De bot maakt de drie woningrollen zelf aan bij de eerste woningtransactie.
+4. Start de bot. Nieuwe databasetabellen en de twee slashcommands worden automatisch toegevoegd/geregistreerd. Er zijn geen nieuwe dependencies of configaanpassingen.
+5. Bekijk /makelaar en /supermarkt. Kies bij aankoop/verbruik bevestigen:Ja.
+
+Woningrollen: starterwoning = brons, luxe woning = zilver, luxe villa = goud.
+Verhuizen verkoopt je vorige koopwoning voor 15% van de betaalde aankoopprijs.
+Woningbonus: +50%, +100% of +200% op XP en /work-/daily-inkomsten, na VIP.
+Huur: eerste dag direct; daarna elke 24 uur van de bank, eventueel tot een negatief saldo. Na botuitval worden gemiste termijnen ingehaald. Huur blijft lopen tot opzeggen/verhuizen, ook als de economy-module wordt uitgezet.
+Supermarktproducten: water €5, cola €8, koffie €10, appel €5, broodje kaas €15, hamburger €25, pizza €35. Voor rollenspel; geen extra stat-bonus.
+
+Alle bestaande economy- en voortgangsresets behouden woningen, contracten en voorraad. Een persoonlijke reset kan bestaande bankschuld wissen, maar stopt toekomstige huur niet.
+Verwijder je database nooit om een update te installeren: die bevat je opgeslagen aankopen en woningen.
+
+Volledige uitleg: HANDLEIDING.md / MANUAL-EN.md (ook via /help).
+Gecontroleerd: JavaScript/commandvalidatie, woningtransacties, huur, resets, VIP-stapeling, supermarkt, kleuren/rolwissels/herstel met Discord-mocks en bestaande store/rekening-regressietest. Een live Discord-test moet nog op jouw server gebeuren.
