@@ -13,7 +13,11 @@ De keuze wordt per server opgeslagen en werkt direct voor nieuwe berichten. Oude
 
 Gebruikers en rollen worden per bericht één keer getagd. Bij herhaling verschijnt alleen de naam als gewone tekst (of het ID als de naam niet beschikbaar is). Ook `@everyone` en `@here` worden niet herhaald als actieve vermelding.
 
-**Botversie 3.0.2 · Bijgewerkt op 16 oktober 2026**
+**Botversie 3.0.3 · Bijgewerkt op 18 oktober 2026**
+
+## Nieuw in 3.0.3
+
+`/bedrijf` beheert bedrijven, upgrades, beveiliging en verzekeringen. `/heist` opent een openbare groepsaanmelding. `/bank` biedt leningen en aflossingen. `/makelaar actie:verkopen bevestigen:Ja` verkoopt je koopwoning voor 75%. Alle prijzen, termijnen en spelregels staan in `UPDATE-3.0.3.txt`.
 
 ## Nieuw in 3.0.2: makelaar en supermarkt
 

@@ -95,6 +95,15 @@ const leave = db.transaction((id,g,u,now = Date.now()) => once(id,g,u,() => {
     queue(g,u);
     return {cancelled:true};
 }));
+const sell = db.transaction((id,g,u) => once(id,g,u,() => {
+    const row=home(g,u);
+    if(!row || row.mode!=='koop') fail('Je hebt geen koopwoning om te verkopen.');
+    const refund=Math.floor(row.paid_price*0.75);
+    economy.addBank(u,g,refund);
+    db.prepare('DELETE FROM living_homes WHERE guild_id=? AND user_id=?').run(g,u);
+    queue(g,u);
+    return {sold:true,refund};
+}));
 const groceries = db.transaction((id,g,u,key,quantity,source,use = false) => once(id,g,u,() => {
     if (!Object.hasOwn(PRODUCTS,key) || !Number.isSafeInteger(quantity) || quantity < 1 || quantity > 100) fail('Kies een geldig product en een aantal van 1 tot 100.');
     if (use) {
@@ -107,7 +116,7 @@ const groceries = db.transaction((id,g,u,key,quantity,source,use = false) => onc
     }
     return {product:key,quantity,cost:use ? 0 : PRODUCTS[key].price*quantity,used:use};
 }));
-module.exports = {HOMES,PRODUCTS,DAY,home,inventory,roles,queue,move,leave,groceries,collectRent,
+module.exports = {HOMES,PRODUCTS,DAY,home,inventory,roles,queue,move,leave,sell,groceries,collectRent,
     multiplier(g,u) { const row=home(g,u); return row ? 1+HOMES[row.home].bonus : 1; },
     setRole(g,key,id) { db.prepare('INSERT INTO living_roles VALUES (?,?,?) ON CONFLICT(guild_id,home) DO UPDATE SET role_id=excluded.role_id').run(g,key,id); },
     jobs() { return db.prepare('SELECT * FROM living_role_jobs').all(); },

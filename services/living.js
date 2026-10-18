@@ -60,7 +60,7 @@ async function realtor(client,i) { return guarded(i,async()=>{
     const action=i.options.getString('actie')||'aanbod',g=i.guildId,u=i.user.id;
     if(action==='aanbod') {
         const lines=Object.entries(data.HOMES).map(([key,h])=>tr('**{0}** · {1}\n{2}\nHuur: {3} per 24 uur · Koop: {4} · XP/inkomen: +{5}%.',tr(h.name),tr({starter:'Brons',luxe:'Zilver',villa:'Goud'}[key]),tr(h.description),money(h.rent),money(h.price),h.bonus*100));
-        return reply(i,tr('🏡 **Makelaar**\n\n')+lines.join('\n\n')+'\n\n'+tr('Eén woning per speler. Bij verhuizen ontvang je 15% van de aankoopprijs van je oude koopwoning; huur levert niets terug. De eerste huurdag betaal je direct. Daarna schrijven we elke 24 uur huur van je bank af, ook bij onvoldoende saldo en na botuitval. Je bank kan negatief worden. Opzeggen stopt toekomstige huur, zonder terugbetaling. Woningen en huurcontracten blijven behouden bij resets. De woningbonus komt boven op VIP. Gebruik actie:kopen of huren, kies een woning en bevestigen:Ja.'));
+        return reply(i,tr('🏡 **Makelaar**\n\n')+lines.join('\n\n')+'\n\n'+tr('Eén woning per speler. Los verkopen via actie:verkopen levert 75% van de betaalde aanschafprijs op je bank op en verwijdert je woningrol en bonus. Bij verhuizen ontvang je 15% van de aankoopprijs van je oude koopwoning; huur levert niets terug. De eerste huurdag betaal je direct. Daarna schrijven we elke 24 uur huur van je bank af, ook bij onvoldoende saldo en na botuitval. Je bank kan negatief worden. Opzeggen stopt toekomstige huur, zonder terugbetaling. Woningen en huurcontracten blijven behouden bij resets. De woningbonus komt boven op VIP. Gebruik actie:kopen of huren, kies een woning en bevestigen:Ja.'));
     }
     if(action==='status') {
         const row=data.home(g,u);
@@ -70,17 +70,18 @@ async function realtor(client,i) { return guarded(i,async()=>{
     }
     confirmed(i);
     // Allow tenants to end their ongoing contract even when economy is disabled.
-    if(action!=='opzeggen') enabled(i);
-    if(!['kopen','huren','opzeggen'].includes(action)) fail('Ongeldige actie.');
+    if(!['opzeggen','verkopen'].includes(action)) enabled(i);
+    if(!['kopen','huren','opzeggen','verkopen'].includes(action)) fail('Ongeldige actie.');
     let roles;
-    if(action!=='opzeggen') roles=await ensureRoles(i.guild);
+    if(!['opzeggen','verkopen'].includes(action)) roles=await ensureRoles(i.guild);
     let result;
-    if(action==='opzeggen') result=data.leave(i.id,g,u);
+    if(action==='verkopen') result=data.sell(i.id,g,u);
+    else if(action==='opzeggen') result=data.leave(i.id,g,u);
     else result=data.move(i.id,g,u,i.options.getString('woning'),action==='kopen'?'koop':'huur',i.options.getString('betaalmiddel')||'wallet');
     let synced=true;
     try { roles ||= await ensureRoles(i.guild); await syncMember(i.guild,u,roles); }
     catch(error) { synced=false; logger.warn(`Woningrol wacht op herstel [${g}/${u}]: ${error.message}`); }
-    const content=result.cancelled ? tr('✅ Huur opgezegd. Er volgt geen nieuwe huur; al vervallen huur is afgerekend. Je woningbonus stopt direct.') : tr('✅ {0} {1}. Betaald: {2}. Terug voor vorige koopwoning: {3}. Je woningbonus is actief.',tr(data.HOMES[result.home].name),tr(result.mode==='koop'?'gekocht':'gehuurd'),money(result.cost),money(result.refund));
+    const content=result.sold ? tr('✅ Woning verkocht. Je ontvangt {0} (75%) op je bank. Je woningrol wordt verwijderd en je woningbonus stopt direct.',money(result.refund)) : result.cancelled ? tr('✅ Huur opgezegd. Er volgt geen nieuwe huur; al vervallen huur is afgerekend. Je woningbonus stopt direct.') : tr('✅ {0} {1}. Betaald: {2}. Terug voor vorige koopwoning: {3}. Je woningbonus is actief.',tr(data.HOMES[result.home].name),tr(result.mode==='koop'?'gekocht':'gehuurd'),money(result.cost),money(result.refund));
     return reply(i,content+(synced?'':'\n'+tr('Je wijziging is opgeslagen. De Discord-rol wordt automatisch opnieuw verwerkt; je wordt niet opnieuw belast.')));
 }); }
 async function supermarket(client,i) { return guarded(i,async()=>{

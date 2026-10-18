@@ -13,7 +13,17 @@ Settings persist per server and apply immediately to new messages. Existing mess
 
 Users and roles are mentioned once per message. Repeated references show a plain name (or ID if unavailable). Repeated `@everyone` and `@here` references are also made non-pinging.
 
-**Bot version 3.0.2 · Updated 16 October 2026**
+**Bot version 3.0.3 · Updated 18 October 2026**
+
+## New in 3.0.3: businesses, heists and loans
+
+- `/bedrijf`: buy one business of each type, upgrade income (stages 1–5), security (0–5), equipment (0–5), or manage insurance. Small business: €10,000 / €500 hourly; restaurant: €50,000 / €2,000 hourly; office: €250,000 / €10,000 hourly. Income starts after one full hour and is deposited automatically, including catch-up after downtime. No VIP/housing multipliers.
+- Each income upgrade costs 20% of the base price and adds 10% of base income, up to +40%. Each security upgrade costs 10% of base price. Equipment upgrades cost €2,500 × the new level.
+- Insurance charges 10% of purchase price plus purchased income/security upgrades immediately and every seven days. Renewals use the current value and may make the bank balance negative. Cancellation ends future premiums without a refund.
+- `/heist`: choose an owner and business type. Join through public buttons (2–5 players); the organizer executes within two minutes. Only loot is shared, not ownership or purchase value. Base loot caps: €1,000 / €3,000 / €5,000. Each security level reduces loot by 10%. Success chance is 45% + 8% per teammate above two + 8% per average equipment level − 12% per security level, clamped to 5–90%. Successful loot is deducted from the owner's bank, possibly creating debt; insurance immediately reimburses that loss. Participants and the target receive a one-hour cooldown after any attempt.
+- `/bank`: borrow €1–€500,000 with a one-time 30% interest charge, rounded up to whole euros. One active loan per player per server. Repay in parts within two calendar months; the remaining debt is automatically collected at maturity, even into a negative balance. No early-payment discount. Negative bank balances block new loans. End-of-month dates clamp to the last day of the target month (UTC time retained).
+- `/makelaar` action `verkopen`: sell a purchased home for 75% of the original price, paid to the bank; removes the housing bonus and role. Moving directly still refunds 15%, as before.
+- Assets and contracts survive resets. Back up your database, stop the bot, copy the update files and restart. The bot registers new commands at startup. Existing configuration remains unchanged. Ensure Manage Roles and place the bot role above housing/business roles.
 
 ## New in 3.0.2: estate agent and supermarket
 

@@ -1,3 +1,12 @@
+## 3.0.3 — 18 oktober 2026
+
+- Bedrijvenmakelaar met automatisch uurinkomen, stadium 1–5, beveiliging, eigen bedrijfsrollen en weekverzekering.
+- Gezamenlijke heists met aanmeldknoppen, uitrusting, beveiligingsafhankelijke buit tot €5.000 en eerlijke verdeling.
+- Koopwoningen los verkopen voor 75% van de oorspronkelijke aanschafprijs; woningrol en bonus verdwijnen.
+- Bankleningen tot €500.000 met eenmalig 30% rente, gedeeltelijk aflossen en automatische incasso na twee kalendermaanden.
+- Nieuwe bezittingen, upgrades en contracten blijven behouden bij bestaande resetcommando’s.
+- Transacties en opgeslagen ontvangstbewijzen voorkomen dubbele betalingen.
+
 # Changelog
 
 ## 3.0.2 — 16 oktober 2026

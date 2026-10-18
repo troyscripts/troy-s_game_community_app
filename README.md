@@ -1,4 +1,8 @@
-# Troy’s Game Community Bot — 3.0.2
+# Troy’s Game Community Bot — 3.0.3
+
+## Nieuw in 3.0.3: bedrijven, heists en bank
+
+Gebruik `/bedrijf`, `/heist`, `/bank` en `/makelaar actie:verkopen`. Zie `UPDATE-3.0.3.txt` voor installatie, prijzen en alle spelregels.
 
 ## Nieuw in 3.0.2: wonen en boodschappen
 
