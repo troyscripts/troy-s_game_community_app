@@ -1,3 +1,11 @@
+## 3.0.4 — 20 oktober 2026
+
+- Tijdelijke HTTP 500-antwoorden op GET-verzoeken krijgen nu één extra poging, net als 502/503/504.
+- YouTube RSS: ook bij HTTP 404 één extra poging; aanhoudende fouten blijven zichtbaar en worden niet als lege feed verwerkt.
+- Verjaardagen: een timeout van de volledige ledenlijst blokkeert het uitdelen van rollen niet meer; jarigen worden dan afzonderlijk opgehaald.
+- De volledige ledencontrole wordt bij een fout opnieuw geprobeerd; bestaande berichtmarkeringen voorkomen dubbele felicitaties.
+- Configuratie, configversie en database-inhoud ongewijzigd.
+
 ## 3.0.3 — 18 oktober 2026
 
 - Bedrijvenmakelaar met automatisch uurinkomen, stadium 1–5, beveiliging, eigen bedrijfsrollen en weekverzekering.

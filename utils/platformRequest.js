@@ -18,7 +18,8 @@ function networkReason(error) {
 }
 async function platformRequest(url, options = {}, {
     fetchImpl = globalThis.fetch, read = response => response.text(), timeoutMs = 20000,
-    wait = delay, allowedHosts = [new URL(url).hostname]
+    wait = delay, allowedHosts = [new URL(url).hostname],
+    retryStatuses = [500,502,503,504]
 } = {}) {
     const method = (options.method || 'GET').toUpperCase();
     const attempts = method === 'GET' ? 2 : 1;
@@ -39,7 +40,7 @@ async function platformRequest(url, options = {}, {
                     current = new URL(location,current);
                     continue;
                 }
-                if ([502,503,504].includes(response.status) && attempt + 1 < attempts) {
+                if (retryStatuses.includes(response.status) && attempt + 1 < attempts) {
                     await response.body?.cancel();
                     break;
                 }

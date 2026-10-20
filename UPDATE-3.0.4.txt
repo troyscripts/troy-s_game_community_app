@@ -1,0 +1,15 @@
+Troy’s Game Community — update 3.0.3 naar 3.0.4
+
+1. Stop de bot en maak een back-up.
+2. Pak deze ZIP uit in de hoofdmap van de bot en vervang de meegeleverde bestanden.
+3. Start de bot opnieuw met npm start.
+
+Geen nieuwe dependencies, configuratie-instellingen of databasewijzigingen.
+Geen nieuwe slashcommands: opnieuw deployen is niet nodig.
+
+Verbeteringen: zie CHANGELOG.md.
+Getest: 9 platformtests, 1 verjaardagshersteltest en syntax/commandcontrole.
+Niet live getest met jouw Discord-bot of de YouTube-koppelingen.
+Deze update maakt herstel robuuster; externe YouTube-storingen kunnen blijven optreden.
+TikTok-accountkoppelingen en Twitch-kanaalnamen zijn niet gewijzigd.
+

@@ -39,6 +39,10 @@ async function request(url, options = {}, json = true) {
     const requestOptions = isYoutube ? {...options,headers:{...options.headers,Cookie:'SOCS=CAI'}} : options;
     const {response,data} = await platformRequest(url, requestOptions, {
         allowedHosts: isYoutube ? ['www.youtube.com','youtube.com'] : [host],
+        // RSS sometimes returns a temporary 404 for an otherwise valid channel.
+        // Retry once; never treat a failed response as an empty successful feed.
+        retryStatuses: isYoutube && new URL(url).pathname === '/feeds/videos.xml'
+            ? [404,500,502,503,504] : [500,502,503,504],
         read: async response => {
             if (!response.ok) { await response.body?.cancel(); return null; }
             if (!json) return response.text();

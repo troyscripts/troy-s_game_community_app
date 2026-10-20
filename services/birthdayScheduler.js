@@ -31,16 +31,25 @@ async function checkGuild(guild) {
     let members = guild.members.cache;
     let role = null;
     let roleReady = false;
+    let memberRefreshFailed = false;
     if (settings.Role) {
         try {
             role = await guild.roles.fetch(settings.Role);
             if (!role) throw new Error(tr("Ingestelde verjaardagsrol bestaat niet."));
+            roleReady = true;
             const previous = snapshots.get(guild.id);
             // A full fetch is necessary after restart and day rollover, including offline members.
             // Refresh periodically for missed member updates; do not fetch every minute.
             if (!previous || previous.day !== today || previous.role !== role.id || Date.now() - previous.at >= 15 * 60000) {
-                members = await guild.members.fetch();
-                snapshots.set(guild.id, {day: today, role: role.id, at: Date.now()});
+                try {
+                    members = await guild.members.fetch();
+                    snapshots.set(guild.id, {day: today, role: role.id, at: Date.now()});
+                } catch (error) {
+                    // Keep cleanup of cached members working and fetch today's birthdays
+                    // individually through REST. Do not mark this snapshot as complete.
+                    memberRefreshFailed = true;
+                    logger.warn(`Volledige ledenlijst voor verjaardagen ophalen mislukt [server ${guild.id}]: ${error.message}. Jarigen worden afzonderlijk opgehaald; volledige controle volgende minuut opnieuw.`);
+                }
             }
             roleReady = true;
             for (const member of members.values()) {
@@ -69,7 +78,9 @@ async function checkGuild(guild) {
     for (const record of records) {
         let member;
         try {
-            member = members.get(record.user_id) || await guild.members.fetch(record.user_id);
+            member = memberRefreshFailed
+                ? await guild.members.fetch({user: record.user_id, force: true})
+                : members.get(record.user_id) || await guild.members.fetch(record.user_id);
         } catch (error) {
             // A departed member is not a delivery failure. Other errors need a retry.
             if (Number(error.code) !== 10007) {

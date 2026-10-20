@@ -30,10 +30,10 @@ test('POST token requests are never automatically retried or redirected',async()
     assert.equal(calls,1);
 });
 test('transient 503 retries; 429 is left to scheduler backoff',async()=>{
-    for(const status of [503,429]){
+    for(const status of [500,502,503,504,429,404]){
         let calls=0;
         const {response}=await platformRequest('https://api.github.com/test',{}, {wait:async()=>{},fetchImpl:async()=>{calls++;return {status,text:async()=>''};}});
-        assert.equal(response.status,status);assert.equal(calls,status===503?2:1);
+        assert.equal(response.status,status);assert.equal(calls,[500,502,503,504].includes(status)?2:1);
     }
 });
 test('timeout also covers response body',async()=>{
@@ -83,3 +83,16 @@ test('live YouTube feed format without UC prefix keeps exact channel validation'
     assert.throws(()=>providers.parseFeed(xml,'UC'+'b'.repeat(22)),/ingestelde kanaal/);
     assert.throws(()=>providers.parseFeed('<feed><yt:channelId></yt:channelId></feed>',id),/ingestelde kanaal/);
 });
+
+ test('YouTube transient feed 404 retries once; persistent failure never becomes empty success',async()=>{
+    const original=global.fetch; const id='UC'+'z'.repeat(22); let calls=0;
+    try {
+        global.fetch=async()=> ++calls===1 ? {ok:false,status:404} : ok(`<feed><yt:channelId>${id}</yt:channelId></feed>`);
+        assert.deepEqual(await providers.youtube({account:id}),{resolvedId:id,items:[]});
+        assert.equal(calls,2);
+        calls=0;
+        global.fetch=async()=>{calls++;return {ok:false,status:404};};
+        await assert.rejects(providers.youtube({account:id}),e=>e.status===404);
+        assert.equal(calls,2);
+    } finally {global.fetch=original;}
+ });
