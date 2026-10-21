@@ -1,6 +1,14 @@
 # Troy’s Game Community Bot — User Manual
 
-### Server language
+### New in 3.1.2: security update
+
+- Buttons and forms: one concurrent action per user per server, with a two-second cooldown. Rejected repeats do not fill the log channel.
+- Ticket close, delete and export recheck staff access and handler rank. Lower staff cannot handle a higher staff member's ticket. Existing Owner, Developer, Administrator and fixed bot-owner support access remains intact.
+- One transcript export at a time across the bot; at most 5000 messages and 8 MB source data per channel, with an 8 MB HTML output cap. No embedded image downloads. Oversized tickets remain intact and are never silently truncated; an administrator must archive them separately in full.
+- Working transcript library 3.2.0 retained; Undici pinned to 6.29.1 and affected dependencies updated.
+- Stop the bot, back up, replace update files, run `npm ci`, then restart. No configuration changes or command deployment required. See `UPDATE-3.1.2.txt`.
+
+## Server language
 The owner and existing authorized configuration managers can choose:
 
 - `/config instellen instelling:Bot.Language waarde:nl` — Dutch public bot messages.
@@ -13,9 +21,9 @@ Settings persist per server and apply immediately to new messages. Existing mess
 
 Users and roles are mentioned once per message. Repeated references show a plain name (or ID if unavailable). Repeated `@everyone` and `@here` references are also made non-pinging.
 
-**Bot version 3.0.11 · Updated 21 October 2026**
+**Bot version 3.1.2 · Updated 21 October 2026**
 
-## New in 3.0.11: ticket messages and member-list fix
+## New in 3.1.1: ticket messages and member-list fix
 
 An unset or conflicting `Tickets.ThreadLogChannel` now produces a clear private response with the configuration command instead of an error stack on every click. The ticket is preserved until its private staff discussion is safely archived.
 
@@ -27,9 +35,9 @@ Choose a separate staff-only text channel, different from `Tickets.LogChannel`, 
 
 Claims and access changes now load members through paginated REST requests instead of gateway opcode 8. Concurrent requests within a server share one load. Completed lists are not cached long-term; later actions fetch staff roles again. Failed or partial lists are never used. Close/delete interactions are acknowledged before waiting for another ticket operation.
 
-**Update from 3.0.10:** stop the bot, back up, replace the supplied files and restart. No new dependencies, configuration fields, SQL or slash command registration are needed. Existing ticket settings remain intact. See `UPDATE-3.0.11.txt`.
+**Update from 3.1.0:** stop the bot, back up, replace the supplied files and restart. No new dependencies, configuration fields, SQL or slash command registration are needed. Existing ticket settings remain intact. See `UPDATE-3.1.1.txt`.
 
-## New in 3.0.10: ticket claims, takeover and staff-thread logs
+## New in 3.1.0: ticket claims, takeover and staff-thread logs
 
 **Normal claim:** the handler and ticket owner can write in the main ticket; added non-staff participants retain participation. Other authorized staff can read the ticket and use **Staff discussion** to open and write in the private thread. The Claim button and `/ticket-claim` share the same behavior.
 

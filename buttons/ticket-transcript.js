@@ -28,7 +28,8 @@ module.exports = {
         working.add(key);
         try {
             await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-            const transcript = await discordTranscripts.createTranscript(interaction.channel, {
+            await require('../services/ticketAccess').authorizeAction(interaction, ticket);
+            const transcript = await require('../services/boundedTranscript').createTranscript(interaction.channel, {
                 limit: -1,
                 filename: `ticket-${interaction.channel.id}.html`
             });
@@ -40,7 +41,7 @@ module.exports = {
             return await send(interaction, "editReply", { content: tr("✅ Transcript opgeslagen in <#{0}>.", logChannel.id), allowedMentions: { parse: [] } });
         } catch (error) {
             logger.error(`Tickettranscript maken of versturen mislukt: ${error.stack || error}`);
-            const payload = { content: tr("❌ Het transcript kon niet worden gemaakt of verstuurd. Bekijk de botconsole voor de oorzaak.") };
+            const payload = { content: error.ticketInput ? error.message : tr("❌ Het transcript kon niet worden gemaakt of verstuurd. Bekijk de botconsole voor de oorzaak.") };
             if (interaction.deferred || interaction.replied) return send(interaction, "editReply", payload).catch(() => {});
             return send(interaction, "reply", { ...payload, flags: MessageFlags.Ephemeral }).catch(() => {});
         } finally { working.delete(key); }

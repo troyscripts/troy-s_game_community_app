@@ -25,7 +25,7 @@ const tickets = require('../database/tickets');
 const panels = require('../database/ticketPanels');
 const { PermissionFlagsBits: P, Collection, ChannelType } = require('discord.js');
 const { canDiscuss, createStaffThread } = require('../services/ticketDiscussion');
-const transcriptLibrary = require('discord-html-transcripts');
+const transcriptLibrary = require('../services/boundedTranscript');
 let failExport = false;
 transcriptLibrary.createTranscript = async (channel, options) => {
     assert.equal(options.limit, -1);
@@ -134,7 +134,7 @@ const { finishTicket } = require('../services/ticketLifecycle');
     channel.delete = async () => {deleted = true;};
     let hidden = false;
     channel.permissionOverwrites = {edit:async()=>{hidden=true;}};
-    const interaction = {channel,guild:{id:'g'},user:{tag:'staff'},deferReply:async()=>{}, editReply:async()=>{},reply:async()=>{}};
+    const interaction = {channel,guild:{id:'g',ownerId:'staff',members:{fetch:async()=>({id:'staff',guild:{ownerId:'staff'}})}},user:{id:'staff',tag:'staff'},deferReply:async()=>{}, editReply:async()=>{},reply:async()=>{}};
     failExport=true;
     await finishTicket(client,interaction,true);
     assert.equal(deleted,false);

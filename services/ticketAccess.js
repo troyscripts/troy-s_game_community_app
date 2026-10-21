@@ -121,4 +121,18 @@ async function change(i,remove){return guarded(i,async(ticket,actor)=>{
     const text=tr('🎫 {0}: {1} in ticket <#{2}>. Uitgevoerd door <@{3}>.',remove?tr('Toegang verwijderd'):tr('Toegang toegevoegd'),mention,ticket.channel_id,actor.id);
     await log(i,text);return send(i,'editReply',{content:text,allowedMentions:{parse:[]}});
 });}
-module.exports={withTicket,rank,isStaff,allowedStaff,claim,change,enforce,editPlan};
+async function authorizeAction(i, ticket) {
+    const actor = await i.guild.members.fetch({user:i.user.id, force:true});
+    // Preserve the existing owner, developer and administrator support access.
+    if (require('../utils/permissions').hasOwnerAccess(actor, actor.id) || actor.permissions.has(P.Administrator)) return actor;
+    if (!allowedStaff(actor,ticket,i.channel) || actor.id === ticket.user_id) fail('Je hebt geen stafftoegang tot dit ticket.');
+    if (ticket.claimed_by && ticket.claimed_by !== actor.id) {
+        const claimant = await i.guild.members.fetch({user:ticket.claimed_by,force:true}).catch(error => {
+            if (Number(error.code) === 10007) return null;
+            throw error;
+        });
+        if (claimant && rank(actor,ticket) < rank(claimant,ticket)) fail('Een hoger stafflid behandelt dit ticket. Je kunt het niet sluiten, verwijderen of exporteren.');
+    }
+    return actor;
+}
+module.exports={authorizeAction,withTicket,rank,isStaff,allowedStaff,claim,change,enforce,editPlan};

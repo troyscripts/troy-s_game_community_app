@@ -1,11 +1,19 @@
-## 3.0.11 — 21 oktober 2026
+## 3.1.2 — Beveiligingsupdate
+
+- Knoppen en formulieren: maximaal één actie tegelijk per gebruiker per server, met twee seconden wachttijd. Afgewezen herhaalklikken vullen het logkanaal niet.
+- Sluiten, verwijderen en exporteren van tickets controleren opnieuw de stafftoegang en rang van de behandelaar. Lagere staff kan een ticket van hogere staff niet afhandelen. Bestaande Owner-, Developer-, Administrator- en vaste botowner-toegang blijven behouden.
+- Transcriptverwerking: één export tegelijk voor de bot, maximaal 5000 berichten en 8 MB berichtgegevens per kanaal; HTML maximaal 8 MB. Geen ingebedde afbeeldingsdownloads. Bij overschrijding blijft het ticket behouden: geen stilzwijgend afgekapt archief. Een beheerder moet grote tickets volledig apart archiveren.
+- Transcriptbibliotheek blijft op de werkende 3.2.0; onderliggende Undici vastgezet op 6.29.1 en overige getroffen dependencies bijgewerkt.
+- Stop de bot, maak een back-up, vervang de updatebestanden, voer `npm ci` uit en herstart. Geen configuratiewijziging of commandoregistratie nodig. Zie `UPDATE-3.1.2.txt`.
+
+## 3.1.1 — 21 oktober 2026
 
 - Ticketclaims en toegangsacties gebruiken gepagineerde REST-ledenlijsten in plaats van gateway-opcode 8, met gedeelde gelijktijdige aanvragen.
 - Ontbrekend of conflicterend ThreadLogChannel geeft een bruikbare privémelding zonder herhaalde foutstack.
 - Exportfouten behouden het ticket; sluiten/verwijderen bevestigt de interactie vóór het wachten op andere ticketacties.
 - Tests, README en beide handleidingen bijgewerkt. Configuratie ongewijzigd.
 
-## 3.0.10 — 21 oktober 2026
+## 3.1.0 — 21 oktober 2026
 
 - Ticketclaim past kanaalrechten toe: andere staff kan meelezen en in de privéthread overleggen.
 - Hogere staff kan claims overnemen; lagere staff verliest ticket- en threadtoegang. Gelijke/hogere staff is beschermd tegen verwijderen.

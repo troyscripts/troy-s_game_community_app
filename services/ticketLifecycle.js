@@ -10,6 +10,7 @@ async function finishTicket(client, interaction, remove = false) {
     if (!remove && ticket.status === 'closed' && ticket.transcript_dm_sent_at) return send(interaction, "editReply", { content: tr("ℹ️ Dit ticket is al gesloten."), flags: MessageFlags.Ephemeral });
     try {
         // A failed export/local save aborts deletion so the conversation is recoverable.
+        await require('./ticketAccess').authorizeAction(interaction, ticket);
         const result = await deliverTranscript(client, channel, ticket);
         const status = result.dmSent ? tr("✅ Transcript via DM afgeleverd (eventueel bij eerder sluiten).") : tr("⚠️ Transcript-DM mislukt. Geef de eigenaar de kopie uit het logkanaal of de map transcripts.");
         if (remove) {

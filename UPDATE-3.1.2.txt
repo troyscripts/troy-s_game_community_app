@@ -1,0 +1,12 @@
+Troy’s Game Community — update 3.1.2 vanaf 3.1.1 (eerder 3.0.11 genoemd)
+
+1. Stop de bot en maak een back-up van bestanden, database en .env.
+2. Pak deze ZIP uit in de botmap en vervang de meegeleverde bestanden.
+3. Voer npm ci uit om de bijgewerkte package-lock.json exact te installeren.
+4. Start de bot met npm start.
+
+Geen SQL, nieuwe configvelden of slashcommandregistratie nodig.
+Rollen en hun Discord-rechten blijven verantwoordelijkheid van de serverbeheerder.
+Lees README.md, HANDLEIDING.md of MANUAL-EN.md voor de exportlimieten.
+Niet live getest op Discord. Tests gebruiken mocks plus de echte HTML-renderer.
+Undici is bewust gepind; controleer bij toekomstige dependency-updates de override opnieuw.

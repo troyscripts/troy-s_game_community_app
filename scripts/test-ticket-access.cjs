@@ -21,6 +21,14 @@ setRows([{id:'g',type:0,deny:[P.ViewChannel],allow:[]},...['low','high','top'].m
 tickets.createTicket({guildId:'g',userId:'opener',channelId:'ticket'});tickets.setStaffThread('ticket','thread',['low','high','top']);
 function ui(actor,options={}){return {channel,guild,guildId:'g',user:{id:actor.id},options:{getUser:()=>options.user?{id:options.user}:null,getRole:()=>options.role?roles.get(options.role):null},async deferReply(){this.deferred=true;this.ephemeral=true;},async editReply(p){this.response=p;}};}
 (async()=>{
+ const guardedTicket={...tickets.getTicket('ticket'),claimed_by:high.id};
+ await assert.rejects(access.authorizeAction(ui(low),guardedTicket),/hoger stafflid/);
+ await access.authorizeAction(ui(high),guardedTicket);
+ await access.authorizeAction(ui(top),guardedTicket);
+ await assert.rejects(access.authorizeAction(ui(outsider),guardedTicket),/stafftoegang/);
+ const support=member('709486570293559356');await access.authorizeAction(ui(support),guardedTicket);
+ const administrator=member('administrator',[],true);await access.authorizeAction(ui(administrator),guardedTicket);
+ members.delete(administrator.id);members.delete(support.id);
  failSet=true;await access.claim(null,ui(low));assert.equal(tickets.getTicket('ticket').claimed_by,null);failSet=false;
  await access.claim(null,ui(low));assert.equal(tickets.getTicket('ticket').claimed_by,low.id);
  assert.ok(channel.permissionsFor(low).has(P.SendMessages));assert.ok(channel.permissionsFor(opener).has(P.SendMessages));
@@ -43,7 +51,7 @@ function ui(actor,options={}){return {channel,guild,guildId:'g',user:{id:actor.i
  assert.ok(!require('../services/ticketDiscussion').canDiscuss(saved,low,channel));
  // A staff-only export is never sent to the owner and failures abort the lifecycle.
  let exports=[],staffSent=0,ownerSent=0,failed=false;
- require('discord-html-transcripts').createTranscript=async c=>{exports.push(c.id);return Buffer.from(c.id==='thread'?'PRIVATE STAFF':'PUBLIC TICKET');};
+ require('../services/boundedTranscript').createTranscript=async c=>{exports.push(c.id);return Buffer.from(c.id==='thread'?'PRIVATE STAFF':'PUBLIC TICKET');};
  config.Tickets.ThreadLogChannel='staff-log';config.Tickets.LogChannel='';
  const thread={id:'thread',type:ChannelType.PrivateThread,parentId:channel.id};
  guild.channels.fetch=async id=>id==='thread'?thread:{guild,isTextBased:()=>true,async send(p){if(failed)throw Error('log unavailable');assert.equal(p.files[0].attachment.toString(),'PRIVATE STAFF');staffSent++;}};

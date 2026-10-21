@@ -1,6 +1,14 @@
 # Troy’s Game Community Bot — Gebruikershandleiding
 
-### Taal per server instellen
+### Nieuw in 3.1.2: beveiligingsupdate
+
+- Knoppen en formulieren: maximaal één actie tegelijk per gebruiker per server, met twee seconden wachttijd. Afgewezen herhaalklikken vullen het logkanaal niet.
+- Sluiten, verwijderen en exporteren van tickets controleren opnieuw de stafftoegang en rang van de behandelaar. Lagere staff kan een ticket van hogere staff niet afhandelen. Bestaande Owner-, Developer-, Administrator- en vaste botowner-toegang blijven behouden.
+- Transcriptverwerking: één export tegelijk voor de bot, maximaal 5000 berichten en 8 MB berichtgegevens per kanaal; HTML maximaal 8 MB. Geen ingebedde afbeeldingsdownloads. Bij overschrijding blijft het ticket behouden: geen stilzwijgend afgekapt archief. Een beheerder moet grote tickets volledig apart archiveren.
+- Transcriptbibliotheek blijft op de werkende 3.2.0; onderliggende Undici vastgezet op 6.29.1 en overige getroffen dependencies bijgewerkt.
+- Stop de bot, maak een back-up, vervang de updatebestanden, voer `npm ci` uit en herstart. Geen configuratiewijziging of commandoregistratie nodig. Zie `UPDATE-3.1.2.txt`.
+
+## Taal per server instellen
 De owner en bestaande bevoegde configuratiebeheerders kunnen kiezen:
 
 - `/config instellen instelling:Bot.Language waarde:nl` — openbare botberichten Nederlands.
@@ -13,9 +21,9 @@ De keuze wordt per server opgeslagen en werkt direct voor nieuwe berichten. Oude
 
 Gebruikers en rollen worden per bericht één keer getagd. Bij herhaling verschijnt alleen de naam als gewone tekst (of het ID als de naam niet beschikbaar is). Ook `@everyone` en `@here` worden niet herhaald als actieve vermelding.
 
-**Botversie 3.0.11 · Bijgewerkt op 21 oktober 2026**
+**Botversie 3.1.2 · Bijgewerkt op 21 oktober 2026**
 
-## Nieuw in 3.0.11: ticketmeldingen en ledenlijst-fix
+## Nieuw in 3.1.1: ticketmeldingen en ledenlijst-fix
 
 Een ontbrekend of gelijk ingesteld `Tickets.ThreadLogChannel` geeft nu een duidelijke privémelding met het instelcommando, in plaats van een foutstack bij iedere klik. Het ticket blijft behouden totdat het staffoverleg veilig is gearchiveerd.
 
@@ -27,9 +35,9 @@ Kies een apart staff-only tekstkanaal, verschillend van `Tickets.LogChannel`, he
 
 Claimen en toegang wijzigen halen de volledige ledenlijst nu gepagineerd via de REST-API op, zonder gateway-opcode 8. Gelijktijdige aanvragen binnen dezelfde server delen één laadactie. Afgeronde lijsten worden niet langdurig bewaard, zodat latere acties opnieuw de staffrollen ophalen. Bij fouten worden geen onvolledige lijsten gebruikt. Sluiten/verwijderen bevestigt de interactie voordat het op een andere ticketactie wacht.
 
-**Update vanaf 3.0.10:** stop de bot, maak een back-up, vervang de bestanden en herstart. Geen nieuwe dependencies, configuratievelden, SQL of slashcommandregistratie nodig. De eerdere ticketconfiguratie blijft behouden. Zie `UPDATE-3.0.11.txt`.
+**Update vanaf 3.1.0:** stop de bot, maak een back-up, vervang de bestanden en herstart. Geen nieuwe dependencies, configuratievelden, SQL of slashcommandregistratie nodig. De eerdere ticketconfiguratie blijft behouden. Zie `UPDATE-3.1.1.txt`.
 
-## Nieuw in 3.0.10: ticketclaims, overnemen en staffthread-log
+## Nieuw in 3.1.0: ticketclaims, overnemen en staffthread-log
 
 **Gewone claim:** alleen de behandelaar en ticketmaker kunnen in het ticket typen; toegevoegde niet-staffdeelnemers behouden hun deelname. Andere bevoegde staffleden blijven meelezen en kunnen via **Staffoverleg** de privéthread openen en daar schrijven. De claimknop en `/ticket-claim` werken hetzelfde.
 

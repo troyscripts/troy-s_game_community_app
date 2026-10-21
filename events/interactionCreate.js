@@ -32,6 +32,8 @@ module.exports = {
 
     async execute(client, interaction) {
         let state = "Onbekende interactie";
+        let release;
+        let throttled = false;
         try {
             if (interaction.isAutocomplete()) {
                 const command = client.commands.get(interaction.commandName);
@@ -83,6 +85,13 @@ module.exports = {
                 return;
             }
 
+            if (interaction.isButton() || interaction.isModalSubmit() || interaction.isAnySelectMenu()) {
+                release = require('../services/interactionThrottle').acquire(`${interaction.guildId || 'dm'}:${interaction.user.id}`);
+                if (!release) {
+                    throttled = true;
+                    return await sendPrivate(interaction, tr('Wacht even: je vorige actie wordt verwerkt of je klikt te snel.'));
+                }
+            }
             if (interaction.isButton()) {
                 const button = resolveDynamic(client.buttons, interaction.customId);
                 if (button) {
@@ -129,7 +138,8 @@ module.exports = {
                 }
             }
         } finally {
-            await logInteraction(interaction, state);
+            release?.();
+            if (!throttled) await logInteraction(interaction, state);
         }
     }
 };
