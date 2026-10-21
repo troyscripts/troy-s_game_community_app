@@ -78,7 +78,7 @@ async function claim(_client,i){return guarded(i,async(ticket,actor)=>{
     }
     const minimum=takeover?Math.max(ticket.staff_min_rank||0,rank(actor,ticket)):(ticket.staff_min_rank||0);
     const updated={...ticket,claimed_by:actor.id,staff_min_rank:minimum};
-    const members=await i.guild.members.fetch();const me=await i.guild.members.fetchMe();
+    const members=await require('./ticketMembers').fetchTicketMembers(i.guild);const me=await i.guild.members.fetchMe();
     if(takeover&&[...members.values()].some(m=>m.id!==ticket.user_id&&!m.user?.bot&&isStaff(m,ticket)&&rank(m,ticket)<minimum&&m.permissions.has(P.Administrator)))fail('Lagere staff met Administrator kan niet worden uitgesloten. Pas eerst hun Discordrechten aan.');
     const before=snapshot(i.channel),plan=new Map(before.map(o=>[o.id,o]));
     enforce(plan,i.channel,updated,members,me.id);
@@ -93,7 +93,7 @@ async function claim(_client,i){return guarded(i,async(ticket,actor)=>{
 async function change(i,remove){return guarded(i,async(ticket,actor)=>{
     const user=i.options.getUser('gebruiker'),roleOption=i.options.getRole('rol');
     if(Boolean(user)===Boolean(roleOption))fail('Kies precies één gebruiker of rol.');
-    const members=await i.guild.members.fetch();const me=await i.guild.members.fetchMe();
+    const members=await require('./ticketMembers').fetchTicketMembers(i.guild);const me=await i.guild.members.fetchMe();
     const target=user?members.get(user.id):null;
     const role=roleOption?i.guild.roles.cache.get(roleOption.id):null;
     if(user&&!target)fail('Deze gebruiker zit niet op deze server.');

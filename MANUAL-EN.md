@@ -13,7 +13,21 @@ Settings persist per server and apply immediately to new messages. Existing mess
 
 Users and roles are mentioned once per message. Repeated references show a plain name (or ID if unavailable). Repeated `@everyone` and `@here` references are also made non-pinging.
 
-**Bot version 3.0.10 · Updated 21 October 2026**
+**Bot version 3.0.11 · Updated 21 October 2026**
+
+## New in 3.0.11: ticket messages and member-list fix
+
+An unset or conflicting `Tickets.ThreadLogChannel` now produces a clear private response with the configuration command instead of an error stack on every click. The ticket is preserved until its private staff discussion is safely archived.
+
+```text
+/config instellen instelling:Tickets.ThreadLogChannel waarde:#ticket-thread-logs
+```
+
+Choose a separate staff-only text channel, different from `Tickets.LogChannel`, the ticket and its thread. The bot needs access, Send Messages and Attach Files. This remains required for tickets with staff threads; the update does not choose a channel for you.
+
+Claims and access changes now load members through paginated REST requests instead of gateway opcode 8. Concurrent requests within a server share one load. Completed lists are not cached long-term; later actions fetch staff roles again. Failed or partial lists are never used. Close/delete interactions are acknowledged before waiting for another ticket operation.
+
+**Update from 3.0.10:** stop the bot, back up, replace the supplied files and restart. No new dependencies, configuration fields, SQL or slash command registration are needed. Existing ticket settings remain intact. See `UPDATE-3.0.11.txt`.
 
 ## New in 3.0.10: ticket claims, takeover and staff-thread logs
 

@@ -9,7 +9,7 @@ const role=(id,position)=>({id,position,managed:false,comparePositionTo(other){r
 const roles=new Collection([['g',role('g',0)],['low',role('low',10)],['high',role('high',20)],['top',role('top',30)],['guest',role('guest',2)],['below-panel',role('below-panel',1)]]);
 config.StaffRoles=['low','high','top','below-panel'];
 const members=new Collection();
-const guild={id:'g',ownerId:'server-owner',roles:{cache:roles,fetch:async()=>roles},members:{fetch:async o=>o?members.get(typeof o==='string'?o:o.user):members,fetchMe:async()=>members.get('bot')},channels:{fetch:async()=>null}};
+const guild={id:'g',ownerId:'server-owner',roles:{cache:roles,fetch:async()=>roles},members:{list:async()=>members,fetch:async o=>o?members.get(typeof o==='string'?o:o.user):members,fetchMe:async()=>members.get('bot')},channels:{fetch:async()=>null}};
 function member(id,ids=[],admin=false){const m={id,guild,user:{bot:id==='bot'},roles:{cache:new Collection(ids.map(k=>[k,roles.get(k)])),highest:roles.get(ids.at(-1)||'g')},permissions:new B(admin?[P.Administrator]:[P.ViewChannel,P.SendMessages])};members.set(id,m);return m;}
 const opener=member('opener'),low=member('staff-low',['low']),high=member('staff-high',['high']),top=member('staff-top',['top']),outsider=member('outsider'),guest=member('guest-user',['guest']),below=member('below-user',['below-panel']),bot=member('bot',[],true);
 let failSet=false;
@@ -54,5 +54,18 @@ function ui(actor,options={}){return {channel,guild,guildId:'g',user:{id:actor.i
  config.Tickets.ThreadLogChannel='';await assert.rejects(deliverTranscript(client,channel,saved),/ThreadLogChannel/);
  const settings=require('../database/guildSettings');assert.ok(settings.getEditablePaths().includes('Tickets.ThreadLogChannel'));
  for(const cmd of ['ticket-add','ticket-remove']){const data=require('../commands/tickets/'+cmd).data.toJSON();assert.equal(data.options.length,2);}
+ // REST pagination shares concurrent work and never keeps a stale completed snapshot.
+ const {fetchTicketMembers}=require('../services/ticketMembers');let lists=0;
+ const paged={id:'pages',members:{async list({after}){lists++;await Promise.resolve();return after?new Collection([['1001',{id:'1001'}]]):new Collection(Array.from({length:1000},(_,n)=>[String(n+1),{id:String(n+1)}]));}}};
+ const [first,second]=await Promise.all([fetchTicketMembers(paged),fetchTicketMembers(paged)]);
+ assert.equal(first.size,1001);assert.equal(second.size,1001);assert.equal(lists,2);
+ await fetchTicketMembers(paged);assert.equal(lists,4);
+ let broken=true;const retry={id:'retry',members:{async list(){if(broken)throw Error('REST unavailable');return new Collection();}}};
+ await assert.rejects(fetchTicketMembers(retry),/REST unavailable/);broken=false;assert.equal((await fetchTicketMembers(retry)).size,0);
+ // Missing thread-log configuration is a private response, not an uncaught error.
+ const close=ui(top);let deleted=false;channel.delete=async()=>{deleted=true;};
+ await require('../services/ticketLifecycle').finishTicket(client,close,true);
+ assert.match(close.response.content,/Tickets.ThreadLogChannel/);assert.equal(deleted,false);assert.equal(tickets.getTicket('ticket').status,'open');
+ console.log('PASS: paginated REST membership, concurrent deduplication, failure retry, missing-log private response and deletion protection.');
  console.log('PASS: failed claim rollback, claim permissions, no panel-role leak, thread access, user/role add/remove, hierarchy, takeover, persistent minimum, separate private export and fail-closed logging.');
 })().catch(e=>{console.error(e);process.exitCode=1;}).finally(()=>{db.closeDatabase();fs.rmSync(tmp,{recursive:true,force:true});fs.rmSync(path.join(__dirname,'../transcripts/g'),{recursive:true,force:true});});

@@ -7,16 +7,18 @@ const config = require('../config/config');
 const tickets = require('../database/tickets');
 const logger = require('../utils/logger');
 
+function archiveError(text){const error=new Error(tr(text));error.ticketInput=true;return error;}
+
 async function deliverThreadTranscript(channel,ticket) {
     if(!ticket.staff_thread_id)return;
     const id=config.Tickets.ThreadLogChannel;
     if(!id || id===config.Tickets.LogChannel || id===channel.id || id===ticket.staff_thread_id)
-        throw new Error(tr('Stel Tickets.ThreadLogChannel in op een apart stafflogkanaal voordat je dit ticket sluit of verwijdert.'));
+        throw archiveError('Stel eerst een apart stafflog in met /config instellen instelling:Tickets.ThreadLogChannel waarde:#ticket-thread-logs. Kies een ander kanaal dan Tickets.LogChannel. Het ticket is behouden.');
     const log=await channel.guild.channels.fetch(id);
-    if(!log?.isTextBased() || log.guild.id!==ticket.guild_id)throw new Error(tr('Het staffthread-logkanaal is niet bereikbaar.'));
+    if(!log?.isTextBased() || log.guild.id!==ticket.guild_id)throw archiveError('Het staffthread-logkanaal is niet bereikbaar. Het ticket is behouden. Controleer Tickets.ThreadLogChannel en de botrechten.');
     const thread=await channel.guild.channels.fetch(ticket.staff_thread_id);
     if(!thread || thread.parentId!==channel.id || thread.type!==require('discord.js').ChannelType.PrivateThread)
-        throw new Error(tr('De opgeslagen staffthread ontbreekt of hoort niet bij dit ticket.'));
+        throw archiveError('De opgeslagen staffthread ontbreekt of hoort niet bij dit ticket.');
     const filename=`staff-thread-${channel.id}-${thread.id}-${Date.now()}.html`;
     const buffer=await transcripts.createTranscript(thread,{limit:-1,returnType:'buffer',filename});
     const directory=path.resolve(__dirname,'..','transcripts',ticket.guild_id,'staff');

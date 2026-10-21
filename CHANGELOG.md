@@ -1,3 +1,10 @@
+## 3.0.11 — 21 oktober 2026
+
+- Ticketclaims en toegangsacties gebruiken gepagineerde REST-ledenlijsten in plaats van gateway-opcode 8, met gedeelde gelijktijdige aanvragen.
+- Ontbrekend of conflicterend ThreadLogChannel geeft een bruikbare privémelding zonder herhaalde foutstack.
+- Exportfouten behouden het ticket; sluiten/verwijderen bevestigt de interactie vóór het wachten op andere ticketacties.
+- Tests, README en beide handleidingen bijgewerkt. Configuratie ongewijzigd.
+
 ## 3.0.10 — 21 oktober 2026
 
 - Ticketclaim past kanaalrechten toe: andere staff kan meelezen en in de privéthread overleggen.

@@ -1217,5 +1217,8 @@
   "Stel Tickets.ThreadLogChannel in op een apart stafflogkanaal voordat je dit ticket sluit of verwijdert.": "Set Tickets.ThreadLogChannel to a separate staff log channel before closing or deleting this ticket.",
   "Het staffthread-logkanaal is niet bereikbaar.": "The staff-thread log channel is not accessible.",
   "De opgeslagen staffthread ontbreekt of hoort niet bij dit ticket.": "The saved staff thread is missing or does not belong to this ticket.",
-  "💬 Staffthread-transcript voor ticket <#{0}>. Alleen voor staff.": "💬 Staff-thread transcript for ticket <#{0}>. Staff only."
+  "💬 Staffthread-transcript voor ticket <#{0}>. Alleen voor staff.": "💬 Staff-thread transcript for ticket <#{0}>. Staff only.",
+  "Stel eerst een apart stafflog in met /config instellen instelling:Tickets.ThreadLogChannel waarde:#ticket-thread-logs. Kies een ander kanaal dan Tickets.LogChannel. Het ticket is behouden.": "First configure a separate staff log using /config instellen instelling:Tickets.ThreadLogChannel waarde:#ticket-thread-logs. Choose a channel different from Tickets.LogChannel. The ticket has been preserved.",
+  "Het staffthread-logkanaal is niet bereikbaar. Het ticket is behouden. Controleer Tickets.ThreadLogChannel en de botrechten.": "The staff-thread log channel is inaccessible. The ticket has been preserved. Check Tickets.ThreadLogChannel and bot permissions.",
+  "Het ticket kon niet worden gesloten of verwijderd. Controleer het threadlog, bestandsopslag en botrechten en probeer opnieuw.": "The ticket could not be closed or deleted. Check the thread log, file storage and bot permissions, then try again."
 }

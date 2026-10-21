@@ -1,4 +1,18 @@
-# Troy’s Game Community Bot — 3.0.10
+# Troy’s Game Community Bot — 3.0.11
+
+## Nieuw in 3.0.11: ticketmeldingen en ledenlijst-fix
+
+Een ontbrekend of gelijk ingesteld `Tickets.ThreadLogChannel` geeft nu een duidelijke privémelding met het instelcommando, in plaats van een foutstack bij iedere klik. Het ticket blijft behouden totdat het staffoverleg veilig is gearchiveerd.
+
+```text
+/config instellen instelling:Tickets.ThreadLogChannel waarde:#ticket-thread-logs
+```
+
+Kies een apart staff-only tekstkanaal, verschillend van `Tickets.LogChannel`, het ticket en de staffthread. Geef de bot toegang, Berichten verzenden en Bestanden bijvoegen. Dit blijft verplicht voor tickets met een staffthread; de update kiest geen kanaal namens jou.
+
+Claimen en toegang wijzigen halen de volledige ledenlijst nu gepagineerd via de REST-API op, zonder gateway-opcode 8. Gelijktijdige aanvragen binnen dezelfde server delen één laadactie. Afgeronde lijsten worden niet langdurig bewaard, zodat latere acties opnieuw de staffrollen ophalen. Bij fouten worden geen onvolledige lijsten gebruikt. Sluiten/verwijderen bevestigt de interactie voordat het op een andere ticketactie wacht.
+
+**Update vanaf 3.0.10:** stop de bot, maak een back-up, vervang de bestanden en herstart. Geen nieuwe dependencies, configuratievelden, SQL of slashcommandregistratie nodig. De eerdere ticketconfiguratie blijft behouden. Zie `UPDATE-3.0.11.txt`.
 
 ## Nieuw in 3.0.10: ticketclaims, overnemen en staffthread-log
 

@@ -136,7 +136,7 @@ const { finishTicket } = require('../services/ticketLifecycle');
     channel.permissionOverwrites = {edit:async()=>{hidden=true;}};
     const interaction = {channel,guild:{id:'g'},user:{tag:'staff'},deferReply:async()=>{}, editReply:async()=>{},reply:async()=>{}};
     failExport=true;
-    await assert.rejects(finishTicket(client,interaction,true),/export failed/);
+    await finishTicket(client,interaction,true);
     assert.equal(deleted,false);
     assert.ok(tickets.getTicket('123'));
     failExport=false;
