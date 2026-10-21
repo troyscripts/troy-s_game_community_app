@@ -4,7 +4,7 @@ const { canDiscuss, getStaffThread } = require('../services/ticketDiscussion');
 const working = new Set();
 module.exports = {
     customId: 'ticket-discuss',
-    async execute(_client, interaction) {
+    async execute(_client, interaction) { return require('../services/ticketAccess').withTicket(interaction.channel.id,async()=>{
         const ticket = tickets.getTicket(interaction.channel.id);
         const member = await interaction.guild.members.fetch(interaction.user.id);
         if (!ticket || ticket.guild_id !== interaction.guild.id || !canDiscuss(ticket, member, interaction.channel)) {
@@ -19,5 +19,5 @@ module.exports = {
             await thread.members.add(member.id);
             return await interaction.editReply({ content: `💬 Staffoverleg: ${thread}`, allowedMentions: { parse: [] } });
         } finally { working.delete(ticket.channel_id); }
-    }
+    }); }
 };

@@ -1,4 +1,41 @@
-# Troy’s Game Community Bot — 3.0.9
+# Troy’s Game Community Bot — 3.0.10
+
+## Nieuw in 3.0.10: ticketclaims, overnemen en staffthread-log
+
+**Gewone claim:** alleen de behandelaar en ticketmaker kunnen in het ticket typen; toegevoegde niet-staffdeelnemers behouden hun deelname. Andere bevoegde staffleden blijven meelezen en kunnen via **Staffoverleg** de privéthread openen en daar schrijven. De claimknop en `/ticket-claim` werken hetzelfde.
+
+**Overnemen:** een stafflid met een hogere staffrol kan opnieuw op **Claim** klikken of `/ticket-claim` gebruiken. De nieuwe behandelaar neemt het ticket over. Lagere staff verliest toegang tot het ticket én de bijbehorende privéthread; gelijke/hogere bevoegde staff blijft alleen meelezen. De ticketmaker blijft toegang houden. Alleen de nieuwe behandelaar kan als staff in het hoofdticket typen. De hoogste ingestelde staffrol bepaalt de rang; de Discord-serverowner en ingestelde globale botowners hebben voorrang. Een gelijk of lager stafflid kan de claim niet overnemen.
+
+**Discordbeperking:** Administrator omzeilt kanaalrechten. Geef staff geen Administrator als leesrechten strikt moeten worden afgedwongen. Overnemen wordt geweigerd als lagere staff met Administrator daardoor niet kan worden uitgesloten. Voor het ophalen van alle staffleden moet Server Members Intent ingeschakeld zijn; de bot heeft Kanaal beheren en Rollen beheren nodig om kanaalrechten te wijzigen.
+
+### Personen of rollen toevoegen/verwijderen
+
+```text
+/ticket-add gebruiker:@Persoon
+/ticket-add rol:@Rol
+/ticket-remove gebruiker:@Persoon
+/ticket-remove rol:@Rol
+```
+
+Kies precies één persoon of rol. Een vermelding voegt toegang toe of haalt die weg; deze commando’s dienen niet als losse ping en sturen geen mentionnotificatie. Gewone toegevoegde deelnemers kunnen in het ticket schrijven, maar krijgen geen toegang tot het privéoverleg. Andere staff blijft na een claim alleen-lezen in het ticket. Het minimum van een overgenomen ticket kan niet met `/ticket-add` worden omzeild.
+
+Gelijke of hogere staff wordt beschermd tegen wijzigingen door lagere staff. De ticketmaker, behandelaar, uitvoerder en bots mogen niet via deze commando’s worden gewijzigd. Rollen die deze beschermde personen bevatten worden ook geweigerd; `@everyone` en beheerde botrollen zijn niet toegestaan. Bij verwijderen van een rol vervalt de toegang via die rol; eventuele andere toegangsrechten blijven van toepassing. Een individuele verwijdering gebruikt een expliciete weigering, zodat toegang via een rol niet alsnog behouden blijft.
+
+### Apart log voor het staffoverleg
+
+Stel een apart kanaal in dat alleen staff kan lezen:
+
+```text
+/config instellen instelling:Tickets.ThreadLogChannel waarde:#ticket-thread-logs
+```
+
+Dit kanaal moet verschillen van `Tickets.LogChannel` en van het ticket/de thread zelf. Bij sluiten én verwijderen wordt de staffthread als apart HTML-transcript in dit kanaal opgeslagen. Een lokale kopie staat onder `transcripts/<server-id>/staff/`. Het gewone tickettranscript gaat zoals voorheen naar de ticketmaker en het gewone ticketlog; het stafftranscript wordt **nooit** aan de ticketmaker gestuurd. Bij opnieuw exporteren wordt een nieuwe momentopname opgeslagen.
+
+Als de staffthread niet kan worden geëxporteerd of het aparte log niet kan worden bereikt, wordt sluiten/verwijderen afgebroken. Geef de bot toegang tot de privéthread en in het logkanaal Kanaal bekijken, Berichten verzenden en Bestanden bijvoegen. De bestaande privéthread houdt de knop **Staffoverleg**; staff hoeft niet rechtstreeks in het hoofdticket te typen om de thread te openen.
+
+### Bijwerken vanaf 3.0.9
+
+Stop de bot, maak een back-up van bestanden en database, vervang de bestanden uit het pakket en voer `npm run deploy` uit voor de nieuwe roloptie. Herstart met `npm start` en stel `Tickets.ThreadLogChannel` in. De database wordt automatisch uitgebreid; er zijn geen nieuwe dependencies. Bij al geclaimde tickets kan de huidige behandelaar nogmaals op Claim klikken om de nieuwe rechten toe te passen zonder lagere staff als bij een overname te verwijderen. Nieuwe claims gebruiken de nieuwe regels direct. Wijzigingen in staffrollen worden bij de volgende claim/toegangsactie verwerkt; Discord-Administrator blijft altijd een uitzondering.
 
 ## Nieuw in 3.0.9: ook serveroverstijgende time-outs
 
@@ -12,7 +49,7 @@ Zet dit aan in iedere deelnemende server, inclusief de bronserver. Voor time-out
 
 Elke server krijgt een eigen logmelding met **Time-out opheffen**. Die knop heft uitsluitend de time-out op in de server waar je klikt. Time-outs in andere servers blijven staan. De actuele rechten, rolhiërarchie en controle op later gewijzigde straffen blijven gelden. De automatische kanaalwaarschuwing vermeldt serveroverstijgende maatregelen bij beide strafopties.
 
-Met dit gecombineerde pakket kun je direct vanaf **3.0.7** bijwerken (3.0.8 is ook ondersteund): stop de bot, maak een back-up, vervang de meegeleverde bestanden en herstart. Geen nieuwe instellingen, dependencies of commandregistratie nodig. Bestaande deelname via `CrossServerBan` is direct ook van toepassing op nieuwe time-outs. Zie `UPDATE-3.0.9.txt`.
+Update vanaf **3.0.8**: stop de bot, maak een back-up, vervang de meegeleverde bestanden en herstart. Geen nieuwe instellingen, dependencies of commandregistratie nodig. Bestaande deelname via `CrossServerBan` is direct ook van toepassing op nieuwe time-outs. Zie `UPDATE-3.0.9.txt`.
 
 ## Nieuw in 3.0.8: serveroverstijgende honeypot-ban
 

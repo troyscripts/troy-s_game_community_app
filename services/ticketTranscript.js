@@ -7,7 +7,29 @@ const config = require('../config/config');
 const tickets = require('../database/tickets');
 const logger = require('../utils/logger');
 
+async function deliverThreadTranscript(channel,ticket) {
+    if(!ticket.staff_thread_id)return;
+    const id=config.Tickets.ThreadLogChannel;
+    if(!id || id===config.Tickets.LogChannel || id===channel.id || id===ticket.staff_thread_id)
+        throw new Error(tr('Stel Tickets.ThreadLogChannel in op een apart stafflogkanaal voordat je dit ticket sluit of verwijdert.'));
+    const log=await channel.guild.channels.fetch(id);
+    if(!log?.isTextBased() || log.guild.id!==ticket.guild_id)throw new Error(tr('Het staffthread-logkanaal is niet bereikbaar.'));
+    const thread=await channel.guild.channels.fetch(ticket.staff_thread_id);
+    if(!thread || thread.parentId!==channel.id || thread.type!==require('discord.js').ChannelType.PrivateThread)
+        throw new Error(tr('De opgeslagen staffthread ontbreekt of hoort niet bij dit ticket.'));
+    const filename=`staff-thread-${channel.id}-${thread.id}-${Date.now()}.html`;
+    const buffer=await transcripts.createTranscript(thread,{limit:-1,returnType:'buffer',filename});
+    const directory=path.resolve(__dirname,'..','transcripts',ticket.guild_id,'staff');
+    await fs.mkdir(directory,{recursive:true});
+    await fs.writeFile(path.join(directory,filename),buffer);
+    // Never reuse the owner's DM payload for confidential staff discussion.
+    await sendLogMessage(log,'send',{
+        content:tr('💬 Staffthread-transcript voor ticket <#{0}>. Alleen voor staff.',channel.id),
+        files:[new AttachmentBuilder(buffer,{name:filename})],allowedMentions:{parse:[]}
+    });
+}
 async function deliverTranscript(client, channel, ticket) {
+    await deliverThreadTranscript(channel,ticket);
     // Only fetch the parent channel: private staff threads never enter this export.
     const filename = `ticket-${channel.id}-${Date.now()}.html`;
     const buffer = await transcripts.createTranscript(channel, { limit: -1, returnType: 'buffer', filename });
@@ -37,4 +59,4 @@ async function deliverTranscript(client, channel, ticket) {
     } catch (error) { logger.error(`Transcriptlog voor ticket ${channel.id} mislukt: ${error.message}`); }
     return { dmSent, logged };
 }
-module.exports = { deliverTranscript };
+module.exports = { deliverTranscript, deliverThreadTranscript };

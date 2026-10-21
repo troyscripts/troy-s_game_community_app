@@ -13,7 +13,44 @@ Settings persist per server and apply immediately to new messages. Existing mess
 
 Users and roles are mentioned once per message. Repeated references show a plain name (or ID if unavailable). Repeated `@everyone` and `@here` references are also made non-pinging.
 
-**Bot version 3.0.9 · Updated 21 October 2026**
+**Bot version 3.0.10 · Updated 21 October 2026**
+
+## New in 3.0.10: ticket claims, takeover and staff-thread logs
+
+**Normal claim:** the handler and ticket owner can write in the main ticket; added non-staff participants retain participation. Other authorized staff can read the ticket and use **Staff discussion** to open and write in the private thread. The Claim button and `/ticket-claim` share the same behavior.
+
+**Takeover:** a higher-ranking staff member can click Claim or use `/ticket-claim` again. Lower staff lose access to both the ticket and its private thread. Authorized equal/higher staff retain read-only access; the ticket owner keeps access. Only the new handler can write as staff in the main channel. Rank uses the highest configured staff role, with priority for the Discord server owner and configured global bot owners. Equal/lower staff cannot take over.
+
+**Discord limitation:** Administrator bypasses channel overwrites. Do not give staff Administrator if read-only restrictions must be enforced. Takeover is refused when lower staff with Administrator cannot be excluded. Server Members Intent is needed to fetch staff; the bot needs Manage Channels and Manage Roles to edit overwrites.
+
+### Add or remove a person or role
+
+```text
+/ticket-add gebruiker:@Person
+/ticket-add rol:@Role
+/ticket-remove gebruiker:@Person
+/ticket-remove rol:@Role
+```
+
+Choose exactly one person or role. These mentions change access rather than sending a ping. Added non-staff participants can write in the ticket but cannot enter the private discussion. Other staff remain read-only after a claim. Adding access cannot bypass a takeover's minimum staff rank.
+
+Equal/higher staff are protected from lower staff. The ticket owner, handler, acting member and bots are protected from these commands, including through roles containing them. Everyone and managed roles are rejected. Removing a role removes its access contribution; other access grants may still apply. Individual removal uses an explicit deny so role-based access cannot keep the user in the ticket.
+
+### Separate staff-thread log
+
+Configure a separate staff-only channel:
+
+```text
+/config instellen instelling:Tickets.ThreadLogChannel waarde:#ticket-thread-logs
+```
+
+It must differ from `Tickets.LogChannel` and the ticket/thread itself. On closing or deleting a ticket, its private staff thread is exported as a separate HTML transcript to this channel. A local copy is saved under `transcripts/<guild-id>/staff/`. The normal ticket transcript still goes to its owner and ordinary ticket log; the staff transcript is **never** sent to the owner. Re-exporting creates a new snapshot.
+
+If thread export or delivery fails, closing/deleting is aborted. The bot needs access to the private thread and View Channel, Send Messages and Attach Files in the log channel. Staff can use the existing discussion button without writing in the main ticket.
+
+### Updating from 3.0.9
+
+Stop the bot, back up files and database, replace the supplied files, run `npm run deploy` for the new role option, then start with `npm start`. Configure `Tickets.ThreadLogChannel`. Database changes are automatic; no new dependencies. Existing handlers can click Claim again to apply the new permissions without triggering takeover restrictions. New claims apply the rules immediately. Staff-role changes are processed on the next claim/access action; Discord Administrator remains an exception.
 
 ## New in 3.0.9: cross-server timeouts too
 
@@ -27,7 +64,7 @@ Enable this in every participating server, including the source. Timeouts requir
 
 Each server receives its own **Remove timeout** button. Removal only affects the server where the button is clicked. Other servers' timeouts remain active. Current permissions, role hierarchy and protection for later changed punishments still apply. The automatic warning describes cross-server enforcement for both actions.
 
-This combined package updates directly from **3.0.7** (3.0.8 is also supported): stop the bot, back up, replace the supplied files and restart. No new settings, dependencies or command registration are needed. Existing `CrossServerBan` opt-ins now also apply to new timeouts. See `UPDATE-3.0.9.txt`.
+Update from **3.0.8**: stop the bot, back up, replace the supplied files and restart. No new settings, dependencies or command registration are needed. Existing `CrossServerBan` opt-ins now also apply to new timeouts. See `UPDATE-3.0.9.txt`.
 
 ## New in 3.0.8: cross-server honeypot bans
 

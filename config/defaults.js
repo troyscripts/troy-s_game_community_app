@@ -80,6 +80,7 @@ module.exports = {
         AutoClose: false,
         Category: "",
         LogChannel: "",
+        ThreadLogChannel: "", // apart staff-only kanaal voor threadtranscripten
         MaxOpenPerUser: 5
     },
 

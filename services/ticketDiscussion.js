@@ -15,6 +15,7 @@ async function createStaffThread(channel) {
 function canDiscuss(ticket, member, channel) {
     if (!member || member.user?.bot) return false;
     if (!channel.permissionsFor(member)?.has(PermissionFlagsBits.ViewChannel)) return false;
+    if (ticket.staff_min_rank && require('./ticketAccess').rank(member,ticket)<ticket.staff_min_rank) return false;
     // Owners/admins can test and manage their own tickets. Regular ticket makers
     // remain excluded even when they hold another staff role.
     if (hasOwnerAccess(member, member.id) || member.permissions.has(PermissionFlagsBits.Administrator)) return true;

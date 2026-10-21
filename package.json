@@ -1,6 +1,6 @@
 {
   "name": "troys-gamecommunity-bot",
-  "version": "3.0.9",
+  "version": "3.0.10",
   "description": "Professionele Discord Bot voor Troy's Gamecommunity",
   "main": "index.js",
   "scripts": {
@@ -15,7 +15,8 @@
     "test:living": "node scripts/test-living.cjs",
     "test:business": "node scripts/test-business.cjs",
     "test:loans": "node scripts/test-loans.cjs",
-    "test:honeypot": "node scripts/test-honeypot.cjs"
+    "test:honeypot": "node scripts/test-honeypot.cjs",
+    "test:tickets": "node scripts/test-ticket-access.cjs && node scripts/test-ticket-upgrade.cjs"
   },
   "engines": {
     "node": ">=20"

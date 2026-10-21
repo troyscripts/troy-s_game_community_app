@@ -26,4 +26,4 @@ async function finishTicket(client, interaction, remove = false) {
         }
     } finally { working.delete(channel.id); }
 }
-module.exports = { finishTicket };
+module.exports = { finishTicket: (client,i,remove=false)=>require('./ticketAccess').withTicket(i.channel.id,()=>finishTicket(client,i,remove)) };

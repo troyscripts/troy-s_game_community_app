@@ -1,3 +1,12 @@
+## 3.0.10 — 21 oktober 2026
+
+- Ticketclaim past kanaalrechten toe: andere staff kan meelezen en in de privéthread overleggen.
+- Hogere staff kan claims overnemen; lagere staff verliest ticket- en threadtoegang. Gelijke/hogere staff is beschermd tegen verwijderen.
+- /ticket-add en /ticket-remove ondersteunen een gebruiker of rol met hiërarchiecontrole.
+- Nieuwe Tickets.ThreadLogChannel voor afzonderlijke privéthread-transcripten. Geen staffoverleg in de DM naar de ticketmaker; mislukte archivering blokkeert sluiten/verwijderen.
+- Bestaande claims kunnen door de behandelaar opnieuw worden toegepast. Database-migratie bewaart bestaande tickets.
+- README, beide handleidingen, vertalingen en tickettests bijgewerkt.
+
 ## 3.0.9 — 21 oktober 2026
 
 - Bestaande Honeypot.CrossServerBan-deelname uitgebreid naar time-outs van zeven dagen.
