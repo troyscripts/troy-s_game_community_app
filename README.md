@@ -1,4 +1,40 @@
-# Troy’s Game Community Bot — 3.0.6
+# Troy’s Game Community Bot — 3.0.9
+
+## Nieuw in 3.0.9: ook serveroverstijgende time-outs
+
+`Honeypot.CrossServerBan` geldt nu voor **bans én time-outs**. De bestaande instellingsnaam blijft behouden, zodat ingeschakelde deelname niet verloren gaat. Bij een geslaagde lokale time-out krijgen aanwezige leden in andere deelnemende servers eveneens een time-out van zeven dagen. De bronactie bepaalt de straf; de lokale `Honeypot.Action` van een ontvangende server bepaalt alleen zijn eigen detecties.
+
+```text
+/config instellen instelling:Honeypot.CrossServerBan waarde:ja
+```
+
+Zet dit aan in iedere deelnemende server, inclusief de bronserver. Voor time-outs heeft de bot **Leden modereren** en voldoende rolpositie nodig. Een reeds actieve time-out wordt behouden. Ontbrekende rechten of een niet-beheerbaar lid worden per server gelogd zonder andere servers te blokkeren. Time-outs verwijderen geen berichten.
+
+Elke server krijgt een eigen logmelding met **Time-out opheffen**. Die knop heft uitsluitend de time-out op in de server waar je klikt. Time-outs in andere servers blijven staan. De actuele rechten, rolhiërarchie en controle op later gewijzigde straffen blijven gelden. De automatische kanaalwaarschuwing vermeldt serveroverstijgende maatregelen bij beide strafopties.
+
+Met dit gecombineerde pakket kun je direct vanaf **3.0.7** bijwerken (3.0.8 is ook ondersteund): stop de bot, maak een back-up, vervang de meegeleverde bestanden en herstart. Geen nieuwe instellingen, dependencies of commandregistratie nodig. Bestaande deelname via `CrossServerBan` is direct ook van toepassing op nieuwe time-outs. Zie `UPDATE-3.0.9.txt`.
+
+## Nieuw in 3.0.8: serveroverstijgende honeypot-ban
+
+Zet in **elke deelnemende server**, inclusief de bronserver, de volgende instelling aan:
+
+```text
+/config instellen instelling:Honeypot.CrossServerBan waarde:ja
+```
+
+Standaard staat deze instelling uit. Na een geslaagde honeypot-ban controleert de bot de andere deelnemende servers waarin hij aanwezig is. Alleen als de gebruiker daar op dat moment ook lid is, voert de bot een ban uit en verwijdert Discord zeven dagen berichtgeschiedenis. De bronserver moet een ingeschakelde honeypot met actie `ban` hebben. Ontvangende servers hoeven geen eigen honeypot-kanaal te hebben; `CrossServerBan` is hun toestemming om mee te doen. Hun eigen `Action`-keuze geldt alleen voor lokale detectie. Vanaf 3.0.9 worden ook time-outs doorgestuurd; zie de uitleg hierboven.
+
+Elke server gebruikt zijn eigen `Honeypot.LogChannel` of `Logging.Channel`, met een eigen logmelding en knop. **Ban opheffen werkt uitsluitend in de server waar je klikt.** Andere bans blijven staan. Bestaande rechtencontroles blijven gelden. De log noemt de bronserver; de berichtlink is alleen toegankelijk met toegang tot die bronserver en kan na berichtverwijdering niet meer openen.
+
+Mislukte bans door rechten of rolpositie worden per server gelogd en houden andere servers niet tegen. Afwezige gebruikers worden overgeslagen. Er is geen permanente gedeelde banlijst: later toetreden leidt niet automatisch tot een ban. Eerder afgehandelde gebeurtenissen worden niet opnieuw uitgevoerd; fouten worden niet automatisch opnieuw geprobeerd. De kanaalwaarschuwing vermeldt de werking over meerdere servers wanneer deze optie aanstaat.
+
+**Update vanaf 3.0.7:** stop de bot, maak een back-up, vervang de meegeleverde bestanden en herstart. De database wordt automatisch uitgebreid met de herkomst van de ban; bestaande logknoppen blijven werken. Geen nieuwe dependencies of commandregistratie nodig. Zie `UPDATE-3.0.8.txt`.
+
+## Nieuw in 3.0.7: zeven dagen berichten verwijderen bij honeypot-ban
+
+Bij een nieuwe honeypot-ban verwijdert Discord alle berichten van die gebruiker uit de afgelopen zeven dagen in de hele server, inclusief afbeeldingen en bijlagen. Dit geldt niet voor time-outs en werkt niet achteraf voor bestaande bans. De logknop heft de ban op, maar herstelt verwijderde berichten niet.
+
+**Update vanaf 3.0.6:** stop de bot, maak een back-up, vervang de bestanden uit het updatepakket op dezelfde paden en herstart met `npm start`. Geen configuratiewijziging, nieuwe dependencies of commandregistratie nodig. Zie `UPDATE-3.0.7.txt`.
 
 ## Nieuw in 3.0.6: honeypot-kanaal
 
@@ -54,7 +90,7 @@ De logmelding vermeldt gebruiker, kanaal, actie, resultaat en een link naar het 
 
 Na opheffen verdwijnt de knop en staat erbij wie de actie heeft afgehandeld. Een unban laat iemand niet automatisch opnieuw toetreden. Een oude knop heft geen later gewijzigde ban of time-out op. Een reeds actieve time-out wordt bij een nieuwe overtreding behouden, zodat een bestaande straf niet wordt overschreven.
 
-De bot heeft toegang tot het honeypot-kanaal, de passende moderatierechten en een rol boven het doelwit nodig. Voor het logkanaal zijn **Kanaal bekijken**, **Berichten verzenden** en **Links insluiten** nodig. Er is geen automatische staff-uitzondering; Discord kan optreden tegen de servereigenaar, hogere rollen of administrators bij time-outs blokkeren. Mislukte acties krijgen een foutmelding zonder ophefknop. Berichten worden door deze functie niet verwijderd. Als het versturen van de log mislukt, blijft een geslaagde straf actief en kun je die via de gewone moderatiecommando’s opheffen.
+De bot heeft toegang tot het honeypot-kanaal, de passende moderatierechten en een rol boven het doelwit nodig. Voor het logkanaal zijn **Kanaal bekijken**, **Berichten verzenden** en **Links insluiten** nodig. Er is geen automatische staff-uitzondering; Discord kan optreden tegen de servereigenaar, hogere rollen of administrators bij time-outs blokkeren. Mislukte acties krijgen een foutmelding zonder ophefknop. Bij een honeypot-ban verwijdert Discord ook de berichten van die gebruiker uit de afgelopen zeven dagen in de hele server, inclusief afbeeldingen en bijlagen. Bij een time-out worden berichten niet verwijderd. Een unban herstelt verwijderde berichten niet. Als het versturen van de log mislukt, blijft een geslaagde straf actief en kun je die via de gewone moderatiecommando’s opheffen.
 
 ### Installatie van deze update
 

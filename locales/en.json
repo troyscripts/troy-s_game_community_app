@@ -1185,5 +1185,6 @@
   "Time-out niet mogelijk: controleer Moderate Members en rolpositie.": "Unable to time out: check Moderate Members and role hierarchy.",
   "Gebruiker heeft al een actieve time-out; deze is behouden.": "The user already has an active timeout; it was preserved.",
   "Kies verified, none, everyone, here of een rolvermelding/rol-ID.": "Choose verified, none, everyone, here or a role mention/role ID.",
-  "\n⚠️ Configuratie opgeslagen, maar de kanaalwaarschuwing kon niet volledig worden bijgewerkt. Controleer kanaal, mentionrol en botrechten.": "\n⚠️ Configuration saved, but the channel warning could not be fully updated. Check the channel, mention role and bot permissions."
+  "\n⚠️ Configuratie opgeslagen, maar de kanaalwaarschuwing kon niet volledig worden bijgewerkt. Controleer kanaal, mentionrol en botrechten.": "\n⚠️ Configuration saved, but the channel warning could not be fully updated. Check the channel, mention role and bot permissions.",
+  "Bronserver": "Source server"
 }

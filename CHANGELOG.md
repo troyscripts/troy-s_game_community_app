@@ -1,4 +1,28 @@
+## 3.0.9 — 21 oktober 2026
+
+- Bestaande Honeypot.CrossServerBan-deelname uitgebreid naar time-outs van zeven dagen.
+- Eigen time-outlog en ophefknop per server; opheffen blijft uitsluitend lokaal.
+- Bestaande time-outs worden behouden. Rechten, rolpositie, ledencontrole en bescherming tegen dubbele uitvoering blijven gelden.
+- Kanaalwaarschuwing, README en beide handleidingen bijgewerkt. Geen nieuwe configuratievelden.
+- Tests uitgebreid met serveroverstijgende time-outs, lokale verwijdering en behoud van bestaande straffen.
+
+## 3.0.8 — 21 oktober 2026
+
+- Optionele serveroverstijgende honeypot-bans via Honeypot.CrossServerBan, standaard uit per server.
+- Alleen deelnemende servers met de gebruiker als huidig lid worden meegenomen; elke geslaagde ban verwijdert zeven dagen berichten.
+- Eigen logs en ophefknop per server: unban werkt uitsluitend lokaal. Time-outs blijven lokaal.
+- Database-uitbreiding bewaart de bronserver en het bronbericht; bestaande knoppen blijven geldig.
+- README, beide handleidingen, kanaalwaarschuwing en tests bijgewerkt.
+
+## 3.0.7 — 21 oktober 2026
+
+- Nieuwe honeypot-bans verwijderen ook alle berichten van de gebruiker uit de afgelopen zeven dagen in de hele server, inclusief afbeeldingen en bijlagen.
+- Time-outs en bestaande bans blijven ongewijzigd; unban herstelt verwijderde berichten niet.
+- README en Nederlandse/Engelse handleidingen bijgewerkt. Configuratie ongewijzigd.
+- Honeypot-test controleert dat de ban 604800 seconden berichtgeschiedenis verwijdert.
+
 ## 3.0.6 — 21 oktober 2026
+
 
 - Honeypot-kanaal per server via /config: direct bannen of zeven dagen time-out bij nieuwe berichten, ook bij afbeeldingen/bijlagen en in threads.
 - Logmelding met blijvende ophefknop, actuele rechtencontrole en bescherming tegen het opheffen van later gewijzigde straffen.

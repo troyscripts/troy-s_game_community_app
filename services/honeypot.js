@@ -25,7 +25,8 @@ async function logCase(message,row,cfg) {
         const result=await sendLogMessage(channel,'send',{
             embeds:[{title:tr('🍯 Honeypot'),color:active?0xE74C3C:0xF39C12,
                 description:tr('Gebruiker: <@{0}> ({0})\nKanaal: <#{1}>\nActie: {2}\nStatus: {3}',row.user_id,row.channel_id,tr(row.action==='ban'?'Ban':'Time-out van 7 dagen'),tr(active?'Uitgevoerd':'Mislukt')),
-                fields:[{name:tr('Bericht'),value:`https://discord.com/channels/${row.guild_id}/${row.channel_id}/${row.id}`},
+                fields:[{name:tr('Bericht'),value:`https://discord.com/channels/${row.source_guild||row.guild_id}/${row.channel_id}/${row.source_message||row.id}`},
+                    ...(row.source_guild && row.source_guild!==row.guild_id?[{name:tr('Bronserver'),value:row.source_guild}]:[]),
                     ...(row.error?[{name:tr('Fout'),value:row.error}]:[])],
                 footer:{text:`Honeypot ${row.id}`},timestamp:new Date().toISOString()}],
             components:active?[{type:1,components:[{type:2,style:2,custom_id:`honeypot:${row.id}`,
@@ -39,7 +40,7 @@ async function handleMessage(message) {
     if(!message.guild || !message.author || message.author.bot || message.webhookId || message.system) return false;
     const cfg=settings.getGuildConfig(message.guild.id);
     if(!matches(message,cfg.Honeypot)) return false;
-    return locked(`${message.guild.id}:${message.author.id}`,async()=>{
+    const handled = await locked(`${message.guild.id}:${message.author.id}`,async()=>{
         // Settings may have changed while this event waited behind another message.
         const current=settings.getGuildConfig(message.guild.id);
         if(!matches(message,current.Honeypot)) return true;
@@ -53,7 +54,7 @@ async function handleMessage(message) {
             const member=await message.guild.members.fetch({user:message.author.id,force:true});
             if(action==='ban') {
                 if(!me.permissions.has(P.BanMembers)||!member.bannable) throw Error(tr('Ban niet mogelijk: controleer Ban Members en rolpositie.'));
-                await member.ban({reason,deleteMessageSeconds:0});
+                await member.ban({reason,deleteMessageSeconds:7 * 86400});
                 cases.active(message.id);
             } else {
                 if(!me.permissions.has(P.ModerateMembers)||!member.moderatable) throw Error(tr('Time-out niet mogelijk: controleer Moderate Members en rolpositie.'));
@@ -68,11 +69,50 @@ async function handleMessage(message) {
         await logCase(message,cases.get(message.id),current);
         return true;
     });
+    const source=cases.get(message.id);
+    if(source?.status==='active' && ['ban','timeout'].includes(source.action) && settings.getGuildConfig(message.guild.id).Honeypot.CrossServerBan) {
+        await propagate(message,source.action);
+    }
+    return handled;
+}
+async function propagate(message,action) {
+    for(const guild of message.guild.client?.guilds.cache.values()||[]) {
+        if(guild.id===message.guild.id)continue;
+        try {
+            await locked(`${guild.id}:${message.author.id}`,async()=>{
+                const cfg=settings.getGuildConfig(guild.id);
+                if(!cfg.Honeypot.CrossServerBan)return;
+                const id=`${message.id}_${guild.id}`;
+                if(cases.get(id))return;
+                let member;
+                try {member=await guild.members.fetch({user:message.author.id,force:true});}
+                catch(error) {if(Number(error.code)===10007)return;throw error;}
+                const reason=`Honeypot ${id}: bronserver ${message.guild.id}`;
+                cases.create({id,guild_id:guild.id,user_id:message.author.id,channel_id:message.channelId,action,reason,source_guild:message.guild.id,source_message:message.id});
+                try {
+                    const me=await guild.members.fetchMe();
+                    if(action==='ban') {
+                        if(!me.permissions.has(P.BanMembers)||!member.bannable)throw Error(tr('Ban niet mogelijk: controleer Ban Members en rolpositie.'));
+                        await member.ban({reason,deleteMessageSeconds:7*86400});
+                        cases.active(id);
+                    } else {
+                        if(!me.permissions.has(P.ModerateMembers)||!member.moderatable)throw Error(tr('Time-out niet mogelijk: controleer Moderate Members en rolpositie.'));
+                        const previous=member.communicationDisabledUntilTimestamp||0;
+                        if(previous>Date.now())throw Error(tr('Gebruiker heeft al een actieve time-out; deze is behouden.'));
+                        const until=Date.now()+WEEK;
+                        await member.disableCommunicationUntil(until,reason);
+                        cases.active(id,until,previous);
+                    }
+                }catch(error){cases.failed(id,error.message);}
+                await logCase({guild},cases.get(id),cfg);
+            });
+        }catch(error){logger.warn(`Honeypot netwerk [${guild.id}]: ${error.message}`);}
+    }
 }
 async function undo(client,i) {
     await i.deferReply({flags:MessageFlags.Ephemeral});
     const reply=content=>send(i,'editReply',{content,allowedMentions:{parse:[]}});
-    const id=/^honeypot:(\d{17,20})$/.exec(i.customId)?.[1];
+    const id=/^honeypot:(\d{17,20}(?:_\d{17,20})?)$/.exec(i.customId)?.[1];
     const initial=id&&cases.get(id);
     if(!i.guild || !initial || initial.guild_id!==i.guildId || initial.log_message!==i.message?.id || initial.log_channel!==i.channelId || i.message?.author?.id!==client.user.id)
         return reply(tr('Deze honeypot-knop is niet geldig.'));

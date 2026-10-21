@@ -11,7 +11,7 @@ let seq=700000000000000000n,banCalls=0,timeoutCalls=0,unbanCalls=0,logs=[],edits
 const permissions=new PermissionsBitField([P.BanMembers,P.ModerateMembers]);
 const actor={id:moderator,permissions,roles:{highest:{comparePositionTo:()=>1}}};
 const member={id:u,bannable:true,moderatable:true,communicationDisabledUntilTimestamp:null,roles:{highest:{}},
- async ban(options){banCalls++;banState={reason:options.reason};},
+ async ban(options){assert.equal(options.deleteMessageSeconds,604800);banCalls++;banState={reason:options.reason};},
  async disableCommunicationUntil(time){timeoutCalls++;this.communicationDisabledUntilTimestamp=time;}};
 const guild={id:g,ownerId:'999999999999999999',members:{
  fetchMe:async()=>({permissions}),fetch:async options=>options.user===moderator?actor:member,
@@ -55,6 +55,40 @@ async function run(){
  database.db.pragma('wal_checkpoint(FULL)');const disk=new (require('better-sqlite3'))(defaults.Database.File);assert.equal(disk.prepare('SELECT status FROM honeypot_cases WHERE id=?').get(t.id).status,'resolved');disk.close();
  assert.ok(settings.getEditablePaths().includes('Honeypot.Action'));
  const source=fs.readFileSync(path.join(__dirname,'../events/messageCreate.js'),'utf8');assert.ok(source.indexOf('.handleMessage(message)')<source.indexOf('const countingResult'));
+ // Network bans: opt-in, actual membership, independent failures and local-only undo.
+ const network=[];
+ function remote(id,{opt=true,present=true,bannable=true}={}) {
+   settings.ensureGuild(id);settings.updateValue(id,'Honeypot.CrossServerBan',String(opt));settings.updateValue(id,'Logging.Channel',logId);
+   const state={bans:0,unbans:0,ban:null,timeouts:0,until:null};
+   const target={id,bans:{fetch:async()=>state.ban},members:{fetchMe:async()=>({permissions}),
+     fetch:async arg=>{if(arg.user===moderator)return actor;if(!present)throw Object.assign(Error('Unknown member'),{code:10007});return {bannable,moderatable:bannable,roles:{highest:{}},id:u,get communicationDisabledUntilTimestamp(){return state.until;},async disableCommunicationUntil(time){state.timeouts++;state.until=time;},async ban(o){assert.equal(o.deleteMessageSeconds,604800);state.bans++;state.ban={reason:o.reason};}};},
+     unban:async()=>{state.unbans++;state.ban=null;}},channels:{fetch:async()=>targetLog}};
+   const targetLog={id:logId,guild:target,isTextBased:()=>true,send:async p=>{state.payload=p;return {id:String(++seq)};}};
+   network.push([id,target]);return {target,state};
+ }
+ const a=remote('100000000000000001'),b=remote('100000000000000002'),disabled=remote('100000000000000003',{opt:false}),absent=remote('100000000000000004',{present:false}),blocked=remote('100000000000000005',{bannable:false});
+ guild.client={guilds:{cache:new Map([[g,guild],...network])}};
+ settings.updateValue(g,'Honeypot.Action','ban');settings.updateValue(g,'Honeypot.CrossServerBan','ja');
+ const net=msg();await service.handleMessage(net);
+ assert.equal(a.state.bans,1);assert.equal(b.state.bans,1);assert.equal(disabled.state.bans,0);assert.equal(absent.state.bans,0);assert.equal(blocked.state.bans,0);
+ assert.equal(cases.get(net.id+'_'+blocked.target.id).status,'failed');
+ const remoteRow=cases.get(net.id+'_'+a.target.id);assert.equal(remoteRow.source_guild,g);
+ assert.ok(a.state.payload.embeds[0].fields[0].value.includes('/'+g+'/'+channelId+'/'+net.id));
+ await service.handleMessage(net);assert.equal(a.state.bans,1);
+ const localUndo=interaction(remoteRow,{guild:a.target,guildId:a.target.id});
+ await service.undo({user:{id:bot}},localUndo);assert.equal(a.state.unbans,1);assert.equal(b.state.unbans,0);assert.equal(cases.get(net.id).status,'active');
+ await service.handleMessage(net);assert.equal(a.state.bans,1); // resolved case never re-bans
+ settings.updateValue(g,'Honeypot.CrossServerBan','nee');await service.handleMessage(msg());assert.equal(b.state.bans,1);
+ settings.updateValue(g,'Honeypot.CrossServerBan','ja');settings.updateValue(g,'Honeypot.Action','timeout');member.communicationDisabledUntilTimestamp=null;
+ const networkTimeout=msg();await service.handleMessage(networkTimeout);assert.equal(b.state.bans,1);
+ assert.equal(a.state.timeouts,1);assert.equal(b.state.timeouts,1);assert.equal(disabled.state.timeouts,0);assert.equal(absent.state.timeouts,0);assert.equal(blocked.state.timeouts,0);
+ const timeoutRow=cases.get(networkTimeout.id+'_'+a.target.id);assert.equal(timeoutRow.action,'timeout');assert.equal(timeoutRow.status,'active');
+ assert.ok(a.state.until>Date.now()+service.WEEK-5000);
+ await service.undo({user:{id:bot}},interaction(timeoutRow,{guild:a.target,guildId:a.target.id}));
+ assert.equal(a.state.until,null);assert.ok(b.state.until>Date.now());assert.equal(cases.get(networkTimeout.id).status,'active');
+ await service.handleMessage(networkTimeout);assert.equal(a.state.timeouts,2); // one application and one removal
+ member.communicationDisabledUntilTimestamp=null;const keep=b.state.until;await service.handleMessage(msg());assert.equal(b.state.until,keep);assert.equal(b.state.timeouts,1);
+ console.log('PASS: network opt-in, membership, per-server failures, source links, duplicate events and server-local unban.');
  // Automatic bilingual warning, mentions, edits and restart-safe persistence.
  const warnings=require('../services/honeypotWarning');
  const notices=new Map();let posts=0,updates=0,lastPayload;

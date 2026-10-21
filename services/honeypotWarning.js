@@ -6,7 +6,7 @@ const logger=require('../utils/logger');
 const locks=new Map();
 let timer;
 const INACTIVE='# ℹ️ HONEYPOT UITGESCHAKELD / HONEYPOT DISABLED\n\nDe automatische honeypot-beveiliging is niet meer actief in dit kanaal.\nAutomatic honeypot protection is no longer active in this channel.';
-function warningText(action,mention='') {
+function warningText(action,mention='',crossServer=false) {
     const ban=action==='ban';
     return `# 🚨 WAARSCHUWING / WARNING 🚨
 
@@ -34,7 +34,7 @@ Any messages posted in this channel will be automatically detected by our securi
 
 🛡️ This channel is exclusively designed to automatically detect spam bots and ${ban?'permanently remove them from our Discord server':'block them on our Discord server for 7 days'}.
 
-⛔ **DO NOT use this channel under any circumstances!**${mention?'\n\n---\n\n🔔 '+mention:''}`;
+⛔ **DO NOT use this channel under any circumstances!**${crossServer?'\n\n🌐 Deze maatregel geldt ook in andere deelnemende servers waar jij en de bot lid zijn. / This action also applies in other participating servers where you and the bot are members.':''}${mention?'\n\n---\n\n🔔 '+mention:''}`;
 }
 async function mentionChoice(guild,cfg) {
     const choice=cfg.Honeypot.Mention;
@@ -69,7 +69,7 @@ async function sync(guild) {
         const channel=await guild.channels.fetch(h.Channel);
         if(!channel?.isTextBased() || !channel.messages || typeof channel.send!=='function')throw Error('Kies een bereikbaar tekstkanaal voor Honeypot.Channel.');
         const mention=await mentionChoice(guild,cfg);
-        const content=warningText(h.Action,mention.text);
+        const content=warningText(h.Action,mention.text,h.CrossServerBan);
         const saved=rows.find(row=>row.channel_id===h.Channel);
         const existing=saved?await fetchMessage(channel,saved.message_id):null;
         if(existing) {

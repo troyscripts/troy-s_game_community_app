@@ -104,6 +104,7 @@ function createCleanServerConfig() {
     clean.Honeypot.Channel = "";
     clean.Honeypot.LogChannel = "";
     clean.Honeypot.Enabled = false;
+    clean.Honeypot.CrossServerBan = false;
     clean.Tickets.Category = "";
     clean.Tickets.LogChannel = "";
     for (const key of Object.keys(clean.Levels.Roles)) clean.Levels.Roles[key] = "";

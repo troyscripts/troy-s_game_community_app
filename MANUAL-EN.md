@@ -13,7 +13,43 @@ Settings persist per server and apply immediately to new messages. Existing mess
 
 Users and roles are mentioned once per message. Repeated references show a plain name (or ID if unavailable). Repeated `@everyone` and `@here` references are also made non-pinging.
 
-**Bot version 3.0.6 · Updated 21 October 2026**
+**Bot version 3.0.9 · Updated 21 October 2026**
+
+## New in 3.0.9: cross-server timeouts too
+
+`Honeypot.CrossServerBan` now applies to **bans and timeouts**. The setting name is retained to preserve existing opt-ins. After a successful local timeout, current members in other participating servers also receive a seven-day timeout. The source action determines the punishment; a receiving server's own `Honeypot.Action` only controls its local detections.
+
+```text
+/config instellen instelling:Honeypot.CrossServerBan waarde:yes
+```
+
+Enable this in every participating server, including the source. Timeouts require **Moderate Members** and sufficient role hierarchy. Existing active timeouts are preserved. Permission or hierarchy failures are logged per server without blocking other servers. Timeouts do not delete messages.
+
+Each server receives its own **Remove timeout** button. Removal only affects the server where the button is clicked. Other servers' timeouts remain active. Current permissions, role hierarchy and protection for later changed punishments still apply. The automatic warning describes cross-server enforcement for both actions.
+
+This combined package updates directly from **3.0.7** (3.0.8 is also supported): stop the bot, back up, replace the supplied files and restart. No new settings, dependencies or command registration are needed. Existing `CrossServerBan` opt-ins now also apply to new timeouts. See `UPDATE-3.0.9.txt`.
+
+## New in 3.0.8: cross-server honeypot bans
+
+Enable this setting in **every participating server**, including the source server:
+
+```text
+/config instellen instelling:Honeypot.CrossServerBan waarde:yes
+```
+
+It is disabled by default. After a successful honeypot ban, the bot checks other participating servers where it is present. It only bans users who are currently members there, deleting seven days of message history. The source needs an enabled honeypot with action `ban`. Receiving servers do not need their own honeypot channel; `CrossServerBan` is their opt-in. Their `Action` setting applies only to local detections. Since 3.0.9, timeouts are propagated too; see above.
+
+Each server uses its own `Honeypot.LogChannel` or `Logging.Channel`, with a separate log and button. **Unban only affects the server where the button is clicked.** Other bans remain. Existing permission checks apply. Logs identify the source server; opening the source message requires access to that server, and deleted messages cannot be opened.
+
+Permission or hierarchy failures are logged per server and do not block other servers. Absent users are skipped. This is not a persistent shared ban list: joining later does not automatically trigger a ban. Previously handled events are not repeated; failures are not automatically retried. The channel warning explains cross-server enforcement when enabled.
+
+**Updating from 3.0.7:** stop the bot, back up, replace the supplied files and restart. The database automatically adds source metadata and existing log buttons remain valid. No new dependencies or command registration are needed. See `UPDATE-3.0.8.txt`.
+
+## New in 3.0.7: delete seven days of messages on honeypot bans
+
+A new honeypot ban deletes that user's messages from the past seven days throughout the server, including images and attachments. This does not apply to timeouts or retroactively to existing bans. The log button removes the ban but cannot restore deleted messages.
+
+**Updating from 3.0.6:** stop the bot, back up your installation, replace the supplied files at their matching paths and restart with `npm start`. No configuration changes, new dependencies or command registration are required. See `UPDATE-3.0.7.txt`.
 
 ## New in 3.0.6: honeypot channel
 
@@ -69,7 +105,7 @@ The log records the user, channel, action, result and a link to the original mes
 
 After resolving the action, the button disappears and the log records who handled it. An unban does not automatically rejoin the user. An old button will not reverse a later changed ban or timeout. An already active timeout is preserved instead of overwritten by another violation.
 
-The bot needs access to the honeypot channel, the appropriate moderation permission and a role above the target. The log channel requires **View Channel**, **Send Messages** and **Embed Links**. There is no automatic staff exemption; Discord may prevent action against the server owner, higher roles, or administrators for timeouts. Failed actions are logged without an undo button. This feature does not delete messages. If log delivery fails, a successful punishment stays active and can be removed through the normal moderation commands.
+The bot needs access to the honeypot channel, the appropriate moderation permission and a role above the target. The log channel requires **View Channel**, **Send Messages** and **Embed Links**. There is no automatic staff exemption; Discord may prevent action against the server owner, higher roles, or administrators for timeouts. Failed actions are logged without an undo button. A honeypot ban also deletes that user’s messages from the past seven days throughout the server, including images and attachments. Timeouts do not delete messages. An unban does not restore deleted messages. If log delivery fails, a successful punishment stays active and can be removed through the normal moderation commands.
 
 ### Updating
 

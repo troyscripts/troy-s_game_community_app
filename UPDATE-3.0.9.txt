@@ -1,0 +1,27 @@
+Troy's Game Community — gecombineerde update v3.0.7 naar v3.0.9
+
+Dit pakket bevat alle gewijzigde bestanden van v3.0.8 EN v3.0.9.
+Je hoeft v3.0.8 niet apart te installeren.
+
+1. Stop de bot en maak een back-up van bestanden en database.
+2. Pak dit pakket uit in de hoofdmap van de bot. Behoud de mappenstructuur
+   en vervang alle meegeleverde bestanden.
+3. Start de bot met npm start.
+
+De database-uitbreiding gebeurt automatisch. Geen nieuwe dependencies,
+commandregistratie of handmatige SQL nodig. Geen bestanden verwijderen.
+
+Zet in iedere deelnemende server, inclusief de bronserver, aan:
+/config instellen instelling:Honeypot.CrossServerBan waarde:ja
+
+Deze instelling geldt voor bans EN time-outs. De actie van de bronserver
+bepaalt de straf in andere deelnemende servers waar de gebruiker lid is.
+Elke server heeft een eigen logmelding en ophefknop. Opheffen werkt uitsluitend
+in de server waar je klikt. Bestaande actieve time-outs worden behouden.
+Bans verwijderen zeven dagen berichten; time-outs verwijderen geen berichten.
+Stel per server een bereikbaar Honeypot.LogChannel of Logging.Channel in.
+De bot heeft passende moderatierechten en voldoende rolpositie nodig.
+
+README, changelog en beide handleidingen zijn inbegrepen.
+De afzonderlijke functietests zijn geslaagd; niet live getest in Discord.
+Niet naar GitHub gepusht.
