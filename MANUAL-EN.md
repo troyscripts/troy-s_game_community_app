@@ -13,7 +13,36 @@ Settings persist per server and apply immediately to new messages. Existing mess
 
 Users and roles are mentioned once per message. Repeated references show a plain name (or ID if unavailable). Repeated `@everyone` and `@here` references are also made non-pinging.
 
-**Bot version 3.0.3 · Updated 18 October 2026**
+**Bot version 3.0.5 · Updated 21 October 2026**
+
+## New in 3.0.5: home upgrades through the estate agent
+
+Owned homes have two separate upgrade tracks, each with five consecutive levels. Each upgrade doubles its reward: ×2, ×4, ×8, ×16 and ×32. This multiplies the existing housing and VIP/birthday bonus.
+
+| Level | Kitchen upgrade — XP | Home improvement — income |
+| --- | --- | --- |
+| 1 | Kitchen appliances | Study |
+| 2 | Kitchen cabinets | Fiber connection |
+| 3 | Countertop | Work studio |
+| 4 | Kitchen island | Business furnishings |
+| 5 | Chef kitchen | Luxury office |
+
+Kitchen upgrades affect XP from messages, the message scanner and counting. Income upgrades affect `/work` and `/daily`. Fixed business income, transfers and loans are unchanged.
+
+**Commands** (canonical Dutch names; Discord may display translated labels):
+
+- `/makelaar actie:upgrades`: view current levels, next upgrades and prices.
+- `/makelaar actie:upgraden upgrade:keuken betaalmiddel:wallet bevestigen:True`: buy the next kitchen upgrade.
+- `/makelaar actie:upgraden upgrade:inkomen betaalmiddel:bank bevestigen:True`: buy the next income upgrade.
+- `/makelaar actie:status`: view reward multipliers, property value and refunds.
+
+**Cost and property value:** by default, each upgrade costs 25% of the current property value, rounded up to whole game euros. Change `PriceRate` (default `0.25`) and upgrade names in `config/housingUpgrades.js`, then restart the bot.
+
+Every upgrade raises the property value by 25%, compounded: `purchase price × 1.25^(kitchen level + income level)`, rounded down. Selling separately refunds 75% of this value to your bank. Replacing a home refunds 15% to the selected payment account. A €15,000 starter home is worth €18,750 after one upgrade and €139,698 after all ten upgrades.
+
+Only owned homes can be upgraded; rentals cannot. Upgrades survive restarts and economy/progress resets, including personal resets. Selling or moving removes the old home's upgrades; a new home starts at level 0/0.
+
+**Updating from 3.0.4:** stop the bot, back up files and database, copy the update files to their matching paths, run `npm run deploy` to register the new estate-agent options, then run `npm start`. The database migration runs automatically and preserves existing homes. No new dependencies are required. See `UPDATE-3.0.5.txt` for the Dutch installation notes.
 
 ## New in 3.0.3: businesses, heists and loans
 
@@ -22,7 +51,7 @@ Users and roles are mentioned once per message. Repeated references show a plain
 - Insurance charges 10% of purchase price plus purchased income/security upgrades immediately and every seven days. Renewals use the current value and may make the bank balance negative. Cancellation ends future premiums without a refund.
 - `/heist`: choose an owner and business type. Join through public buttons (2–5 players); the organizer executes within two minutes. Only loot is shared, not ownership or purchase value. Base loot caps: €1,000 / €3,000 / €5,000. Each security level reduces loot by 10%. Success chance is 45% + 8% per teammate above two + 8% per average equipment level − 12% per security level, clamped to 5–90%. Successful loot is deducted from the owner's bank, possibly creating debt; insurance immediately reimburses that loss. Participants and the target receive a one-hour cooldown after any attempt.
 - `/bank`: borrow €1–€500,000 with a one-time 30% interest charge, rounded up to whole euros. One active loan per player per server. Repay in parts within two calendar months; the remaining debt is automatically collected at maturity, even into a negative balance. No early-payment discount. Negative bank balances block new loans. End-of-month dates clamp to the last day of the target month (UTC time retained).
-- `/makelaar` action `verkopen`: sell a purchased home for 75% of the original price, paid to the bank; removes the housing bonus and role. Moving directly still refunds 15%, as before.
+- `/makelaar` action `verkopen`: sell a purchased home for 75% of the current property value including upgrades, paid to the bank; removes the housing bonus and role. Moving directly refunds 15% of the current property value including upgrades.
 - Assets and contracts survive resets. Back up your database, stop the bot, copy the update files and restart. The bot registers new commands at startup. Existing configuration remains unchanged. Ensure Manage Roles and place the bot role above housing/business roles.
 
 ## New in 3.0.2: estate agent and supermarket
@@ -40,14 +69,14 @@ The starter home has a small living room with an open kitchen and a small bedroo
 - `/makelaar actie:aanbod`: offers and terms.
 - `/makelaar actie:kopen woning:starter bevestigen:True`: buy a starter home.
 - `/makelaar actie:huren woning:luxe betaalmiddel:bank bevestigen:True`: rent a luxury home.
-- `/makelaar actie:status`: current home and next rent payment.
+- `/makelaar actie:status`: current home, upgrade levels, XP/income multipliers, property value, sale/replacement refunds and any next rent payment.
 - `/makelaar actie:opzeggen bevestigen:True`: cancel rent, settling any overdue rent.
 
 The first payment comes from your selected wallet (default) or bank. Recurring rent is charged to your bank every 24 hours and may create debt. Missed periods are collected once after downtime. Rent continues until cancellation or moving, even if the economy module is disabled; cancellation remains available. The bot cannot collect while absent from a server and catches up after returning. Paid rent is not refunded.
 
-Moving automatically sells the previous owned home for **15% of its original paid price**, credited to your selected payment account before paying for the new home. Rentals have no resale value. The entire transaction rolls back if you cannot afford the new home. The old housing role is removed. Buying the same home in the same arrangement again is blocked.
+Moving automatically sells the previous owned home for **15% of its current property value including upgrades**, credited to your selected payment account before paying for the new home. Rentals have no resale value. The entire transaction rolls back if you cannot afford the new home. The old housing role is removed. Buying the same home in the same arrangement again is blocked.
 
-Housing multiplies the existing VIP/birthday bonus for message XP, counting XP, `/work` and `/daily`. A base reward of 100 becomes 150 / 200 / 300 without VIP, or 300 / 400 / 600 with 2× VIP. Fractions are rounded down. Transfers, home refunds and administrative gifts receive no bonus. Stored home ownership determines the bonus; manually assigning a role does not grant it.
+Housing multiplies the existing VIP/birthday bonus for message XP, counting XP, `/work` and `/daily`. Without upgrades, a base reward of 100 becomes 150 / 200 / 300 without VIP, or 300 / 400 / 600 with 2× VIP. Fractions are rounded down. Transfers, home refunds and administrative gifts receive no bonus. Stored home ownership determines the bonus; manually assigning a role does not grant it.
 
 Use `/supermarkt actie:aanbod` for water €5, cola €8, coffee €10, apple €5, cheese sandwich €15, hamburger €25 and pizza €35.
 

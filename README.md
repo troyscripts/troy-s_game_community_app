@@ -1,4 +1,33 @@
-# Troy’s Game Community Bot — 3.0.3
+# Troy’s Game Community Bot — 3.0.5
+
+## Nieuw in 3.0.5: woningupgrades via de makelaar
+
+Koopwoningen hebben twee aparte upgradereeksen met elk vijf niveaus. Iedere upgrade verdubbelt de betreffende beloning: ×2, ×4, ×8, ×16 en ×32. Deze factor komt boven op de bestaande woning- en VIP/verjaardagsbonus.
+
+| Niveau | Keukenupgrade — XP | Woningverbetering — inkomen |
+| --- | --- | --- |
+| 1 | Keukenapparatuur | Werkkamer |
+| 2 | Keukenkasten | Glasvezelaansluiting |
+| 3 | Werkblad | Werkstudio |
+| 4 | Kookeiland | Zakelijke inrichting |
+| 5 | Chefkeuken | Luxe kantoor |
+
+De keukenbonus geldt voor XP uit berichten, de berichtenscanner en het telspel. De inkomensbonus geldt voor `/work` en `/daily`. Vast bedrijfsinkomen, overschrijvingen en leningen veranderen niet.
+
+**Gebruik:**
+
+- `/makelaar actie:upgrades` toont de niveaus, volgende upgrades en prijzen.
+- `/makelaar actie:upgraden upgrade:keuken betaalmiddel:wallet bevestigen:Ja` koopt de volgende keukenupgrade.
+- `/makelaar actie:upgraden upgrade:inkomen betaalmiddel:bank bevestigen:Ja` koopt de volgende inkomensupgrade.
+- `/makelaar actie:status` toont je bonussen, woningwaarde en opbrengst bij verkoop of vervanging.
+
+**Prijs en waarde:** iedere upgrade kost standaard 25% van de actuele woningwaarde, naar boven afgerond op hele spel-euro’s. Stel het prijspercentage (`PriceRate`, standaard `0.25`) en de upgradenamen in via `config/housingUpgrades.js`. Herstart de bot na een wijziging van dit bestand.
+
+Iedere upgrade verhoogt de woningwaarde met 25%, samengesteld: `aankoopprijs × 1,25^(keukenniveau + inkomensniveau)`, naar beneden afgerond. Los verkopen geeft 75% van deze waarde terug op de bank; bij vervanging ontvang je 15%. Een starterwoning van €15.000 is na één upgrade €18.750 waard en na tien upgrades €139.698.
+
+Upgrades zijn alleen beschikbaar voor koopwoningen. Ze blijven behouden na herstart en bij economy-/voortgangsresets. Bij verkoop of verhuizing verdwijnen de upgrades van de oude woning; de volgende woning begint op niveau 0/0. Huurwoningen kunnen niet worden geüpgraded.
+
+**Bijwerken vanaf 3.0.4:** stop de bot, maak een back-up van bestanden en database en plaats de gewijzigde bestanden op dezelfde paden. Voer `npm run deploy` uit om de nieuwe makelaaropties te registreren en start met `npm start`. De database wordt automatisch uitgebreid; bestaande woningen blijven behouden. Er zijn geen nieuwe dependencies. Zie [UPDATE-3.0.5.txt](UPDATE-3.0.5.txt).
 
 ## Nieuw in 3.0.3: bedrijven, heists en bank
 
@@ -136,7 +165,7 @@ Voor welkomstberichten stel je `Welcome.Enabled` in op `ja` en `Welcome.Channel`
 
 ## Bestaande installatie bijwerken
 
-Stop de bot, maak een back-up en kopieer de bestanden uit het updatepakket naar dezelfde paden in de botmap. Start daarna opnieuw. Voor 2.5.7 zijn geen nieuwe dependencies of slashcommandregistraties nodig; neem de nieuwe helper `utils/deferredReply.js` mee. Voor de Groq-update naar 2.5.6 zijn geen nieuwe dependencies of slashcommandregistraties nodig. Voeg voor AI je eigen GROQ_API_KEY en GROQ_MODEL toe aan je bestaande .env; zie [GROQ-INSTALLATIE.md](GROQ-INSTALLATIE.md). De automatische changelog gebruikt de bestaande logginginstellingen.
+Stop de bot, maak een back-up en kopieer de bestanden uit het updatepakket naar dezelfde paden in de botmap. Voor 3.0.5 voer je daarna `npm run deploy` uit en start je de bot opnieuw; zie [UPDATE-3.0.5.txt](UPDATE-3.0.5.txt). Voor 2.5.7 zijn geen nieuwe dependencies of slashcommandregistraties nodig; neem de nieuwe helper `utils/deferredReply.js` mee. Voor de Groq-update naar 2.5.6 zijn geen nieuwe dependencies of slashcommandregistraties nodig. Voeg voor AI je eigen GROQ_API_KEY en GROQ_MODEL toe aan je bestaande .env; zie [GROQ-INSTALLATIE.md](GROQ-INSTALLATIE.md). De automatische changelog gebruikt de bestaande logginginstellingen.
 
 ## Instellingen en gegevens
 
@@ -159,6 +188,7 @@ Publicatie-instructies staan in [GITHUB-INSTALLATIE.md](GITHUB-INSTALLATIE.md).
 
 - `npm run check`: controle van syntax, commandnamen en vereiste bestanden.
 - `npm run test:updates`: tests voor de versiechecker.
+- `npm run test:living`: woningtests, inclusief upgrades, migratie, betalingen, bonussen, resets en verkoop.
 - `npm run prepare:github`: maak een openbare export zonder lokale botdata.
 
 Deze broncode is lokaal gecontroleerd. Er is geen live Discord-test uitgevoerd.

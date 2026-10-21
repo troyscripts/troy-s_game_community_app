@@ -13,7 +13,36 @@ De keuze wordt per server opgeslagen en werkt direct voor nieuwe berichten. Oude
 
 Gebruikers en rollen worden per bericht één keer getagd. Bij herhaling verschijnt alleen de naam als gewone tekst (of het ID als de naam niet beschikbaar is). Ook `@everyone` en `@here` worden niet herhaald als actieve vermelding.
 
-**Botversie 3.0.3 · Bijgewerkt op 18 oktober 2026**
+**Botversie 3.0.5 · Bijgewerkt op 21 oktober 2026**
+
+## Nieuw in 3.0.5: woningupgrades via de makelaar
+
+Koopwoningen hebben twee aparte upgradereeksen met elk vijf niveaus. Iedere upgrade verdubbelt de betreffende beloning: ×2, ×4, ×8, ×16 en ×32. Deze factor komt boven op de bestaande woning- en VIP/verjaardagsbonus.
+
+| Niveau | Keukenupgrade — XP | Woningverbetering — inkomen |
+| --- | --- | --- |
+| 1 | Keukenapparatuur | Werkkamer |
+| 2 | Keukenkasten | Glasvezelaansluiting |
+| 3 | Werkblad | Werkstudio |
+| 4 | Kookeiland | Zakelijke inrichting |
+| 5 | Chefkeuken | Luxe kantoor |
+
+De keukenbonus geldt voor XP uit berichten, de berichtenscanner en het telspel. De inkomensbonus geldt voor `/work` en `/daily`. Vast bedrijfsinkomen, overschrijvingen en leningen veranderen niet.
+
+**Gebruik:**
+
+- `/makelaar actie:upgrades` toont de niveaus, volgende upgrades en prijzen.
+- `/makelaar actie:upgraden upgrade:keuken betaalmiddel:wallet bevestigen:Ja` koopt de volgende keukenupgrade.
+- `/makelaar actie:upgraden upgrade:inkomen betaalmiddel:bank bevestigen:Ja` koopt de volgende inkomensupgrade.
+- `/makelaar actie:status` toont je bonussen, woningwaarde en opbrengst bij verkoop of vervanging.
+
+**Prijs en waarde:** iedere upgrade kost standaard 25% van de actuele woningwaarde, naar boven afgerond op hele spel-euro’s. Stel het prijspercentage (`PriceRate`, standaard `0.25`) en de upgradenamen in via `config/housingUpgrades.js`. Herstart de bot na een wijziging van dit bestand.
+
+Iedere upgrade verhoogt de woningwaarde met 25%, samengesteld: `aankoopprijs × 1,25^(keukenniveau + inkomensniveau)`, naar beneden afgerond. Los verkopen geeft 75% van deze waarde terug op de bank; bij vervanging ontvang je 15%. Een starterwoning van €15.000 is na één upgrade €18.750 waard en na tien upgrades €139.698.
+
+Upgrades zijn alleen beschikbaar voor koopwoningen. Ze blijven behouden na herstart en bij economy-/voortgangsresets. Bij verkoop of verhuizing verdwijnen de upgrades van de oude woning; de volgende woning begint op niveau 0/0. Huurwoningen kunnen niet worden geüpgraded.
+
+**Bijwerken vanaf 3.0.4:** stop de bot, maak een back-up van bestanden en database en plaats de gewijzigde bestanden op dezelfde paden. Voer `npm run deploy` uit om de nieuwe makelaaropties te registreren en start met `npm start`. De database wordt automatisch uitgebreid; bestaande woningen blijven behouden. Er zijn geen nieuwe dependencies. Zie [UPDATE-3.0.5.txt](UPDATE-3.0.5.txt).
 
 ## Nieuw in 3.0.3
 
@@ -34,14 +63,14 @@ Starterwoning: kleine woonkamer met open keuken en een kleine slaapkamer. Luxe w
 - `/makelaar actie:aanbod`: prijzen en voorwaarden.
 - `/makelaar actie:kopen woning:starter bevestigen:Ja`: starterwoning kopen.
 - `/makelaar actie:huren woning:luxe betaalmiddel:bank bevestigen:Ja`: luxe woning huren.
-- `/makelaar actie:status`: huidige woning en volgende huurbetaling.
+- `/makelaar actie:status`: huidige woning, upgradeniveaus, XP-/inkomensfactor, woningwaarde, verkoop-/vervangingsopbrengst en eventuele volgende huurbetaling.
 - `/makelaar actie:opzeggen bevestigen:Ja`: huur stoppen; reeds vervallen huur wordt nog afgerekend.
 
 Kies bij de eerste betaling portemonnee (standaard) of bank. Daarna gaat huur automatisch elke 24 uur van je bank, ook bij onvoldoende saldo. Je kunt daardoor negatief komen te staan. Na botuitval haalt de bot alle gemiste huurtermijnen eenmalig in. Huur loopt totdat je opzegt of verhuist. Je krijgt geen reeds betaalde huur terug. Huur wordt ook geïnd als de economy-module later is uitgezet; opzeggen blijft mogelijk. Zolang de bot uit een server is verwijderd, kan hij daar niet innen; na terugkeer worden gemiste termijnen ingehaald.
 
-Bij elke verhuizing, ook bij een andere woonvorm, wordt je vorige koopwoning automatisch voor **15% van de werkelijk betaalde aankoopprijs** verkocht. Dat bedrag gaat naar het gekozen betaalmiddel en telt mee voor de nieuwe betaling. Een huurwoning geeft geen verkoopvergoeding. De hele verhuizing gaat alleen door als je de nieuwe woning kunt betalen. De vorige woningrol wordt verwijderd. Een woning opnieuw in dezelfde woonvorm aanschaffen is geblokkeerd.
+Bij elke verhuizing, ook bij een andere woonvorm, wordt je vorige koopwoning automatisch voor **15% van de actuele woningwaarde inclusief upgrades** verkocht. Dat bedrag gaat naar het gekozen betaalmiddel en telt mee voor de nieuwe betaling. Een huurwoning geeft geen verkoopvergoeding. De hele verhuizing gaat alleen door als je de nieuwe woning kunt betalen. De vorige woningrol wordt verwijderd. Een woning opnieuw in dezelfde woonvorm aanschaffen is geblokkeerd.
 
-Bonussen gelden voor bericht-XP, counting-XP en inkomsten uit `/work` en `/daily`. De woningfactor wordt vermenigvuldigd met de bestaande VIP-/verjaardagsfactor. Bij een basisbeloning van 100 krijg je zonder VIP 150 / 200 / 300; met 2× VIP krijg je 300 / 400 / 600. Gebroken XP/geldbedragen worden naar beneden afgerond. Overboekingen, verkoopvergoedingen en geld dat staff geeft krijgen geen bonus. Je opgeslagen woning bepaalt de bonus; jezelf handmatig een woningrol geven levert niets op.
+Bonussen gelden voor bericht-XP, counting-XP en inkomsten uit `/work` en `/daily`. De woningfactor wordt vermenigvuldigd met de bestaande VIP-/verjaardagsfactor. Zonder upgrades krijg je bij een basisbeloning van 100 zonder VIP 150 / 200 / 300; met 2× VIP krijg je 300 / 400 / 600. Gebroken XP/geldbedragen worden naar beneden afgerond. Overboekingen, verkoopvergoedingen en geld dat staff geeft krijgen geen bonus. Je opgeslagen woning bepaalt de bonus; jezelf handmatig een woningrol geven levert niets op.
 
 **Supermarkt:** `/supermarkt actie:aanbod` toont water €5, cola €8, koffie €10, appel €5, broodje kaas €15, hamburger €25 en pizza €35.
 
@@ -49,7 +78,7 @@ Bonussen gelden voor bericht-XP, counting-XP en inkomsten uit `/work` en `/daily
 - `/supermarkt actie:voorraad`: je blijvende voorraad bekijken.
 - `/supermarkt actie:gebruiken product:water aantal:1 bevestigen:Ja`: drinken/eten en het gekozen aantal uit je voorraad halen.
 
-Dit zijn rollenspelproducten, zonder extra bonus of verplicht honger-/dorst-systeem. Je kunt per actie 1–100 producten kopen/gebruiken. **Woningen, huurcontracten, woningrollen, aankopen en supermarktvoorraad blijven behouden bij alle bestaande economy- en voortgangsresets, ook persoonlijke resets.** Een persoonlijke economy-reset kan een bestaand negatief saldo wel wissen, maar stopt toekomstige huur niet. Serverbrede resets laten bestaande bankschuld staan.
+Dit zijn rollenspelproducten, zonder extra bonus of verplicht honger-/dorst-systeem. Je kunt per actie 1–100 producten kopen/gebruiken. **Woningen, woningupgrades, huurcontracten, woningrollen, aankopen en supermarktvoorraad blijven behouden bij alle bestaande economy- en voortgangsresets, ook persoonlijke resets.** Een persoonlijke economy-reset kan een bestaand negatief saldo wel wissen, maar stopt toekomstige huur niet. Serverbrede resets laten bestaande bankschuld staan.
 
 De bot heeft **Rollen beheren** nodig; zijn hoogste rol moet boven alle woningrollen staan. Woningrollen mogen geen extra rechten krijgen. Als een roltoekenning tijdelijk mislukt, blijft de woning opgeslagen en probeert de bot het opnieuw. Verwijderde woningrollen worden hersteld. De kleur van je Discord-naam hangt nog steeds af van je hoogste gekleurde rol.
 

@@ -1,3 +1,11 @@
+## 3.0.5 — 21 oktober 2026
+
+- Makelaar: vijf keukenupgrades (ieder ×2 XP) en vijf woningverbeteringen (ieder ×2 verdiend inkomen).
+- Iedere upgrade verhoogt de actuele woningwaarde met 25%; verkoop 75% en vervanging 15% van deze waarde.
+- Alleen koopwoningen; upgrades blijven bij resets behouden en worden bij verhuizing/verkoop verwijderd.
+- Prijspercentage en upgradenamen instelbaar in config/housingUpgrades.js.
+- Automatische databasemigratie, afzonderlijke XP/inkomenberekening, Nederlandse en Engelse meldingen.
+
 ## 3.0.4 — 20 oktober 2026
 
 - Tijdelijke HTTP 500-antwoorden op GET-verzoeken krijgen nu één extra poging, net als 502/503/504.

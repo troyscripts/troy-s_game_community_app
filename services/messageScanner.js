@@ -111,7 +111,7 @@ async function processNewMessages(messages, guild) {
         const result = levels.addXP({
             userId: message.author.id,
             guildId: guild.id,
-            amount: applyRewardBonus(randomXP(), bonusMember),
+            amount: applyRewardBonus(randomXP(), bonusMember, 'xp'),
             timestamp: message.createdTimestamp || Date.now(),
             cooldownMs
         });

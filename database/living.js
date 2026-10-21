@@ -3,6 +3,7 @@
 const { db } = require('./database');
 const economy = require('./economy');
 const { tr } = require('../utils/localization');
+const upgrades = require('../config/housingUpgrades');
 const DAY = 86400000;
 const HOMES = {
     starter: { name: 'Starterwoning', role: 'starterwoning', rent: 500, price: 15000, bonus: 0.5,
@@ -33,6 +34,10 @@ function init() {
         request_id TEXT PRIMARY KEY, guild_id TEXT NOT NULL, user_id TEXT NOT NULL, result TEXT NOT NULL);
     CREATE TABLE IF NOT EXISTS living_role_jobs (
         guild_id TEXT NOT NULL, user_id TEXT NOT NULL, PRIMARY KEY(guild_id,user_id));`);
+    const columns = new Set(db.prepare('PRAGMA table_info(living_homes)').all().map(c => c.name));
+    for (const name of ['kitchen_level', 'income_level']) {
+        if (!columns.has(name)) db.exec(`ALTER TABLE living_homes ADD COLUMN ${name} INTEGER NOT NULL DEFAULT 0`);
+    }
 }
 init();
 const home = (g,u) => db.prepare('SELECT * FROM living_homes WHERE guild_id=? AND user_id=?').get(g,u);
@@ -74,15 +79,15 @@ const move = db.transaction((id,g,u,key,mode,source,now = Date.now()) => once(id
     const old = home(g,u);
     if (old?.home === key && old?.mode === mode) fail('Je hebt deze woning en woonvorm al.');
     collectRent(g,u,now);
-    const refund = old?.mode === 'koop' ? Math.floor(old.paid_price*0.15) : 0;
+    const refund = old?.mode === 'koop' ? Math.floor(value(old)*0.15) : 0;
     // Sale and payment are atomic; insufficient funds roll back the entire move.
     if (refund) {
         if (source === 'wallet') economy.addWallet(u,g,refund); else economy.addBank(u,g,refund);
     }
     const cost = mode === 'koop' ? HOMES[key].price : HOMES[key].rent;
     debit(g,u,cost,source);
-    db.prepare(`INSERT INTO living_homes VALUES (?,?,?,?,?,?) ON CONFLICT(guild_id,user_id)
-        DO UPDATE SET home=excluded.home,mode=excluded.mode,paid_price=excluded.paid_price,next_rent=excluded.next_rent`)
+    db.prepare(`INSERT INTO living_homes (guild_id,user_id,home,mode,paid_price,next_rent) VALUES (?,?,?,?,?,?) ON CONFLICT(guild_id,user_id)
+        DO UPDATE SET home=excluded.home,mode=excluded.mode,paid_price=excluded.paid_price,next_rent=excluded.next_rent,kitchen_level=0,income_level=0`)
         .run(g,u,key,mode,mode === 'koop' ? cost : 0,mode === 'huur' ? now+DAY : 0);
     queue(g,u);
     return {home:key,mode,cost,refund};
@@ -98,11 +103,31 @@ const leave = db.transaction((id,g,u,now = Date.now()) => once(id,g,u,() => {
 const sell = db.transaction((id,g,u) => once(id,g,u,() => {
     const row=home(g,u);
     if(!row || row.mode!=='koop') fail('Je hebt geen koopwoning om te verkopen.');
-    const refund=Math.floor(row.paid_price*0.75);
+    const refund=Math.floor(value(row)*0.75);
     economy.addBank(u,g,refund);
     db.prepare('DELETE FROM living_homes WHERE guild_id=? AND user_id=?').run(g,u);
     queue(g,u);
     return {sold:true,refund};
+}));
+function value(row) {
+    return row?.mode === 'koop' ? Math.floor(row.paid_price * 1.25 ** (row.kitchen_level + row.income_level)) : 0;
+}
+function quote(g,u,type) {
+    const row = home(g,u);
+    if (!row || row.mode !== 'koop') fail('Upgrades zijn alleen beschikbaar voor een koopwoning.');
+    if (!['keuken','inkomen'].includes(type)) fail('Kies upgrade:keuken of upgrade:inkomen.');
+    const field = type === 'keuken' ? 'kitchen_level' : 'income_level';
+    const level = row[field];
+    if (level >= 5) fail('Deze upgrade heeft al het maximale niveau 5.');
+    if (!Number.isFinite(upgrades.PriceRate) || upgrades.PriceRate < 0) fail('Ongeldige upgradeprijs in de configuratie.');
+    return {field, level:level+1, type, cost:Math.ceil(value(row)*upgrades.PriceRate),
+        name:(type === 'keuken' ? upgrades.Kitchen : upgrades.Income)[level]};
+}
+const upgrade = db.transaction((id,g,u,type,source) => once(id,g,u,() => {
+    const next = quote(g,u,type);
+    debit(g,u,next.cost,source);
+    db.prepare(`UPDATE living_homes SET ${next.field}=? WHERE guild_id=? AND user_id=?`).run(next.level,g,u);
+    return {...next, value:value(home(g,u))};
 }));
 const groceries = db.transaction((id,g,u,key,quantity,source,use = false) => once(id,g,u,() => {
     if (!Object.hasOwn(PRODUCTS,key) || !Number.isSafeInteger(quantity) || quantity < 1 || quantity > 100) fail('Kies een geldig product en een aantal van 1 tot 100.');
@@ -116,8 +141,8 @@ const groceries = db.transaction((id,g,u,key,quantity,source,use = false) => onc
     }
     return {product:key,quantity,cost:use ? 0 : PRODUCTS[key].price*quantity,used:use};
 }));
-module.exports = {HOMES,PRODUCTS,DAY,home,inventory,roles,queue,move,leave,sell,groceries,collectRent,
-    multiplier(g,u) { const row=home(g,u); return row ? 1+HOMES[row.home].bonus : 1; },
+module.exports = {HOMES,PRODUCTS,DAY,home,value,quote,upgrade,inventory,roles,queue,move,leave,sell,groceries,collectRent,
+    multiplier(g,u,kind='income') { const row=home(g,u); return row ? (1+HOMES[row.home].bonus) * 2 ** (kind === 'xp' ? row.kitchen_level : row.income_level) : 1; },
     setRole(g,key,id) { db.prepare('INSERT INTO living_roles VALUES (?,?,?) ON CONFLICT(guild_id,home) DO UPDATE SET role_id=excluded.role_id').run(g,key,id); },
     jobs() { return db.prepare('SELECT * FROM living_role_jobs').all(); },
     done(g,u) { db.prepare('DELETE FROM living_role_jobs WHERE guild_id=? AND user_id=?').run(g,u); },

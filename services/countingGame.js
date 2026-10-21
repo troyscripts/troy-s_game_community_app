@@ -72,7 +72,7 @@ async function processCountingMessage(message, { silent = false, awardXP = true 
             const xpResult = levels.addXP({
                 userId: message.author.id,
                 guildId: message.guild.id,
-                amount: applyRewardBonus(reward, bonusMember),
+                amount: applyRewardBonus(reward, bonusMember, 'xp'),
                 timestamp: message.createdTimestamp || Date.now(),
                 cooldownMs: 0
             });

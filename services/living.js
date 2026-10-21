@@ -60,13 +60,29 @@ async function realtor(client,i) { return guarded(i,async()=>{
     const action=i.options.getString('actie')||'aanbod',g=i.guildId,u=i.user.id;
     if(action==='aanbod') {
         const lines=Object.entries(data.HOMES).map(([key,h])=>tr('**{0}** · {1}\n{2}\nHuur: {3} per 24 uur · Koop: {4} · XP/inkomen: +{5}%.',tr(h.name),tr({starter:'Brons',luxe:'Zilver',villa:'Goud'}[key]),tr(h.description),money(h.rent),money(h.price),h.bonus*100));
-        return reply(i,tr('🏡 **Makelaar**\n\n')+lines.join('\n\n')+'\n\n'+tr('Eén woning per speler. Los verkopen via actie:verkopen levert 75% van de betaalde aanschafprijs op je bank op en verwijdert je woningrol en bonus. Bij verhuizen ontvang je 15% van de aankoopprijs van je oude koopwoning; huur levert niets terug. De eerste huurdag betaal je direct. Daarna schrijven we elke 24 uur huur van je bank af, ook bij onvoldoende saldo en na botuitval. Je bank kan negatief worden. Opzeggen stopt toekomstige huur, zonder terugbetaling. Woningen en huurcontracten blijven behouden bij resets. De woningbonus komt boven op VIP. Gebruik actie:kopen of huren, kies een woning en bevestigen:Ja.'));
+        return reply(i,tr('🏡 **Makelaar**\n\n')+lines.join('\n\n')+'\n\n'+tr('Eén woning per speler. Los verkopen via actie:verkopen levert 75% van de actuele woningwaarde inclusief upgrades op je bank op en verwijdert je woningrol en bonus. Bij verhuizen ontvang je 15% van de actuele woningwaarde inclusief upgrades van je oude koopwoning; huur levert niets terug. De eerste huurdag betaal je direct. Daarna schrijven we elke 24 uur huur van je bank af, ook bij onvoldoende saldo en na botuitval. Je bank kan negatief worden. Opzeggen stopt toekomstige huur, zonder terugbetaling. Woningen en huurcontracten blijven behouden bij resets. De woningbonus komt boven op VIP. Gebruik actie:kopen of huren, kies een woning en bevestigen:Ja.'));
+    }
+    if(action==='upgrades') {
+        const row=data.home(g,u);
+        if(!row || row.mode!=='koop') fail('Upgrades zijn alleen beschikbaar voor een koopwoning.');
+        const lines=['keuken','inkomen'].map(type=>{
+            const level=row[type==='keuken'?'kitchen_level':'income_level'];
+            if(level>=5) return tr('{0}: 5/5 — maximaal.',tr(type==='keuken'?'Keuken':'Inkomen'));
+            const q=data.quote(g,u,type);
+            return tr('{0}: {1}/5 · Volgende: {2} · Prijs: {3}',tr(type==='keuken'?'Keuken':'Inkomen'),level,tr(q.name),money(q.cost));
+        });
+        return reply(i,tr('🏡 **Woningupgrades**\n')+lines.join('\n')+'\n\n'+tr('Elke keukenupgrade verdubbelt je XP; elke inkomensupgrade verdubbelt je verdiende beloningen. Beide reeksen hebben 5 niveaus (maximaal ×32 per reeks). Iedere upgrade verhoogt de woningwaarde met 25%. Alleen koopwoningen. Upgrades blijven bij resets behouden en verdwijnen bij verkoop/verhuizing. Bedrijfsinkomen blijft ongewijzigd. Koop via /makelaar actie:upgraden upgrade:keuken of inkomen, betaalmiddel en bevestigen:Ja.'));
+    }
+    if(action==='upgraden') {
+        enabled(i); confirmed(i);
+        const result=data.upgrade(i.id,g,u,i.options.getString('upgrade'),i.options.getString('betaalmiddel')||'wallet');
+        return reply(i,tr('✅ {0} gekocht (niveau {1}/5) voor {2}. Nieuwe woningwaarde: {3}. Je bonus is direct actief.',tr(result.name),result.level,money(result.cost),money(result.value)));
     }
     if(action==='status') {
         const row=data.home(g,u);
         if(!row) return reply(i,tr('Je hebt nog geen woning. Bekijk /makelaar actie:aanbod.'));
         const h=data.HOMES[row.home];
-        return reply(i,tr('🏡 **Mijn woning: {0}**\nWoonvorm: {1}\nExtra XP en inkomen: +{2}% boven op VIP.\n{3}\nWoning en contract blijven behouden bij resets.',tr(h.name),tr(row.mode==='koop'?'Koop':'Huur'),h.bonus*100,row.mode==='huur'?tr('Volgende huur: {0} op <t:{1}:f>. Automatisch via bank; negatief saldo is mogelijk.',money(h.rent),Math.floor(row.next_rent/1000)):tr('Bij verhuizen krijg je {0} terug.',money(Math.floor(row.paid_price*0.15)))));
+        return reply(i,tr('🏡 **Mijn woning: {0}**\nWoonvorm: {1}\nXP: ×{2} · Inkomen: ×{3} (boven op VIP).\nKeuken: {4}/5 · Inkomenupgrades: {5}/5\n{6}\nWoning en upgrades blijven behouden bij resets. Bekijk /makelaar actie:upgrades.',tr(h.name),tr(row.mode==='koop'?'Koop':'Huur'),data.multiplier(g,u,'xp'),data.multiplier(g,u),row.kitchen_level,row.income_level,row.mode==='huur'?tr('Volgende huur: {0} op <t:{1}:f>. Automatisch via bank; negatief saldo is mogelijk.',money(h.rent),Math.floor(row.next_rent/1000)):tr('Woningwaarde: {0} · Verkopen (75%): {1} · Vervangen (15%): {2}.',money(data.value(row)),money(Math.floor(data.value(row)*0.75)),money(Math.floor(data.value(row)*0.15)))));
     }
     confirmed(i);
     // Allow tenants to end their ongoing contract even when economy is disabled.

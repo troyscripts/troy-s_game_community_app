@@ -58,7 +58,7 @@ module.exports = {
         const result = levels.addXP({
             userId: message.author.id,
             guildId: message.guild.id,
-            amount: applyRewardBonus(randomXP(), message.member),
+            amount: applyRewardBonus(randomXP(), message.member, 'xp'),
             timestamp: message.createdTimestamp || Date.now(),
             cooldownMs: cooldown
         });

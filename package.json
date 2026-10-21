@@ -1,6 +1,6 @@
 {
   "name": "troys-gamecommunity-bot",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "description": "Professionele Discord Bot voor Troy's Gamecommunity",
   "main": "index.js",
   "scripts": {
@@ -36,3 +36,4 @@
     "better-sqlite3@12.11.1": true
   }
 }
+

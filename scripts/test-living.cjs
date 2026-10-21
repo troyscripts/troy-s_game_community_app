@@ -3,7 +3,13 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),os=require('nod
 const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'troy-living-'));
 const defaults=require('../config/defaults');defaults.Database.File=path.join(tmp,'test.sqlite');defaults.Logging.Enabled=false;defaults.Economy.Enabled=true;
 const database=require('../database/database');database.initializeDatabase();
-const {db}=database,economy=require('../database/economy'),data=require('../database/living');
+const {db}=database;
+// Simulate a pre-upgrade installation, including an existing owned home.
+db.exec(`CREATE TABLE living_homes (guild_id TEXT NOT NULL,user_id TEXT NOT NULL,home TEXT NOT NULL,mode TEXT NOT NULL,paid_price INTEGER NOT NULL,next_rent INTEGER NOT NULL,PRIMARY KEY(guild_id,user_id));
+INSERT INTO living_homes VALUES ('legacy','owner','starter','koop',15000,0);`);
+const economy=require('../database/economy'),data=require('../database/living');
+assert.equal(data.home('legacy','owner').kitchen_level,0);
+assert.equal(data.value(data.home('legacy','owner')),15000);
 const {resetEconomy}=require('../database/economyReset'),{resetProgress}=require('../database/progressReset');
 const bonus=require('../services/rewardBonus'),service=require('../services/living');
 const g='111111111111111111',other='222222222222222222',u='709486570293559356',v='333333333333333333';
@@ -58,6 +64,39 @@ async function run(){
  require('../database/languages').set(g,u,'en');const offer=ui();await service.realtor(null,offer);assert.match(offer.response.content,/Estate agent/);assert.match(offer.response.content,/Bronze/);assert.ok(!/[\uE000-\uE002]/.test(offer.response.content));
  const food=ui({actie:'kopen',product:'water'},true);await service.supermarket(null,food);assert.match(food.response.content,/Purchased/);
  for(const name of ['makelaar','supermarkt']) { const command=require('../commands/economy/'+name);const json=require('../utils/localization').commandData(command.data.toJSON());assert.equal(json.name,name);assert.ok(json.options.length<=25); }
+ // Upgrades: independent reward paths, limits, rollback, idempotency and ownership.
+ economy.setMoney(v,g,1000000,1000000);
+ assert.throws(()=>data.upgrade('no-home',g,v,'keuken','wallet'));
+ data.move('upgrade-home',g,v,'starter','koop','wallet');
+ const vm={id:v,guild:{id:g},roles:{cache:new Map([['vip',{}]])}};
+ assert.throws(()=>data.upgrade('invalid',g,v,'__proto__','wallet'));
+ const first=data.upgrade('k1',g,v,'keuken','wallet');assert.equal(first.cost,3750);assert.equal(first.value,18750);
+ const after=economy.getBalance(v,g).wallet;
+ assert.deepEqual(data.upgrade('k1',g,v,'keuken','wallet'),first);assert.equal(economy.getBalance(v,g).wallet,after);
+ assert.equal(bonus.applyRewardBonus(100,vm,'xp'),600);assert.equal(bonus.applyRewardBonus(100,vm),300);
+ assert.equal(data.multiplier(other,v,'xp'),1);
+ economy.setMoney(v,g,0,0);const unchanged=JSON.stringify(data.home(g,v));
+ assert.throws(()=>data.upgrade('poor-upgrade',g,v,'inkomen','bank'));assert.equal(JSON.stringify(data.home(g,v)),unchanged);
+ economy.setMoney(v,g,1000000,1000000);
+ for(let n=2;n<=5;n++)data.upgrade('k'+n,g,v,'keuken','wallet');
+ for(let n=1;n<=5;n++)data.upgrade('i'+n,g,v,'inkomen','bank');
+ assert.equal(data.multiplier(g,v,'xp'),48);assert.equal(data.multiplier(g,v),48);
+ assert.equal(bonus.applyRewardBonus(100,vm,'xp'),9600);assert.equal(bonus.applyRewardBonus(100,vm),9600);
+ assert.throws(()=>data.upgrade('k6',g,v,'keuken','wallet'));assert.throws(()=>data.upgrade('i6',g,v,'inkomen','bank'));
+ const worth=Math.floor(15000*1.25**10);assert.equal(data.value(data.home(g,v)),worth);
+ const upgraded=JSON.stringify(data.home(g,v));resetEconomy(g);resetProgress(g);assert.equal(JSON.stringify(data.home(g,v)),upgraded);
+ const sold=data.sell('sell-upgraded',g,v);assert.equal(sold.refund,Math.floor(worth*0.75));
+ const soldBalance=economy.getBalance(v,g).bank;data.sell('sell-upgraded',g,v);assert.equal(economy.getBalance(v,g).bank,soldBalance);
+ assert.equal(data.multiplier(g,v,'xp'),1);
+ economy.setMoney(v,g,1000000,1000000);data.move('new-home',g,v,'starter','koop','wallet');data.upgrade('new-k1',g,v,'keuken','wallet');
+ const replacement=data.move('replace-upgraded',g,v,'luxe','koop','wallet');assert.equal(replacement.refund,2812);assert.equal(data.home(g,v).kitchen_level,0);assert.equal(data.home(g,v).income_level,0);
+ data.move('rent-upgrade',g,v,'starter','huur','wallet');assert.throws(()=>data.upgrade('tenant-upgrade',g,v,'keuken','wallet'));
+ // Upgrade commands: confirmation, localized quote and purchase.
+ economy.setMoney(u,g,1000000,1000000);
+ const quote=ui({actie:'upgrades'});await service.realtor(null,quote);assert.match(quote.response.content,/Home upgrades/);
+ const unconfirmed=ui({actie:'upgraden',upgrade:'keuken'});await service.realtor(null,unconfirmed);assert.equal(data.home(g,u).kitchen_level,0);
+ const buy=ui({actie:'upgraden',upgrade:'keuken'},true);await service.realtor(null,buy);assert.equal(data.home(g,u).kitchen_level,1);assert.match(buy.response.content,/Purchased/);
+ const status=ui({actie:'status'});await service.realtor(null,status);assert.match(status.response.content,/Kitchen: 1\/5/);assert.match(status.response.content,/Property value/);
  // Data is on disk and survives reopening, independent of module caches.
  const persisted=data.home(g,u);db.pragma('wal_checkpoint(FULL)');const connection=new (require('better-sqlite3'))(defaults.Database.File);assert.deepEqual(connection.prepare('SELECT * FROM living_homes WHERE guild_id=? AND user_id=?').get(g,u),persisted);connection.close();
  console.log('PASS: housing prices/refunds, atomic rollback, VIP stacking, rounding, rent catch-up/debt/idempotency, all reset paths, inventory, isolation, role colors/switch/retry/recreate, command confirmation/defer/localization, on-disk persistence.');

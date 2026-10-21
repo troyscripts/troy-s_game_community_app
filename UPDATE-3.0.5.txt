@@ -1,0 +1,39 @@
+Troy's Game Community — v3.0.5 woningupgrades
+
+Dit pakket bevat alleen nieuwe/gewijzigde bestanden ten opzichte van GitHub v3.0.4.
+1. Stop de bot en maak een backup van je database en bestanden.
+2. Pak dit pakket uit in de botmap; behoud de mappenstructuur en vervang de bestanden.
+3. Voer npm run deploy uit om de nieuwe makelaaropties te registreren.
+4. Start de bot met npm start. De database wordt automatisch uitgebreid; bestaande woningen blijven behouden.
+Er zijn geen nieuwe dependencies en er worden geen bestanden verwijderd.
+
+Gebruik:
+/makelaar actie:upgrades
+/makelaar actie:upgraden upgrade:keuken betaalmiddel:wallet bevestigen:Ja
+/makelaar actie:upgraden upgrade:inkomen betaalmiddel:bank bevestigen:Ja
+/makelaar actie:status
+
+Keuken: apparatuur, kasten, werkblad, kookeiland, chefkeuken.
+Inkomen: werkkamer, glasvezel, werkstudio, zakelijke inrichting, luxe kantoor.
+Iedere reeks heeft vijf opeenvolgende niveaus: x2, x4, x8, x16, x32.
+De factor vermenigvuldigt de bestaande woningbonus en VIP/verjaardagsbonus.
+XP geldt voor berichten, berichtenscanner en tellen; inkomen voor work/daily.
+Het vaste bedrijfsinkomen, overschrijvingen en leningen veranderen niet.
+
+Iedere upgrade verhoogt de woningwaarde met 25% samengesteld:
+aankoopprijs x 1,25^(keukenniveau + inkomensniveau), afgerond naar beneden.
+Los verkopen geeft 75% van die waarde; vervangen geeft 15%.
+Voorbeeld starterwoning: 15.000 -> 18.750 na een upgrade.
+Na tien upgrades: woningwaarde 139.698; verkoop 104.773; vervanging 20.954.
+
+Standaard kost een upgrade 25% van de actuele woningwaarde, naar boven afgerond.
+Pas PriceRate in config/housingUpgrades.js aan (0.25 = 25%). Hier staan ook de namen.
+Upgrades zijn alleen voor koopwoningen. Ze blijven na herstart en resets behouden.
+Bij verkoop/verhuizing verdwijnen ze; de volgende woning start op niveau 0/0.
+
+Controles: syntax/commands en uitgebreide woningtests geslaagd (migratie, prijzen,
+XP/inkomen, VIP, maxniveau, onvoldoende saldo, dubbele verzoeken, resets, verkoop,
+vervanging, huurblokkade, Engelse commandrespons en opslag).
+De bestaande algemene taaltest stopt op een verouderde telling: verwacht 57 commands,
+terwijl deze repository al 62 commands heeft. Deze update voegt geen command toe.
+Niet live getest in Discord. Niet naar GitHub gepusht.
