@@ -1,0 +1,31 @@
+Troy's Game Community v3.0.6 — Honeypot
+
+Alleen nieuwe/gewijzigde bestanden ten opzichte van v3.0.5 met woningupgrades.
+Stop de bot, maak een backup van bestanden en database, pak het pakket uit in de
+botmap met behoud van de mappenstructuur en start met npm start.
+Geen nieuwe dependencies, geen bestanden verwijderen en geen extra slashcommands.
+Configuratievelden en SQLite-tabel worden automatisch toegevoegd.
+
+Instellen (serverowner of bevoegde developer):
+/config instellen instelling:Honeypot.Channel waarde:#niet-typen
+/config instellen instelling:Honeypot.Action waarde:ban
+/config instellen instelling:Honeypot.LogChannel waarde:#logs
+/config instellen instelling:Honeypot.Mention waarde:verified
+/config instellen instelling:Honeypot.Enabled waarde:ja
+
+Gebruik Action timeout voor een time-out van 7 dagen.
+Uitschakelen: Honeypot.Enabled waarde:nee.
+LogChannel leeg gebruikt Logging.Channel. Honeypot-logs werken onafhankelijk van
+Logging.Enabled en volgen Logging.Language.
+
+Lees README.md, HANDLEIDING.md of MANUAL-EN.md voor rechten, uitzonderingen en
+het opheffen via de logknop. Alle drie zijn bijgewerkt en meegeleverd.
+Tests: npm run test:honeypot en npm run check. Niet live getest in Discord.
+Niet naar GitHub gepusht.
+
+De waarschuwing wordt automatisch tweetalig geplaatst en volgt de ingestelde straf.
+Mention: verified (Roles.Verified), @rol/rol-ID, everyone, here of none.
+Kies de mention voor het inschakelen. De eerste plaatsing kan pingen; bewerkingen,
+herstarts en herstel van een verwijderd bericht geven geen nieuwe ping.
+De bot heeft ook Berichtgeschiedenis lezen en Berichten verzenden nodig.
+Bij uitschakelen of kanaalwissel wordt de oude waarschuwing inactief gemarkeerd.

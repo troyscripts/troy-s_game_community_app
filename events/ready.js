@@ -39,6 +39,7 @@ module.exports = {
         require("../services/polls").start(client);
         require("../services/store").start(client);
         require("../services/living").start(client);
+        require("../services/honeypotWarning").start(client);
         require("../services/business").start(client);
         require("../services/loans").start(client);
         require("../services/giveaways").start(client);

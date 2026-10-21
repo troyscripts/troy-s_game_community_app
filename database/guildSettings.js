@@ -15,6 +15,7 @@ const EDITABLE_ROOTS = [
     "Bump",
     "Store",
     "Logging",
+    "Honeypot",
     "Tickets",
     "Levels",
     "Economy",
@@ -100,6 +101,9 @@ function createCleanServerConfig() {
     clean.Bump.Channel = "";
     clean.Store.VIPRole = "";
     clean.Logging.Channel = "";
+    clean.Honeypot.Channel = "";
+    clean.Honeypot.LogChannel = "";
+    clean.Honeypot.Enabled = false;
     clean.Tickets.Category = "";
     clean.Tickets.LogChannel = "";
     for (const key of Object.keys(clean.Levels.Roles)) clean.Levels.Roles[key] = "";
@@ -321,6 +325,17 @@ function parseValue(path, rawValue, currentValue) {
         if (!language) throw new Error(tr("Gebruik nl (Nederlands), en (Engels) of both (beide talen)."));
         return language;
     }
+    if (path === "Honeypot.Mention") {
+        const aliases = {verified:"verified",geverifieerd:"verified",none:"none",geen:"none",uit:"none",everyone:"everyone","@everyone":"everyone",here:"here","@here":"here"};
+        const value = aliases[raw.toLowerCase()] || extractDiscordId(raw);
+        if (!value) throw new Error(tr("Kies verified, none, everyone, here of een rolvermelding/rol-ID."));
+        return value;
+    }
+    if (path === "Honeypot.Action") {
+        const action = raw.toLowerCase();
+        if (!["ban", "timeout"].includes(action)) throw new Error(tr("Gebruik ban of timeout (7 dagen)."));
+        return action;
+    }
     if (path === "AIChat.Mode" && !["all", "mention"].includes(raw)) {
         throw new Error(tr("Gebruik all (alle berichten) of mention (alleen @bot)."));
     }
@@ -381,7 +396,7 @@ function parseValue(path, rawValue, currentValue) {
         return values;
     }
 
-    const isIdPath = /^(Notify\.PingRole[1-4]|Roles\.[^.]+|SelfRoles\.[^.]+|Store\.VIPRole|Bump\.Channel|Logging\.Channel|Tickets\.(Category|LogChannel)|Levels\.Roles\.\d+|Counting\.Channel|Birthday\.(Role|Channel)|Welcome\.(Channel|AutoRole)|Leave\.Channel|StartupReport\.Channel)$/.test(path);
+    const isIdPath = /^(Notify\.PingRole[1-4]|Roles\.[^.]+|SelfRoles\.[^.]+|Store\.VIPRole|Bump\.Channel|Honeypot\.(Channel|LogChannel)|Logging\.Channel|Tickets\.(Category|LogChannel)|Levels\.Roles\.\d+|Counting\.Channel|Birthday\.(Role|Channel)|Welcome\.(Channel|AutoRole)|Leave\.Channel|StartupReport\.Channel)$/.test(path);
     if (isIdPath) {
         if (["leeg", "geen", "uit", "empty", "none", "off"].includes(raw.toLowerCase())) return "";
         const id = extractDiscordId(raw);

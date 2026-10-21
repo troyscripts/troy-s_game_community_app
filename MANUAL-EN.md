@@ -13,7 +13,67 @@ Settings persist per server and apply immediately to new messages. Existing mess
 
 Users and roles are mentioned once per message. Repeated references show a plain name (or ID if unavailable). Repeated `@everyone` and `@here` references are also made non-pinging.
 
-**Bot version 3.0.5 · Updated 21 October 2026**
+**Bot version 3.0.6 · Updated 21 October 2026**
+
+## New in 3.0.6: honeypot channel
+
+Configure a channel where every new user message immediately triggers a ban or a **seven-day timeout**. Image-only messages, videos, files, stickers and embeds count too. Threads below the configured channel are included. Bot, webhook and system messages are ignored. Old messages are not punished retroactively.
+
+### Configuration
+
+As the server owner or an authorized developer, use the canonical command names below (Discord may display translated labels):
+
+```text
+/config instellen instelling:Honeypot.Channel waarde:#do-not-post
+/config instellen instelling:Honeypot.Action waarde:ban
+/config instellen instelling:Honeypot.LogChannel waarde:#logs
+/config instellen instelling:Honeypot.Enabled waarde:yes
+```
+
+Set `Honeypot.Action` to `timeout` for a seven-day timeout instead of a ban. Disable with `/config instellen instelling:Honeypot.Enabled waarde:no`. Changes take effect immediately per server. The feature is disabled by default.
+
+| Setting | Default | Behavior |
+| --- | --- | --- |
+| `Honeypot.Enabled` | `false` | Enable/disable detection |
+| `Honeypot.Channel` | empty | Channel where posting is prohibited |
+| `Honeypot.Action` | `ban` | `ban` or `timeout` (seven days) |
+| `Honeypot.LogChannel` | empty | Dedicated log channel; falls back to `Logging.Channel` |
+
+Honeypot logs are sent even when general logging is disabled. They follow `Logging.Language`. Configure an accessible log channel to receive the undo buttons.
+
+### Automatic warning and mention
+
+When enabled, the bot automatically publishes the bilingual **WAARSCHUWING / WARNING** in the configured channel. It states either a permanent ban or a seven-day timeout, matching `Honeypot.Action`. This warning always uses both Dutch and English regardless of the general bot language.
+
+Choose the mention before enabling the honeypot:
+
+```text
+/config instellen instelling:Honeypot.Mention waarde:verified
+```
+
+| Value for `Honeypot.Mention` | Mention below the warning |
+| --- | --- |
+| `verified` (default) | The role configured in `Roles.Verified`; no mention if unset |
+| Role mention or role ID | The selected role |
+| `everyone` | `@everyone` |
+| `here` | `@here` |
+| `none` | No mention or bell line |
+
+Example: `/config instellen instelling:Honeypot.Mention waarde:@Verified`. For the default choice, set `Roles.Verified` to your verified role first if needed. Only the initial publication in a channel can ping the selected audience. The role must be mentionable or the bot must be allowed to mention all roles; `everyone`/`here` require the appropriate mention permission.
+
+Configuration changes edit the same warning without pinging again. Restarts reuse the saved message. Deleted warnings are recreated within about a minute without another ping. Disabling the feature or changing its channel marks the old warning inactive. The bot needs **View Channel**, **Read Message History** and **Send Messages** in the honeypot channel. Missing permissions or an invalid mention role are reported during configuration; settings are still saved.
+
+### Logs and undo buttons
+
+The log records the user, channel, action, result and a link to the original message. Successful bans include **Unban**; successful timeouts include **Remove timeout**. Buttons survive bot restarts. The clicking member must currently have **Ban Members** or **Moderate Members**, respectively. Timeout removal also enforces role hierarchy. Permissions are fetched again when the button is clicked.
+
+After resolving the action, the button disappears and the log records who handled it. An unban does not automatically rejoin the user. An old button will not reverse a later changed ban or timeout. An already active timeout is preserved instead of overwritten by another violation.
+
+The bot needs access to the honeypot channel, the appropriate moderation permission and a role above the target. The log channel requires **View Channel**, **Send Messages** and **Embed Links**. There is no automatic staff exemption; Discord may prevent action against the server owner, higher roles, or administrators for timeouts. Failed actions are logged without an undo button. This feature does not delete messages. If log delivery fails, a successful punishment stays active and can be removed through the normal moderation commands.
+
+### Updating
+
+This patch requires **3.0.5 with home upgrades**. Stop the bot, back up files and database, copy all changed files to their matching paths and run `npm start`. New configuration fields and moderation storage are added automatically. There are no new dependencies or slash commands. Existing settings remain intact. Updated README and both manuals are included; `/help` uses these files. See the Dutch `UPDATE-3.0.6.txt` for installation notes.
 
 ## New in 3.0.5: home upgrades through the estate agent
 

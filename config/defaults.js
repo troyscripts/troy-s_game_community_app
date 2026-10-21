@@ -65,6 +65,14 @@ module.exports = {
         Channel: ""
     },
 
+    Honeypot: {
+        Enabled: false,
+        Channel: "",
+        Action: "ban", // ban of timeout (7 dagen)
+        LogChannel: "", // leeg = Logging.Channel
+        Mention: "verified" // verified, none, everyone, here of een rol-ID
+    },
+
     Tickets: {
         Enabled: false,
         Transcript: true,

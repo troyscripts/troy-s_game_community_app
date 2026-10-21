@@ -1,4 +1,64 @@
-# Troy’s Game Community Bot — 3.0.5
+# Troy’s Game Community Bot — 3.0.6
+
+## Nieuw in 3.0.6: honeypot-kanaal
+
+Stel een kanaal in waar elk nieuw gebruikersbericht direct tot een ban of een time-out van **zeven dagen** leidt. Ook berichten met alleen een afbeelding, video, bestand, sticker of embed tellen mee. Threads onder het ingestelde kanaal vallen eveneens onder de controle. Botberichten, webhooks en systeemberichten worden genegeerd. Er worden geen oude berichten achteraf bestraft.
+
+### Instellen via Discord
+
+Gebruik als serverowner of bevoegde developer:
+
+```text
+/config instellen instelling:Honeypot.Channel waarde:#niet-typen
+/config instellen instelling:Honeypot.Action waarde:ban
+/config instellen instelling:Honeypot.LogChannel waarde:#logs
+/config instellen instelling:Honeypot.Enabled waarde:ja
+```
+
+Kies `waarde:timeout` bij `Honeypot.Action` voor zeven dagen time-out in plaats van een ban. Uitschakelen: `/config instellen instelling:Honeypot.Enabled waarde:nee`. Instellingen werken direct en afzonderlijk per server. De functie staat standaard uit.
+
+| Instelling | Standaard | Werking |
+| --- | --- | --- |
+| `Honeypot.Enabled` | `false` | Controle aan/uit |
+| `Honeypot.Channel` | leeg | Kanaal waarin niet gepost mag worden |
+| `Honeypot.Action` | `ban` | `ban` of `timeout` (zeven dagen) |
+| `Honeypot.LogChannel` | leeg | Eigen logkanaal; leeg gebruikt `Logging.Channel` |
+
+Honeypot-meldingen worden naar dit logkanaal verstuurd, ook wanneer algemene logging uitstaat. De taal volgt `Logging.Language`. Stel een bereikbaar logkanaal in om de ophefknoppen te ontvangen.
+
+### Automatische waarschuwing en mention
+
+Bij inschakelen plaatst de bot automatisch de tweetalige **WAARSCHUWING / WARNING** in het ingestelde kanaal. De tekst noemt een permanente ban of zeven dagen time-out, afhankelijk van `Honeypot.Action`. De waarschuwing blijft altijd Nederlands én Engels, ongeacht de algemene bottaal.
+
+Kies de mention voordat je de honeypot inschakelt:
+
+```text
+/config instellen instelling:Honeypot.Mention waarde:verified
+```
+
+| Waarde voor `Honeypot.Mention` | Mention onder de waarschuwing |
+| --- | --- |
+| `verified` (standaard) | De rol uit `Roles.Verified`; geen mention als deze leeg is |
+| `@Rolnaam` of rol-ID | De opgegeven rol |
+| `everyone` | `@everyone` |
+| `here` | `@here` |
+| `none` | Geen mention en geen belregel |
+
+Voor een eigen rol: `/config instellen instelling:Honeypot.Mention waarde:@Geverifieerd`. Voor de standaardkeuze stel je zo nodig eerst `/config instellen instelling:Roles.Verified waarde:@Geverifieerd` in. Alleen bij de eerste plaatsing in een kanaal kan de geselecteerde mention een ping geven. De rol moet vermeldbaar zijn of de bot moet toestemming hebben om alle rollen te vermelden; voor `everyone`/`here` is de bijbehorende mentiontoestemming nodig.
+
+Configwijzigingen werken het bestaande bericht bij, zonder nieuwe ping. Ook na herstart wordt hetzelfde bericht gebruikt. Een verwijderde waarschuwing wordt binnen ongeveer een minuut opnieuw geplaatst zonder ping. Bij uitschakelen of wisselen van kanaal wordt de oude waarschuwing gemarkeerd als inactief. De bot heeft **Kanaal bekijken**, **Berichtgeschiedenis lezen** en **Berichten verzenden** nodig in het honeypot-kanaal. Ontbrekende rechten of een ongeldige mentionrol worden bij een configwijziging gemeld; de instellingen blijven wel opgeslagen.
+
+### Logmelding en opheffen
+
+De logmelding vermeldt gebruiker, kanaal, actie, resultaat en een link naar het oorspronkelijke bericht. Na een geslaagde ban verschijnt **Ban opheffen**; na een geslaagde time-out **Time-out opheffen**. De knop blijft werken na een bot-herstart. Alleen leden met respectievelijk **Leden verbannen** of **Leden modereren** mogen de actie opheffen. Voor time-outs geldt ook de rolhiërarchie. De bot controleert deze rechten opnieuw wanneer iemand klikt.
+
+Na opheffen verdwijnt de knop en staat erbij wie de actie heeft afgehandeld. Een unban laat iemand niet automatisch opnieuw toetreden. Een oude knop heft geen later gewijzigde ban of time-out op. Een reeds actieve time-out wordt bij een nieuwe overtreding behouden, zodat een bestaande straf niet wordt overschreven.
+
+De bot heeft toegang tot het honeypot-kanaal, de passende moderatierechten en een rol boven het doelwit nodig. Voor het logkanaal zijn **Kanaal bekijken**, **Berichten verzenden** en **Links insluiten** nodig. Er is geen automatische staff-uitzondering; Discord kan optreden tegen de servereigenaar, hogere rollen of administrators bij time-outs blokkeren. Mislukte acties krijgen een foutmelding zonder ophefknop. Berichten worden door deze functie niet verwijderd. Als het versturen van de log mislukt, blijft een geslaagde straf actief en kun je die via de gewone moderatiecommando’s opheffen.
+
+### Installatie van deze update
+
+Dit updatepakket is bedoeld voor **3.0.5 inclusief woningupgrades**. Stop de bot, maak een back-up van bestanden en database, plaats alle gewijzigde bestanden op dezelfde paden en start met `npm start`. De nieuwe configuratievelden en de honeypot-opslag worden automatisch toegevoegd. Er zijn geen nieuwe dependencies of slashcommando’s. Bestaande instellingen blijven behouden. `README.md`, `HANDLEIDING.md` en `MANUAL-EN.md` zijn meegeleverd; `/help` gebruikt deze handleidingen. Zie `UPDATE-3.0.6.txt`.
 
 ## Nieuw in 3.0.5: woningupgrades via de makelaar
 

@@ -176,11 +176,12 @@ module.exports = {
             await interaction.deferReply({ flags: MessageFlags.Ephemeral });
             try {
                 const result = settings.updateValue(guildId, path, rawValue);
+                const warningNote = result.path.startsWith("Honeypot.") || result.path === "Roles.Verified" ? await require("../../services/honeypotWarning").syncWarning(interaction.guild) : "";
                 if (result.path === "Bump.Channel") await require("../../services/bumpReminder").tick(_client);
                 return send(interaction, "editReply", {
                     content:
                         tr("✅ **{0}** is opgeslagen voor alleen deze Discord-server.\n", result.path) +
-                        tr("Nieuwe waarde: {0}", displayValue(result.value)),
+                        tr("Nieuwe waarde: {0}", displayValue(result.value)) + warningNote,
                     flags: MessageFlags.Ephemeral
                 });
             } catch (error) {
@@ -196,11 +197,12 @@ module.exports = {
             await interaction.deferReply({ flags: MessageFlags.Ephemeral });
             try {
                 const result = settings.resetValue(guildId, path);
+                const warningNote = result.path.startsWith("Honeypot.") || result.path === "Roles.Verified" ? await require("../../services/honeypotWarning").syncWarning(interaction.guild) : "";
                 if (result.path === "Bump.Channel") await require("../../services/bumpReminder").tick(_client);
                 return send(interaction, "editReply", {
                     content:
                         tr("✅ **{0}** is hersteld naar de veilige standaard.\n", result.path) +
-                        tr("Waarde: {0}", displayValue(result.value)),
+                        tr("Waarde: {0}", displayValue(result.value)) + warningNote,
                     flags: MessageFlags.Ephemeral
                 });
             } catch (error) {
@@ -221,11 +223,12 @@ module.exports = {
 
         await interaction.deferReply({ flags: MessageFlags.Ephemeral });
         settings.resetGuild(guildId);
+        const warningNote = await require("../../services/honeypotWarning").syncWarning(interaction.guild);
         await require("../../services/bumpReminder").tick(_client);
         return send(interaction, "editReply", {
             content:
                 tr("✅ Alle instellingen voor deze Discord-server zijn teruggezet. ") +
-                tr("Kanaal- en rol-ID's zijn leeggemaakt; stel ze opnieuw in met `/config instellen`."),
+                tr("Kanaal- en rol-ID's zijn leeggemaakt; stel ze opnieuw in met `/config instellen`.") + warningNote,
             flags: MessageFlags.Ephemeral
         });
     }

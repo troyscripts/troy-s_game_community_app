@@ -1,3 +1,11 @@
+## 3.0.6 — 21 oktober 2026
+
+- Honeypot-kanaal per server via /config: direct bannen of zeven dagen time-out bij nieuwe berichten, ook bij afbeeldingen/bijlagen en in threads.
+- Logmelding met blijvende ophefknop, actuele rechtencontrole en bescherming tegen het opheffen van later gewijzigde straffen.
+- Standaard uitgeschakeld; nieuw onderdeel Honeypot met Enabled, Channel, Action, LogChannel en Mention. Bestaande configuratie blijft behouden.
+- Automatische tweetalige kanaalwaarschuwing met instelbare mention (geverifieerde rol, eigen rol, everyone, here of geen); bijwerken zonder dubbele berichten of herhaalde pings.
+- README en Nederlandse/Engelse handleidingen bijgewerkt; tests voor configuratie, sancties, logging, waarschuwingen en knopbeveiliging toegevoegd.
+
 ## 3.0.5 — 21 oktober 2026
 
 - Makelaar: vijf keukenupgrades (ieder ×2 XP) en vijf woningverbeteringen (ieder ×2 verdiend inkomen).
@@ -5,6 +13,7 @@
 - Alleen koopwoningen; upgrades blijven bij resets behouden en worden bij verhuizing/verkoop verwijderd.
 - Prijspercentage en upgradenamen instelbaar in config/housingUpgrades.js.
 - Automatische databasemigratie, afzonderlijke XP/inkomenberekening, Nederlandse en Engelse meldingen.
+- README en Nederlandse/Engelse handleiding bijgewerkt met upgradeprijzen, commando’s, bonussen en verkoopregels.
 
 ## 3.0.4 — 20 oktober 2026
 
