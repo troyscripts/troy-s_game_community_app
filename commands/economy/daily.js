@@ -1,0 +1,162 @@
+const { tr } = require("../../utils/localization");
+const { replyAfterDefer } = require("../../utils/deferredReply");
+const { applyRewardBonus, rewardMultiplier } = require("../../services/rewardBonus");
+const { MessageFlags } = require("../../utils/discord");
+const {
+    SlashCommandBuilder,
+    EmbedBuilder
+} = require("../../utils/discord");
+
+const config =
+    require("../../config/config");
+
+const economy =
+    require("../../database/economy");
+
+
+module.exports = {
+
+
+    data: new SlashCommandBuilder()
+
+        .setName("daily")
+
+        .setDescription(
+            "Claim je dagelijkse beloning."
+        ),
+
+
+
+    category: "Economy",
+
+
+    guildOnly: true,
+
+
+
+    async execute(client, interaction) {
+
+        // Bevestig vóór databasewerk; bij een mislukte bevestiging geen mutaties.
+        await interaction.deferReply();
+
+
+        const userId =
+            interaction.user.id;
+
+
+        const guildId =
+            interaction.guild.id;
+
+
+
+        const cooldownTime =
+            (Number(config.Economy.DailyCooldownHours) || 24) * 60 * 60 * 1000;
+
+
+
+        const economyUser = economy.getOrCreate(userId, guildId);
+        const remaining = economyUser.last_daily + cooldownTime - Date.now();
+
+        if (remaining > 0) {
+
+
+                const hours =
+                    Math.floor(
+                        remaining / 3600000
+                    );
+
+
+                const minutes =
+                    Math.ceil(
+
+                        (remaining % 3600000) / 60000
+
+                    );
+
+
+
+                return replyAfterDefer(interaction, {
+
+                    content:
+                    tr("⏳ Je hebt je daily reward al gebruikt.\nProbeer opnieuw over **{0} uur en {1} minuten**.", hours, minutes),
+
+                    flags: MessageFlags.Ephemeral
+
+                });
+
+
+        }
+
+
+
+        const reward = applyRewardBonus(Math.floor(Math.random() * 501) + 500, interaction.member);
+
+
+
+        economy.addWallet(
+
+            userId,
+
+            guildId,
+
+            reward
+
+        );
+
+
+
+        economy.setLastDaily(userId, guildId, Date.now());
+
+
+
+        const embed =
+            new EmbedBuilder()
+
+
+                .setColor(
+                    config.Bot.Color
+                )
+
+
+                .setTitle(
+                    "🎁 Daily Reward"
+                )
+
+
+                .setDescription(
+
+                    tr("Je hebt je dagelijkse beloning ontvangen!\n\n") +
+
+                    tr("💰 Je kreeg **€{0}**", reward) +
+                    (rewardMultiplier(interaction.member) > 1 ? tr("\n✨ {0}× beloning inclusief je VIP-/verjaardags- en woningbonus.", rewardMultiplier(interaction.member)) : "")
+
+                )
+
+
+                .setTimestamp()
+
+
+                .setFooter({
+
+                    text:
+                    config.Bot.Footer
+
+                });
+
+
+
+        return replyAfterDefer(interaction, {
+
+            embeds:[
+
+                embed
+
+            ]
+
+        });
+
+
+    }
+
+
+};

@@ -1,0 +1,28 @@
+const assert = require('node:assert/strict');
+const {Collection} = require('discord.js');
+const library = require('discord-html-transcripts');
+const bounded = require('../services/boundedTranscript');
+const {acquire} = require('../services/interactionThrottle');
+(async()=>{
+ const release=acquire('one');assert.ok(release);assert.equal(acquire('one'),null);
+ const other=acquire('other');assert.ok(other);other();release();assert.equal(acquire('one'),null);
+ let rendered=0;
+ const real=library.generateFromMessages;
+ library.generateFromMessages=async(messages,ch,options)=>{rendered++;assert.equal(options.saveImages,false);assert.equal(options.hydrate,false);return Buffer.from('safe');};
+ let number=0;
+ const large={messages:{fetch:async()=>new Collection(Array.from({length:100},()=>{const id=String(++number);return [id,{id,toJSON:()=>({content:'test'})}];}))}};
+ await assert.rejects(bounded.createTranscript(large),/5000/);assert.equal(rendered,0);
+ const oversized={messages:{fetch:async()=>new Collection([['1',{id:'1',toJSON:()=>({content:'x'.repeat(8*1024*1024)})}]])}};
+ await assert.rejects(bounded.createTranscript(oversized),/8 MB/);assert.equal(rendered,0);
+ let complete;
+ const pending=bounded.createTranscript({messages:{fetch:()=>new Promise(resolve=>{complete=resolve;})}},{returnType:'buffer'});
+ await assert.rejects(bounded.createTranscript(large),/al een transcript/);
+ complete(new Collection());assert.equal((await pending).toString(),'safe');
+ library.generateFromMessages=async()=>Buffer.alloc(8*1024*1024+1);
+ await assert.rejects(bounded.createTranscript({messages:{fetch:async()=>new Collection()}}),/groter dan 8 MB/);
+ library.generateFromMessages=real;
+ const channel={id:'123',name:'security-test',type:0,isThread:()=>false,isVoiceBased:()=>false,isDMBased:()=>false,guild:{name:'Test',iconURL:()=>null},messages:{fetch:async()=>new Collection()}};
+ const html=await bounded.createTranscript(channel,{returnType:'buffer'});
+ assert.ok(html.length>100);assert.match(html.toString(),/html/i);
+ console.log('PASS: component cooldown/concurrency; transcript message, byte and output caps; export concurrency; real HTML renderer.');
+})().catch(e=>{console.error(e);process.exitCode=1;});

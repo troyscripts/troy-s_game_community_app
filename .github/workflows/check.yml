@@ -1,0 +1,26 @@
+name: Botcontroles
+on: [push, pull_request]
+permissions:
+  contents: read
+concurrency:
+  group: bot-checks-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  check:
+    name: Node.js ${{ matrix.node }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['22', '24']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - name: Schone installatie
+        run: npm ci --no-audit --no-fund
+      - name: Code, versies en regressietests
+        run: npm run ci
