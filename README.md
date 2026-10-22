@@ -1,4 +1,8 @@
-# Troy’s Game Community Bot — 3.1.3
+# Troy’s Game Community Bot — 3.1.4
+
+## Nieuw in 3.1.4: automatische controles
+
+GitHub Actions controleert iedere push en pull request op Node.js 22 en 24: schone installatie, code/bestanden, versies, database/commandos en alle regressietests. Lokaal: `npm ci` gevolgd door `npm run ci`. Zie CONTROLES.md.
 
 ## Nieuw in 3.1.3: softmoderatie
 

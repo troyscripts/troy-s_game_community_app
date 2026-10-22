@@ -1,0 +1,12 @@
+Troy's Game Community Bot 3.1.4 — volledige versie
+
+1. Maak een back-up van je huidige bot en database.
+2. GitHub Desktop: kopieer de INHOUD van troy-s_game_community_app naar de root van je lokale repository. package.json en index.js staan direct in die root.
+3. Neem de .github-map mee en behoud de bestaande .git-map. Commit en push zelf.
+4. Hosting: stop de bot, behoud je .env, database en eigen configuratie. Vervang bronbestanden, voer npm ci uit en herstart.
+5. Geen nieuwe configuratievelden, geen databaseschemaverhoging en geen herregistratie van commands nodig voor deze update.
+
+Controleer lokaal in een schone testkopie met npm run ci. Zie CONTROLES.md.
+Deze update wijzigt kwaliteitscontroles en verouderde testfixtures; spelregels en moderatiegedrag blijven gelijk.
+
+Het volledige pakket bevat geen .env, node_modules, .git, databases of logs.

@@ -1,3 +1,12 @@
+## 3.1.4 — Automatische kwaliteitscontroles
+
+- GitHub Actions voert bij iedere push en pull request een schone npm ci-installatie en alle controles uit op Node.js 22 en 24.
+- Eén opdracht voor alle regressietests, met aparte processen en een tijdslimiet per testbestand.
+- Controle op versienummers in package.json, package-lock.json, configuratie, README en changelog.
+- Opstartonderdelen offline getest: tijdelijke SQLite-database en geldige, unieke slashcommands zonder Discord-login.
+- Verouderde testfixtures bijgewerkt voor vertaling, notify-instellingen en het huidige aantal commands.
+- Geen gewijzigde botinstellingen, databaseschema of spelregels. Zie UPDATE-3.1.4.txt.
+
 ## 3.1.2 — Beveiligingsupdate
 
 - Knoppen en formulieren: maximaal één actie tegelijk per gebruiker per server, met twee seconden wachttijd. Afgewezen herhaalklikken vullen het logkanaal niet.
