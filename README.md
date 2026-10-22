@@ -1,4 +1,8 @@
-# Troy’s Game Community Bot — 3.1.2
+# Troy’s Game Community Bot — 3.1.3
+
+## Nieuw in 3.1.3: softmoderatie
+
+Alle kanalen, uitzondering voor staffrollen, waarschuwing en 24 uur time-out bij herhaling. Staff kan beoordelen en een Nederlandse einddatum/tijd invoeren. Activeer per server volgens [SOFTMODERATIE.md](SOFTMODERATIE.md).
 
 ## Nieuw in 3.1.2: beveiligingsupdate
 

@@ -33,6 +33,8 @@ module.exports = {
 
         if (await require("../services/honeypot").handleMessage(message)) return;
 
+        require("../services/softModeration").enqueue(message);
+
         const countingResult = await processCountingMessage(message);
         if (countingResult.handled) {
             channelState.setChannelState(message.channel.id, message.guild.id, message.id);

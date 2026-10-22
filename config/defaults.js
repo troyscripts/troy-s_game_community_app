@@ -65,6 +65,18 @@ module.exports = {
         Channel: ""
     },
 
+    SoftModeration: {
+        Enabled: false,
+        LogChannel: "",
+        TimeoutHours: 24,
+        RepeatWindowHours: 24,
+        MinConfidence: 0.9,
+        SpamMessages: 6,
+        SpamWindowSeconds: 10,
+        MentionLimit: 6,
+        QueueLimit: 200
+    },
+
     Honeypot: {
         Enabled: false,
         Channel: "",

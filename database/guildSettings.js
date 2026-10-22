@@ -16,6 +16,7 @@ const EDITABLE_ROOTS = [
     "Store",
     "Logging",
     "Honeypot",
+    "SoftModeration",
     "Tickets",
     "Levels",
     "Economy",
@@ -327,6 +328,15 @@ function parseValue(path, rawValue, currentValue) {
         if (!language) throw new Error(tr("Gebruik nl (Nederlands), en (Engels) of both (beide talen)."));
         return language;
     }
+    if (path.startsWith("SoftModeration.")) {
+        const ranges = { TimeoutHours: [1, 672], RepeatWindowHours: [1, 720], MinConfidence: [0.8, 1], SpamMessages: [3, 50], SpamWindowSeconds: [2, 120], MentionLimit: [3, 50], QueueLimit: [10, 1000] };
+        const key = path.split(".")[1];
+        if (ranges[key]) {
+            const n = Number(raw); const [min, max] = ranges[key];
+            if (!Number.isFinite(n) || n < min || n > max || (key !== "MinConfidence" && !Number.isInteger(n))) throw new Error(`Gebruik een getal tussen ${min} en ${max}.`);
+            return n;
+        }
+    }
     if (path === "Honeypot.Mention") {
         const aliases = {verified:"verified",geverifieerd:"verified",none:"none",geen:"none",uit:"none",everyone:"everyone","@everyone":"everyone",here:"here","@here":"here"};
         const value = aliases[raw.toLowerCase()] || extractDiscordId(raw);
@@ -398,7 +408,7 @@ function parseValue(path, rawValue, currentValue) {
         return values;
     }
 
-    const isIdPath = /^(Notify\.PingRole[1-4]|Roles\.[^.]+|SelfRoles\.[^.]+|Store\.VIPRole|Bump\.Channel|Honeypot\.(Channel|LogChannel)|Logging\.Channel|Tickets\.(Category|LogChannel|ThreadLogChannel)|Levels\.Roles\.\d+|Counting\.Channel|Birthday\.(Role|Channel)|Welcome\.(Channel|AutoRole)|Leave\.Channel|StartupReport\.Channel)$/.test(path);
+    const isIdPath = /^(Notify\.PingRole[1-4]|Roles\.[^.]+|SelfRoles\.[^.]+|SoftModeration\.LogChannel|Store\.VIPRole|Bump\.Channel|Honeypot\.(Channel|LogChannel)|Logging\.Channel|Tickets\.(Category|LogChannel|ThreadLogChannel)|Levels\.Roles\.\d+|Counting\.Channel|Birthday\.(Role|Channel)|Welcome\.(Channel|AutoRole)|Leave\.Channel|StartupReport\.Channel)$/.test(path);
     if (isIdPath) {
         if (["leeg", "geen", "uit", "empty", "none", "off"].includes(raw.toLowerCase())) return "";
         const id = extractDiscordId(raw);

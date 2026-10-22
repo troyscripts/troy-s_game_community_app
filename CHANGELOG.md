@@ -6,6 +6,17 @@
 - Transcriptbibliotheek blijft op de werkende 3.2.0; onderliggende Undici vastgezet op 6.29.1 en overige getroffen dependencies bijgewerkt.
 - Stop de bot, maak een back-up, vervang de updatebestanden, voer `npm ci` uit en herstart. Geen configuratiewijziging of commandoregistratie nodig. Zie `UPDATE-3.1.2.txt`.
 
+## 3.1.3 — Softmoderatie
+
+- Softmoderatie van nieuwe en bewerkte tekstberichten in alle toegankelijke kanalen, tickets en threads, zonder kanaaluitzonderingen.
+- Ingestelde staffrollen, beheerrollen en owners zijn uitgezonderd.
+- Eerste duidelijke overtreding: vriendelijke waarschuwing. Herhaling binnen standaard 24 uur: standaard 24 uur time-out.
+- Staffmelding met berichttekst, reden, directe berichtlink en knoppen Goedkeuren, Afkeuren en Eindtijd aanpassen.
+- Eindtijd instelbaar als DD-MM-JJJJ UU:MM in Nederlandse tijd; controle op zomer-/wintertijd en Discord-limiet.
+- Afgekeurde overtredingen tellen niet meer mee. Alleen een nog overeenkomende bot-time-out wordt opgeheven.
+- AI-beoordeling via bestaande Groq-verbinding; twijfelgevallen gaan zonder straf naar staff. Lokale controles op spam en overmatig taggen.
+- Instellingen per server via /config, duurzame moderatiezaken in de database. Zie SOFTMODERATIE.md voor activering.
+
 ## 3.1.1 — 21 oktober 2026
 
 - Ticketclaims en toegangsacties gebruiken gepagineerde REST-ledenlijsten in plaats van gateway-opcode 8, met gedeelde gelijktijdige aanvragen.
