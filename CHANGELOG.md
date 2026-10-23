@@ -1,3 +1,13 @@
+## 3.1.5 — Ticket sluiten bij ontbrekende staffthread
+
+- Privéoverleg wordt pas aangemaakt bij Staffoverleg. Tickets zonder staffthread kunnen sluiten zonder staffthread-logkanaal.
+
+- Een verwijderde staffthread blokkeert sluiten niet meer: de ontbrekende archivering wordt lokaal en in het aparte stafflog vastgelegd voordat het ticketgesprek wordt geëxporteerd.
+- Ontbrekende logkanalen en onvoldoende toegang blijven sluiten blokkeren en noemen nu het betrokken kanaal-ID en de Discord-foutcode.
+- Kanaalgegevens worden opnieuw opgehaald om verouderde cacheverwijzingen te vermijden.
+- Een al verwijderd ticketkanaal geldt na succesvolle transcriptopslag als verwijderd.
+- Technische sluitfouten vermelden de verwerkingsstap. Geen instellingen of databaseschema gewijzigd.
+
 ## 3.1.4 — Automatische kwaliteitscontroles
 
 - GitHub Actions voert bij iedere push en pull request een schone npm ci-installatie en alle controles uit op Node.js 22 en 24.

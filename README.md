@@ -1,4 +1,14 @@
-# Troy’s Game Community Bot — 3.1.4
+# Troy’s Game Community Bot — 3.1.5
+
+## Nieuw in 3.1.5: tickets zonder staffoverleg sluiten
+
+Nieuwe tickets krijgen pas een privéthread wanneer staff **Staffoverleg** opent.
+Zonder opgeslagen staffthread is geen `Tickets.ThreadLogChannel` vereist om te
+sluiten. Een verwijderde opgeslagen staffthread wordt als ontbrekend vastgelegd
+in het aparte stafflog en lokaal; daarna kan het ticketgesprek worden bewaard
+en het ticket worden gesloten. Ontbrekende botrechten blijven een blokkade.
+Zie `UPDATE-3.1.5.txt`. Er zijn geen nieuwe instellingen of slashcommands.
+
 
 ## Nieuw in 3.1.4: automatische controles
 

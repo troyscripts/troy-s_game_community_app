@@ -15,7 +15,6 @@ const tickets = require("../database/tickets");
 const logger = require("../utils/logger");
 const panels = require("../database/ticketPanels");
 const creating = new Set();
-const { createStaffThread } = require("../services/ticketDiscussion");
 const { selectStaffRoles } = require("../services/ticketStaff");
 
 function safeChannelName(username) {
@@ -132,8 +131,8 @@ module.exports = {
                 category
             });
             await channel.setName(`ticket-${ticketNumber}-${safeChannelName(category)}-${safeChannelName(interaction.user.username)}`);
-            const thread = await createStaffThread(channel);
-            tickets.setStaffThread(channel.id, thread.id, staffRoles);
+            // Create the private thread only when staff opens Staffoverleg.
+            tickets.setStaffThread(channel.id, null, staffRoles);
         } catch (error) {
             if (channel) {
                 tickets.deleteTicket(channel.id);
