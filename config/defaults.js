@@ -62,7 +62,12 @@ module.exports = {
         Console: true,
         Files: true,
         MessageDelete: true,
-        Channel: ""
+        Channel: "", // standaard; lege categoriekanalen gebruiken dit kanaal
+        RetentionDays: 30,
+        MaxRecords: 50000,
+        QueueLimit: 5000,
+        Channels: {Messages: "", MessageEdits: "", MessageDeletes: "", Reactions: "", Members: "", Roles: "", Channels: "", Threads: "", Voice: "", Moderation: "", Invites: "", Server: "", Expressions: "", ScheduledEvents: "", Integrations: "", AutoMod: "", Commands: "", Audit: "", Presence: "", Typing: "", Polls: ""},
+        Events: {Messages: true, MessageEdits: true, MessageDeletes: true, Reactions: true, Members: true, Roles: true, Channels: true, Threads: true, Voice: true, Moderation: true, Invites: true, Server: true, Expressions: true, ScheduledEvents: true, Integrations: true, AutoMod: true, Commands: true, Audit: true, Presence: true, Typing: true, Polls: true}
     },
 
     SoftModeration: {
@@ -71,6 +76,10 @@ module.exports = {
         TimeoutHours: 24,
         RepeatWindowHours: 24,
         MinConfidence: 0.9,
+        AdultContent: true, // expliciet seksuele inhoud: verwijderen + geregistreerde warn
+        AdultMinConfidence: 0.95,
+        ScanImages: true,
+        VisionModel: "qwen/qwen3.8-27b",
         SpamMessages: 6,
         SpamWindowSeconds: 10,
         MentionLimit: 6,

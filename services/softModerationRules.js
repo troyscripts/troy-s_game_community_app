@@ -25,6 +25,6 @@ function parseEnd(value,now=Date.now()) {
 function verdict(text) {
  const obj=JSON.parse(text);
  if(!['ok','violation','review'].includes(obj.verdict) || typeof obj.confidence!=='number' || obj.confidence<0 || obj.confidence>1 || typeof obj.reason!=='string') throw Error('Ongeldig moderatieantwoord');
- return {verdict:obj.verdict,confidence:obj.confidence,reason:obj.reason.slice(0,500)};
+ return {verdict:obj.verdict,confidence:obj.confidence,reason:obj.reason.slice(0,500),category:obj.category==='adult'?'adult':'other'};
 }
 module.exports={isStaff,parseEnd,verdict};

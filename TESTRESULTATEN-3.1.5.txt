@@ -1,8 +1,0 @@
-23 oktober 2026 — bot 3.1.5
-
-npm run ci geslaagd: syntax/importcontrole, versiecontrole, 17/17 testbestanden.
-Gerichte regressies: sluiten zonder thread en zonder staffloginstelling;
-thread pas aanmaken via Staffoverleg; verwijderde thread met auditmelding;
-ontbrekend logkanaal; ontbrekende rechten; mislukte logverzending;
-al verwijderd ticketkanaal na transcriptopslag.
-Geen live Discord-test uitgevoerd. Geen database of server van de gebruiker gewijzigd.

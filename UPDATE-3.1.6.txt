@@ -1,0 +1,15 @@
+UPDATE 3.1.6 — Discordlogs en 18+-moderatie
+
+1. Stop de bot en maak een back-up.
+2. Vervang alle bronbestanden en submappen; behoud .env, eigen configuratie,
+   database en transcripts. Neem de NIEUWE config/defaults.js ook over;
+   zet eventuele eigen bestandsaanpassingen daarin terug. Serverinstellingen
+   in SQLite blijven bewaard. Geen dependencies gewijzigd.
+3. Voer npm run deploy uit voor /logs en herstart.
+4. Stel Logging.Channel en eventueel Logging.Channels.<categorie> in via /config.
+5. Gebruik /logs status en /logs test.
+6. Stel SoftModeration.LogChannel in en zet SoftModeration.Enabled aan voor de
+   18+-controle. GROQ_API_KEY en geschikte botrechten zijn vereist.
+
+Alle nieuwe instellingen en beperkingen staan in LOGGING-HANDLEIDING.md.
+Tickets, economie en bestaande instellingen worden niet gereset.

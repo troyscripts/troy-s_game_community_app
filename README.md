@@ -1,4 +1,17 @@
-# Troy’s Game Community Bot — 3.1.5
+# Troy’s Game Community Bot — 3.1.6
+
+## Nieuw in 3.1.6: uitgebreide logs en 18+-moderatie
+
+Stel één standaardlogkanaal en 21 afzonderlijke categoriekanalen in via `/config`.
+`/logs status`, `/logs test` en `/logs opnieuw` helpen bij het controleren en
+herstellen van de opgeslagen logwachtrij. De 18+-controle kan duidelijk herkende
+expliciet seksuele tekst en ondersteunde afbeeldingsbijlagen verwijderen en één
+registreerbare warn geven. Geen straf bij twijfel of een API-fout.
+
+Zie **LOGGING-HANDLEIDING.md** voor alle instellingen, botrechten, intenties,
+Groq-afbeeldingsanalyse, staffuitzonderingen en grenzen. Registreer `/logs` met
+`npm run deploy`. Er zijn geen gewijzigde dependencies.
+
 
 ## Nieuw in 3.1.5: tickets zonder staffoverleg sluiten
 

@@ -14,6 +14,6 @@ module.exports = {
         if (config.Leave?.Enabled) {
             if (await sendEmbed(member.guild, config.Leave.Channel, embed)) delivered = config.Leave.Channel;
         }
-        await sendLog(member.guild, embed, delivered);
+        // De centrale Discordlogger verwerkt het ledenlog.
     }
 };

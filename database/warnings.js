@@ -6,6 +6,9 @@ function addWarning({ userId, guildId, moderatorId, reason }) {
         VALUES (?, ?, ?, ?)
     `).run(userId, guildId, moderatorId, reason);
 
+    try { require('../services/discordAudit').enqueue({id:guildId}, 'Moderation', 'Waarschuwing geregistreerd',
+        `Warn ${result.lastInsertRowid}; gebruiker ${userId}; moderator ${moderatorId}`, [{name:'Reden',value:reason}]); }
+    catch(error) { require('../utils/logger').warn(`Warnlog mislukt: ${error.message}`); }
     return result.lastInsertRowid;
 }
 

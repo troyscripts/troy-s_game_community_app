@@ -1,3 +1,12 @@
+## 3.1.6 — Uitgebreide Discordlogs en 18+-moderatie
+
+- 21 instelbare logcategorieën, centrale fallback, schakelaars per categorie en aparte instellingen per server.
+- SQLite-verzendwachtrij met herstartbehoud, vijf verzendpogingen, bewaartermijn en limieten. /logs status, test en opnieuw toegevoegd.
+- Logs voor berichten, wijzigingen, verwijderingen, reacties, leden, rollen, kanalen, threads, voice, bans, uitnodigingen, serverinstellingen, expressies, evenementen, integraties, AutoMod, auditacties, interacties, polls, typen en optionele presence.
+- 18+-controle via Groq voor tekst en ondersteunde afbeeldingsbijlagen: duidelijke overtredingen verwijderen en één geregistreerde warn geven. Staff kan die afkeuren en intrekken. API-fouten en twijfel geven geen automatische straf.
+- Staffuitzonderingen blijven behouden. Video/GIF en niet-ondersteunde bijlagen gaan naar handmatige beoordeling; geen garantie dat alle 18+-inhoud wordt herkend.
+- Nieuwe log-/moderatie-instellingen worden met bestaande serverconfiguraties samengevoegd; geen instellingenreset. Zie LOGGING-HANDLEIDING.md en UPDATE-3.1.6.txt.
+
 ## 3.1.5 — Ticket sluiten bij ontbrekende staffthread
 
 - Privéoverleg wordt pas aangemaakt bij Staffoverleg. Tickets zonder staffthread kunnen sluiten zonder staffthread-logkanaal.

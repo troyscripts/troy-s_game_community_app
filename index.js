@@ -14,12 +14,25 @@ const intents = [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMembers,
     GatewayIntentBits.GuildModeration,
-    GatewayIntentBits.GuildMessages
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.GuildMessageReactions,
+    GatewayIntentBits.GuildVoiceStates,
+    GatewayIntentBits.GuildInvites,
+    GatewayIntentBits.GuildExpressions,
+    GatewayIntentBits.GuildIntegrations,
+    GatewayIntentBits.GuildWebhooks,
+    GatewayIntentBits.GuildScheduledEvents,
+    GatewayIntentBits.AutoModerationConfiguration,
+    GatewayIntentBits.AutoModerationExecution,
+    GatewayIntentBits.GuildMessageTyping,
+    GatewayIntentBits.GuildMessagePolls
 ];
 
 if (process.env.MESSAGE_CONTENT_INTENT !== "false") {
     intents.push(GatewayIntentBits.MessageContent);
 }
+
+if (process.env.PRESENCE_INTENT === 'true') intents.push(GatewayIntentBits.GuildPresences);
 
 const client = new Client({
     intents,
@@ -27,7 +40,8 @@ const client = new Client({
         Partials.Channel,
         Partials.Message,
         Partials.User,
-        Partials.GuildMember
+        Partials.GuildMember,
+        Partials.Reaction
     ]
 });
 
@@ -71,6 +85,7 @@ async function start() {
     databaseManager = require("./database/manager");
     databaseManager.initialize();
 
+    require("./services/discordAudit").install(client);
     require("./handlers/eventHandler")(client);
     require("./handlers/commandHandler")(client);
     require("./handlers/buttonHandler")(client);
@@ -79,6 +94,7 @@ async function start() {
 
     await client.login(process.env.TOKEN);
     databaseManager.startBackupSchedule();
+    require("./services/discordAudit").start(client);
     started = true;
     return client;
 }
@@ -98,6 +114,7 @@ async function shutdown(signal) {
         require("./services/connectionMonitor").stopConnectionMonitor();
         await require("./services/notifyService").stopNotify();
         client.destroy();
+        require("./services/discordAudit").stop();
         databaseManager?.close();
     } catch (error) {
         logger.error(`Fout tijdens afsluiten: ${error.stack || error}`);
@@ -112,6 +129,7 @@ if (require.main === module) {
     start().catch((error) => {
         logger.error("Bot kon niet worden gestart:");
         logger.error(error.stack || error);
+        require("./services/discordAudit").stop();
         databaseManager?.close();
         process.exitCode = 1;
     });

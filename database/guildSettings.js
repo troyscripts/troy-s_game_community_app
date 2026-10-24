@@ -102,6 +102,7 @@ function createCleanServerConfig() {
     clean.Bump.Channel = "";
     clean.Store.VIPRole = "";
     clean.Logging.Channel = "";
+    for (const key of Object.keys(clean.Logging.Channels)) clean.Logging.Channels[key] = "";
     clean.Honeypot.Channel = "";
     clean.Honeypot.LogChannel = "";
     clean.Honeypot.Enabled = false;
@@ -328,12 +329,18 @@ function parseValue(path, rawValue, currentValue) {
         if (!language) throw new Error(tr("Gebruik nl (Nederlands), en (Engels) of both (beide talen)."));
         return language;
     }
+    if (["Logging.RetentionDays", "Logging.MaxRecords", "Logging.QueueLimit"].includes(path)) {
+        const ranges = {"Logging.RetentionDays":[1,365],"Logging.MaxRecords":[100,100000],"Logging.QueueLimit":[10,10000]};
+        const [min,max]=ranges[path], n=Number(raw);
+        if(!Number.isInteger(n)||n<min||n>max)throw new Error(`Gebruik een geheel getal tussen ${min} en ${max}.`);
+        return n;
+    }
     if (path.startsWith("SoftModeration.")) {
-        const ranges = { TimeoutHours: [1, 672], RepeatWindowHours: [1, 720], MinConfidence: [0.8, 1], SpamMessages: [3, 50], SpamWindowSeconds: [2, 120], MentionLimit: [3, 50], QueueLimit: [10, 1000] };
+        const ranges = { TimeoutHours: [1, 672], RepeatWindowHours: [1, 720], MinConfidence: [0.8, 1], AdultMinConfidence: [0.9, 1], SpamMessages: [3, 50], SpamWindowSeconds: [2, 120], MentionLimit: [3, 50], QueueLimit: [10, 1000] };
         const key = path.split(".")[1];
         if (ranges[key]) {
             const n = Number(raw); const [min, max] = ranges[key];
-            if (!Number.isFinite(n) || n < min || n > max || (key !== "MinConfidence" && !Number.isInteger(n))) throw new Error(`Gebruik een getal tussen ${min} en ${max}.`);
+            if (!Number.isFinite(n) || n < min || n > max || (!["MinConfidence","AdultMinConfidence"].includes(key) && !Number.isInteger(n))) throw new Error(`Gebruik een getal tussen ${min} en ${max}.`);
             return n;
         }
     }
@@ -408,7 +415,7 @@ function parseValue(path, rawValue, currentValue) {
         return values;
     }
 
-    const isIdPath = /^(Notify\.PingRole[1-4]|Roles\.[^.]+|SelfRoles\.[^.]+|SoftModeration\.LogChannel|Store\.VIPRole|Bump\.Channel|Honeypot\.(Channel|LogChannel)|Logging\.Channel|Tickets\.(Category|LogChannel|ThreadLogChannel)|Levels\.Roles\.\d+|Counting\.Channel|Birthday\.(Role|Channel)|Welcome\.(Channel|AutoRole)|Leave\.Channel|StartupReport\.Channel)$/.test(path);
+    const isIdPath = /^(Notify\.PingRole[1-4]|Roles\.[^.]+|SelfRoles\.[^.]+|SoftModeration\.LogChannel|Store\.VIPRole|Bump\.Channel|Honeypot\.(Channel|LogChannel)|Logging\.(Channel|Channels\.[^.]+)|Tickets\.(Category|LogChannel|ThreadLogChannel)|Levels\.Roles\.\d+|Counting\.Channel|Birthday\.(Role|Channel)|Welcome\.(Channel|AutoRole)|Leave\.Channel|StartupReport\.Channel)$/.test(path);
     if (isIdPath) {
         if (["leeg", "geen", "uit", "empty", "none", "off"].includes(raw.toLowerCase())) return "";
         const id = extractDiscordId(raw);

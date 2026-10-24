@@ -28,6 +28,6 @@ module.exports = {
         if (config.Welcome?.Enabled) {
             if (await sendEmbed(member.guild, config.Welcome.Channel, embed)) delivered = config.Welcome.Channel;
         }
-        await sendLog(member.guild, embed, delivered);
+        // De centrale Discordlogger verwerkt het ledenlog.
     }
 };
