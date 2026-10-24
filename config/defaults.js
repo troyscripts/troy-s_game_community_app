@@ -45,6 +45,42 @@ module.exports = {
     // Aparte tijdelijke VIP-rol voor de economywinkel; per server via /config.
     Store: { VIPRole: "" },
 
+    // Internetradio: per server instelbaar via /config; zenders ook via /radio instellen.
+    Radio: {
+        Enabled: true, // true = starten toegestaan; false = geen nieuwe starts/volumewijzigingen
+        DefaultVolume: 30, // 0–100 procent; bij iedere start of zenderwissel
+        EmptySeconds: 60, // 5–3600 seconden wachten nadat de laatste menselijke luisteraar vertrekt
+        Stations: {
+            // Name: zichtbare naam (max. 80 tekens). Url: directe HTTP(S) MP3/AAC-stream.
+            // Lege Url schakelt het zendernummer uit. Geen website, YouTube-link of M3U/PLS.
+            Station1: { Name: "Radio 538", Url: "https://playerservices.streamtheworld.com/api/livestream-redirect/RADIO538.mp3" },
+            Station2: { Name: "538 Non Stop", Url: "https://playerservices.streamtheworld.com/api/livestream-redirect/TLPSTR09.mp3" },
+            Station3: { Name: "538 Dance Department", Url: "https://playerservices.streamtheworld.com/api/livestream-redirect/TLPSTR01.mp3" },
+            Station4: { Name: "Qmusic", Url: "https://stream.qmusic.nl/qmusic/mp3" },
+            Station5: { Name: "Qmusic Nonstop", Url: "https://stream.qmusic.nl/nonstop/mp3" },
+            Station6: { Name: "Qmusic Thema", Url: "https://stream.qmusic.nl/thema/mp3" },
+            Station7: { Name: "Qmusic Top 40", Url: "https://stream.qmusic.nl/top40/mp3" },
+            Station8: { Name: "Qmusic Nederlandstalig", Url: "https://stream.qmusic.nl/nederlandstalig/mp3" },
+            Station9: { Name: "Qmusic 90s & 00s", Url: "https://stream.qmusic.nl/90s-00s/mp3" },
+            Station10: { Name: "NPO Radio 5", Url: "https://icecast.omroep.nl/radio5-bb-mp3" },
+            Station11: { Name: "NPO Klassiek", Url: "https://icecast.omroep.nl/radio4-bb-mp3" },
+            Station12: { Name: "", Url: "" },
+            Station13: { Name: "", Url: "" },
+            Station14: { Name: "", Url: "" },
+            Station15: { Name: "", Url: "" },
+            Station16: { Name: "", Url: "" },
+            Station17: { Name: "", Url: "" },
+            Station18: { Name: "", Url: "" },
+            Station19: { Name: "", Url: "" },
+            Station20: { Name: "", Url: "" },
+            Station21: { Name: "", Url: "" },
+            Station22: { Name: "", Url: "" },
+            Station23: { Name: "", Url: "" },
+            Station24: { Name: "", Url: "" },
+            Station25: { Name: "", Url: "" }
+        }
+    },
+
     StaffRoles: [],
 
     SelfRoles: { fivem: "", ats: "", minecraft: "", streams: "" },

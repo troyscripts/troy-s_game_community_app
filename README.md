@@ -1,4 +1,4 @@
-# Troy’s Game Community Bot — 3.1.6
+# Troy’s Game Community Bot — 3.1.7
 
 ## Nieuw in 3.1.6: uitgebreide logs en 18+-moderatie
 
@@ -378,3 +378,6 @@ Publicatie-instructies staan in [GITHUB-INSTALLATIE.md](GITHUB-INSTALLATIE.md).
 - `npm run prepare:github`: maak een openbare export zonder lokale botdata.
 
 Deze broncode is lokaal gecontroleerd. Er is geen live Discord-test uitgevoerd.
+
+## Internetradio
+Gebruik `/radio paneel` in de chat van je spraakkanaal. Kies een zender in de dropdown. Zie [RADIO-HANDLEIDING.md](RADIO-HANDLEIDING.md).

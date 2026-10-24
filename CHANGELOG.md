@@ -1,3 +1,12 @@
+## 3.1.7 — 2026-10-24
+- Internetradio: openbaar callchat-paneel met zenderdropdown, volume- en stopknoppen.
+- `/leave` stopt de audio en laat de bot het spraakkanaal verlaten.
+- Elf vooraf ingestelde zenders; maximaal 25 zenders per server, beheer via /radio instellen en /config.
+- Eén radioverbinding per server; bediening vanuit het actieve kanaal, beheerder kan overal stoppen.
+- Automatisch stoppen bij leeg kanaal, verwijdering, verbreken van verbinding en afsluiten.
+- Nederlandse, Engelse en tweetalige berichten; consolelogs met servernaam en ID.
+- Voice met DAVE, Opus en FFmpeg; minimaal Node.js 22.12.0 (Node 24 aanbevolen).
+
 ## 3.1.6 — Uitgebreide Discordlogs en 18+-moderatie
 
 - 21 instelbare logcategorieën, centrale fallback, schakelaars per categorie en aparte instellingen per server.

@@ -113,6 +113,7 @@ async function shutdown(signal) {
         require("./services/versionReporter").stopVersionReporter();
         require("./services/connectionMonitor").stopConnectionMonitor();
         await require("./services/notifyService").stopNotify();
+        require("./services/radioService").stopAll();
         client.destroy();
         require("./services/discordAudit").stop();
         databaseManager?.close();

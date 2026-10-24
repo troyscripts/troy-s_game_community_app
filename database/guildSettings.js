@@ -12,6 +12,7 @@ const EDITABLE_ROOTS = [
     "StaffRoles",
     "SelfRoles",
     "Notify",
+    "Radio",
     "Bump",
     "Store",
     "Logging",
@@ -373,6 +374,19 @@ function parseValue(path, rawValue, currentValue) {
         }
     }
 
+    if (path.startsWith("Radio.Stations.") && path.endsWith(".Url")) {
+        if (["leeg", "geen", "empty", "none", ""].includes(raw.toLowerCase())) return "";
+        return require("../services/radioService").validateUrl(raw);
+    }
+    if (path.startsWith("Radio.Stations.") && path.endsWith(".Name") && raw.length > 80)
+        throw new Error(tr("Gebruik maximaal 80 tekens voor de zendernaam."));
+    if (["Radio.DefaultVolume", "Radio.EmptySeconds"].includes(path)) {
+        const min = path.endsWith("EmptySeconds") ? 5 : 0;
+        const max = path.endsWith("EmptySeconds") ? 3600 : 100;
+        const n = Number(raw);
+        if (!Number.isInteger(n) || n < min || n > max) throw new Error(tr("Gebruik een heel getal tussen {0} en {1}.", min, max));
+        return n;
+    }
     if (typeof currentValue === "boolean") {
         const normalized = raw.toLowerCase();
         if (["ja", "yes", "true", "aan", "on", "1"].includes(normalized)) return true;

@@ -1,6 +1,6 @@
 {
   "name": "troys-gamecommunity-bot",
-  "version": "3.1.6",
+  "version": "3.1.7",
   "description": "Professionele Discord Bot voor Troy's Gamecommunity",
   "main": "index.js",
   "scripts": {
@@ -21,20 +21,24 @@
     "test:security": "node scripts/test-security.cjs",
     "test": "node scripts/run-tests.cjs",
     "check:versions": "node scripts/check-versions.cjs",
-    "ci": "npm run check && npm run check:versions && npm test"
+    "ci": "npm run check && npm run check:versions && npm test",
+    "test:radio": "node scripts/test-radio.cjs"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=22.12.0"
   },
   "dependencies": {
+    "@discordjs/voice": "0.19.2",
     "better-sqlite3": "^12.4.1",
     "chalk": "^4.1.2",
     "dayjs": "^1.11.13",
     "discord-html-transcripts": "3.2.0",
     "discord.js": "^14.21.0",
     "dotenv": "^17.2.2",
+    "ffmpeg-static": "5.3.0",
     "fs-extra": "^11.3.2",
-    "glob": "^11.0.3"
+    "glob": "^11.0.3",
+    "opusscript": "0.1.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.10"
