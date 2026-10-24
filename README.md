@@ -1,4 +1,4 @@
-# Troy’s Game Community Bot — 3.1.7
+# Troy’s Game Community Bot — 3.1.8
 
 ## Nieuw in 3.1.6: uitgebreide logs en 18+-moderatie
 

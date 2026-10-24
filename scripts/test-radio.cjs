@@ -13,7 +13,7 @@ const { Collection, ChannelType, PermissionsBitField, PermissionFlagsBits: P } =
 const childProcess = require('node:child_process');
 const originalSpawn = childProcess.spawn;
 let spawned = [], failConnection = false;
-childProcess.spawn = () => { const child = new EventEmitter(); child.stdout = new PassThrough(); child.kill = () => {child.killed = true;}; spawned.push(child); return child; };
+childProcess.spawn = () => { const child = new EventEmitter(); child.stdout = new PassThrough(); child.stderr = new PassThrough(); child.kill = () => {child.killed = true;}; spawned.push(child); return child; };
 const voicePath = require.resolve('@discordjs/voice');
 const oldVoice = require.cache[voicePath];
 require.cache[voicePath] = { id: voicePath, filename: voicePath, loaded: true, exports: {
@@ -41,16 +41,21 @@ function interaction(f, sub, args={}) {
 }
 (async()=>{
     try {
+        assert.ok(radio.ffmpegArgs('https://example.com/live').includes('http,https,tcp,tls,crypto,httpproxy'));
+        const secret = radio.safeDiagnostic('Error https://user:pass@example.com/live?token=hidden\n token=private');
+        assert.ok(!secret.includes('hidden') && !secret.includes('private') && !secret.includes('user:pass'));
         assert.equal(command.data.toJSON().options.length,7);
         assert.equal(require('../commands/community/leave').data.toJSON().name,'leave');
         const ui=panel.payload(defaults.Radio);
-        assert.equal(ui.components[0].components[0].options.length,11);
+        assert.equal(ui.components[0].components[0].options.length,12);
         assert.equal(ui.components[1].components.length,4);
         const {payload:localize}=require('../utils/localization');
         assert.equal(localize(ui,'en').components[0].components[0].placeholder,'Choose a radio station');
         assert.equal(Object.keys(defaults.Radio.Stations).length,25);
         for(const url of ['file:///etc/passwd','ftp://example.com','https://user:pass@example.com/','not a url']) assert.throws(()=>radio.validateUrl(url));
         assert.equal(radio.validateUrl('https://example.com/live'),'https://example.com/live');
+        assert.equal(radio.validateUrl('https://www.radioveronica.nl/?utm_source=nederland.fm'), 'https://playerservices.streamtheworld.com/api/livestream-redirect/VERONICA.mp3');
+        assert.equal(radio.validateUrl('https://www.radioveronica.nl.evil.example/'), 'https://www.radioveronica.nl.evil.example/');
         settings.ensureGuild('a');settings.ensureGuild('b');
         settings.updateValue('a','Radio.DefaultVolume','70');
         assert.equal(settings.getGuildConfig('a').Radio.DefaultVolume,70);

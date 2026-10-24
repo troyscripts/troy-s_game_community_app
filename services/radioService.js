@@ -11,7 +11,23 @@ function validateUrl(value) {
     try { url = new URL(value); } catch { throw new Error(tr('Gebruik een volledige HTTP- of HTTPS-stream-URL.')); }
     if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password || value.length > 1000)
         throw new Error(tr('Gebruik een volledige HTTP- of HTTPS-stream-URL.'));
+    // The Veronica home page is often copied from Nederland.fm; it is HTML, not audio.
+    // Resolve only this known station homepage, never arbitrary websites or paths.
+    if (['radioveronica.nl', 'www.radioveronica.nl'].includes(url.hostname) && url.pathname === '/')
+        return 'https://playerservices.streamtheworld.com/api/livestream-redirect/VERONICA.mp3';
     return url.href;
+}
+// Keep diagnostics useful without exposing stream URLs, credentials or terminal control codes.
+function safeDiagnostic(value) {
+    return String(value || '').replace(/\x1b\[[0-9;]*[A-Za-z]/g, '')
+        .replace(/https?:\/\/[^\s<>"']+/gi, '[stream-URL]')
+        .replace(/(authorization|cookie|password|token|secret)\s*[:=]\s*[^\s]+/gi, '$1=[verborgen]')
+        .replace(/[\r\n\t]+/g, ' ').slice(0, 1200);
+}
+function ffmpegArgs(url) {
+    return ['-nostdin', '-hide_banner', '-loglevel', 'error',
+        '-protocol_whitelist', 'http,https,tcp,tls,crypto,httpproxy', '-rw_timeout', '15000000',
+        '-i', url, '-vn', '-f', 's16le', '-ar', '48000', '-ac', '2', 'pipe:1'];
 }
 function bounded(value, fallback, min, max) {
     const n = Number(value);
@@ -27,7 +43,7 @@ function stop(guildId, reason = 'gestopt') {
     s.child?.stdout.destroy();
     s.child?.kill('SIGKILL');
     if (s.connection.state.status !== 'destroyed') s.connection.destroy();
-    logger.info(`[Radio] ${s.guild.name} (${guildId}): ${reason}.`);
+    logger.info(`[Radio] ${s.guild.name} (${guildId}) [${safeDiagnostic(s.name)}]: ${reason}.`);
     return true;
 }
 function emptyCheck(s) {
@@ -82,12 +98,22 @@ async function start(channel, station, options) {
     try {
         await v.entersState(connection, v.VoiceConnectionStatus.Ready, 20000);
         if (sessions.get(channel.guild.id) !== s) throw new Error('cancelled');
-        // No shell. Limit FFmpeg input protocols to network audio, excluding local files and playlists.
-        s.child = spawn(executable, ['-nostdin', '-hide_banner', '-loglevel', 'error',
-            '-protocol_whitelist', 'http,https,tcp,tls,crypto', '-rw_timeout', '15000000',
-            '-i', url, '-vn', '-f', 's16le', '-ar', '48000', '-ac', '2', 'pipe:1'], { stdio: ['ignore', 'pipe', 'ignore'] });
-        s.child.on('error', () => fail('FFmpeg kon niet starten'));
-        s.child.on('exit', code => { if (code !== 0 && code !== null) fail('stream kon niet worden afgespeeld'); });
+        // HTTP CONNECT proxies are needed by some hosts. Local input files stay disallowed.
+        s.child = spawn(executable, ffmpegArgs(url), { stdio: ['ignore', 'pipe', 'pipe'] });
+        let diagnosticCount = 0;
+        s.child.stderr?.on('data', chunk => {
+            if (diagnosticCount++ >= 3) return;
+            const detail = safeDiagnostic(chunk.toString('utf8'));
+            if (detail) logger.warn(`[Radio] ${s.guild.name} (${s.guild.id}) [${safeDiagnostic(s.name)}] FFmpeg: ${detail}`);
+        });
+        s.child.on('error', error => {
+            logger.warn(`[Radio] ${s.guild.name} (${s.guild.id}) [${safeDiagnostic(s.name)}] FFmpeg-startfout: ${safeDiagnostic(error.code || error.message)}`);
+            fail('FFmpeg kon niet starten');
+        });
+        s.child.on('exit', (code, signal) => {
+            if (code !== 0 && code !== null) fail(`stream kon niet worden afgespeeld (FFmpeg-code ${code}; zie FFmpeg-melding)`);
+            else if (signal && sessions.get(channel.guild.id) === s) fail(`FFmpeg beëindigd door ${signal}`);
+        });
         s.resource = v.createAudioResource(s.child.stdout, { inputType: v.StreamType.Raw, inlineVolume: true });
         s.resource.volume.setVolume(s.volume / 100);
         connection.subscribe(player);
@@ -116,4 +142,4 @@ async function exclusive(guildId, callback) {
     try { return await callback(); } finally { locks.delete(guildId); }
 }
 function stopAll() { for (const id of sessions.keys()) stop(id, 'bot wordt afgesloten'); }
-module.exports = { validateUrl, bounded, status, stop, start, volume, exclusive, install, stopAll };
+module.exports = { safeDiagnostic, ffmpegArgs, validateUrl, bounded, status, stop, start, volume, exclusive, install, stopAll };

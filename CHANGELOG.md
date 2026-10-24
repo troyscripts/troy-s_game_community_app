@@ -1,3 +1,9 @@
+## 3.1.8 — 2026-10-24
+- Radio Veronica-homepagelinks worden bij instellen én afspelen omgezet naar de directe MP3-stream, inclusief links met Nederland.fm-tracking.
+- Radio Veronica als twaalfde standaardzender; bestaande eigen zenderinstellingen blijven behouden.
+- FFmpeg staat HTTP-proxyverbindingen toe. Dit lost de lokaal gereproduceerde protocol-whitelistfout op.
+- Console toont zendernaam, FFmpeg-exitcode en begrensde foutdetails; stream-URL's worden afgeschermd.
+
 ## 3.1.7 — 2026-10-24
 - Internetradio: openbaar callchat-paneel met zenderdropdown, volume- en stopknoppen.
 - `/leave` stopt de audio en laat de bot het spraakkanaal verlaten.

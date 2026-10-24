@@ -64,7 +64,7 @@ module.exports = {
             Station9: { Name: "Qmusic 90s & 00s", Url: "https://stream.qmusic.nl/90s-00s/mp3" },
             Station10: { Name: "NPO Radio 5", Url: "https://icecast.omroep.nl/radio5-bb-mp3" },
             Station11: { Name: "NPO Klassiek", Url: "https://icecast.omroep.nl/radio4-bb-mp3" },
-            Station12: { Name: "", Url: "" },
+            Station12: { Name: "Radio Veronica", Url: "https://playerservices.streamtheworld.com/api/livestream-redirect/VERONICA.mp3" },
             Station13: { Name: "", Url: "" },
             Station14: { Name: "", Url: "" },
             Station15: { Name: "", Url: "" },

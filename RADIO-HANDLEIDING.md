@@ -1,4 +1,4 @@
-# Internetradio — 3.1.7
+# Internetradio — 3.1.8
 
 ## Installeren
 1. Stop de bot en pak het pakket uit over de botbestanden. Bewaar je `.env`, database en eigen gegevens.
@@ -21,7 +21,7 @@ Het paneel is openbaar en blijft bruikbaar na een botrestart. Audio hervat na ee
 Het paneel bevat geen voortdurend bijgewerkte afspeelstatus; **Nu luisteren** toont de huidige toestand. Na wijzigingen aan zendernamen of toevoegingen plaats je een nieuw paneel met `/radio paneel`. Oude paneelkeuzes gebruiken altijd de huidige URL uit de configuratie.
 
 ## Zenders en configuratie
-Elf zenders zijn vooraf ingevuld: Radio 538, 538 Non Stop, 538 Dance Department, Qmusic, Qmusic Nonstop, Qmusic Thema, Qmusic Top 40, Qmusic Nederlandstalig, Qmusic 90s & 00s, NPO Radio 5 en NPO Klassiek.
+Twaalf zenders zijn vooraf ingevuld: Radio 538, 538 Non Stop, 538 Dance Department, Qmusic, Qmusic Nonstop, Qmusic Thema, Qmusic Top 40, Qmusic Nederlandstalig, Qmusic 90s & 00s, NPO Radio 5, NPO Klassiek en Radio Veronica.
 
 Er zijn maximaal 25 plaatsen. Een botowner of beheerder met **Server beheren** kan `/radio instellen zender:12 naam:Mijn radio url:https://...` gebruiken. Gebruik een directe MP3/AAC-stream, geen webpagina, YouTube-link of M3U/PLS-bestand. Nederland.fm is de inspiratie voor de zenderkeuze; de bot speelt directe streams en gebruikt geen Nederland.fm-account of API.
 
@@ -56,3 +56,14 @@ Streams kunnen door de omroep gewijzigd worden; beheerders kunnen de URL per ser
 
 ## Controle
 `npm run ci` controleert syntaxis, versies en regressietests. `npm run test:radio` controleert configuratie, paneel, kanaalrechten, serverisolatie en het opruimen van audiosessies met nagebootste Discordverbindingen. Echte audio in jouw Discordcall moet na installatie worden getest; hiervoor zijn een actieve botverbinding en de hostingomgeving nodig.
+
+## Radio Veronica / update 3.1.8
+De website `https://www.radioveronica.nl/` is geen audiostream. De bot herkent vanaf 3.1.8 deze homepage (ook met trackingparameters) en gebruikt de directe stream. Dit geldt ook voor eerder opgeslagen Veronica-homepagelinks.
+
+Directe stream: `https://playerservices.streamtheworld.com/api/livestream-redirect/VERONICA.mp3`
+
+Veronica is standaard zender 12 voor nieuwe serverconfiguraties. Bestaande opgeslagen zenderplaatsen worden niet overschreven. Voeg hem daar zo toe (kies een vrij of te vervangen zendernummer):
+`/radio instellen zender:12 naam:Radio Veronica url:https://playerservices.streamtheworld.com/api/livestream-redirect/VERONICA.mp3`
+Plaats daarna een nieuw `/radio paneel` om de gewijzigde dropdown te zien.
+
+FFmpeg-fouten bevatten nu ook zendernaam en afgeschermde foutdetails. De proxycorrectie is getest met echte streams; de oorzaak op jouw hosting kan alleen uit de nieuwe foutmelding worden vastgesteld als de directe stream nog niet werkt.
