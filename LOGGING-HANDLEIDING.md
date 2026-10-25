@@ -1,4 +1,16 @@
-# Discordlogs en 18+-moderatie — 3.1.9
+# Discordlogs en 18+-moderatie — 3.2.0
+
+## Update 3.2.0 — duidelijke logs en betrouwbare radiostart
+
+Nieuwe Discordlogs tonen weergavenamen/gebruikersnamen, kanaalnamen en rolnamen waar die beschikbaar zijn. ID's blijven als aanvullende informatie behouden. Namen worden bij de gebeurtenis vastgelegd, zodat latere naamwijzigingen de opgeslagen log niet veranderen. Er zijn geen extra Discord-ophaalverzoeken per log nodig. Bij ontbrekende gegevens staat er expliciet een onbekende/verwijderde gebruiker, rol of kanaal met ID. Al verstuurde logs en eerder opgeslagen wachtrijregels worden niet herschreven.
+
+Voicevelden hebben leesbare labels zoals **Spraakkanaal**, **Microfoon zelf gedempt** en **Scherm delen**, met **Ja/Nee** in plaats van true/false. Geen voicekanaal wordt **Geen kanaal**. Command-, knop- en menulogs hebben aparte velden voor gebruiker en kanaal. Berichtlogs bevatten **Open bericht** en nemen beschikbare embedtekst mee. Een link naar een verwijderd bericht kan het bericht niet terughalen. Logberichten pingen niemand; privéantwoorden, commandargumenten en formulierinhoud blijven buiten interactielogs.
+
+Radio meldt pas ‘gestart’ wanneer FFmpeg gedecodeerde audiogegevens heeft geleverd én de speler de afspeelstatus bereikt. De eerste audiobytes blijven beschikbaar voor afspelen. Zonder audio volgt na maximaal 20 seconden wachten op die audio een startfout; FFmpeg, speler en verbinding worden opgeruimd. Ook sluiten/stoppen vóór de eerste audio geeft geen succesvolle startmelding. Een stream kan na een geslaagde start alsnog uitvallen.
+
+De standaardzenders en jouw opgeslagen stream-URL's zijn niet gewijzigd. Gebruik de werkende originele Veronica-zender uit het paneel. Deze wijziging repareert geen externe TLS- of netwerkstoring.
+
+**Vanaf 3.1.9 bijwerken:** stop de bot, vervang de gewijzigde bestanden op dezelfde paden en herstart. Neem ook het nieuwe `utils/logNames.js` mee. Dependencies, configvelden en commands zijn niet gewijzigd; opnieuw registreren is niet nodig. Bewaar `.env`, database en eigen `data/`-bestanden. Zie [UPDATE-3.2.0.md](UPDATE-3.2.0.md). Oudere release-instructies hieronder beschrijven eerdere versies.
 
 ## Installatie
 

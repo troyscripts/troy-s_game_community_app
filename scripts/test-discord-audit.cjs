@@ -55,6 +55,34 @@ async function run(){
  delete require.cache[require.resolve('../services/discordAudit')];assert.ok(require('../services/discordAudit').status(g).some(r=>r.status==='pending'));
  // Old rows are removed on the next enqueue; default per-server retention is bounded.
  database.db.prepare('UPDATE discord_event_logs SET created_at=0 WHERE guild_id=?').run(g);audit.enqueue(one,'Voice','new');assert.equal(audit.status(g).reduce((n,r)=>n+r.count,0),1);
+ // Names are captured when the event is queued, including deleted entities.
+ one.name='Testserver';one.channels.cache=new Map([['555555555555555555',{id:'555555555555555555',name:'Gezellige call'}]]);
+ one.members.cache=new Map([['666666666666666666',{id:'666666666666666666',displayName:'Troy',user:{id:'666666666666666666',username:'troy1991'}}]]);
+ one.roles={cache:new Map([['777777777777777777',{id:'777777777777777777',name:'Politie'}]])};
+ const latest=()=>require('../utils/localization').payload(JSON.parse(database.db.prepare('SELECT payload FROM discord_event_logs WHERE guild_id=? ORDER BY id DESC LIMIT 1').get(g).payload),'nl');
+ client.emit(Events.VoiceStateUpdate,{guild:one,channelId:null,selfMute:false,streaming:false},{guild:one,id:'666666666666666666',channelId:'555555555555555555',selfMute:true,streaming:true});
+ let readable=latest();assert.match(readable.embeds[0].description,/Troy.*troy1991/);
+ assert.match(readable.embeds[0].fields.find(f=>f.name==='Spraakkanaal').value,/Gezellige call/);
+ assert.match(readable.embeds[0].fields.find(f=>f.name==='Spraakkanaal').value,/Geen kanaal/);
+ assert.equal(readable.embeds[0].fields.find(f=>f.name==='Microfoon zelf gedempt').value,'Voor: Nee\nNa: Ja');
+ assert.ok(readable.embeds[0].fields.some(f=>f.name==='Scherm delen'));
+ client.emit(Events.VoiceStateUpdate,{guild:one,channelId:'888888888888888888',channel:{id:'888888888888888888',name:'Verwijderde call'}},{guild:one,id:'666666666666666666',channelId:null});
+ assert.match(JSON.stringify(latest()),/Verwijderde call/);
+ settings.updateValue(g,'Logging.Events.Messages','ja');
+ client.emit(Events.MessageCreate,{...base,id:'999999999999999999',channelId:'555555555555555555',content:'',embeds:[{title:'Botmelding',description:'Inhoud van embed'}]});
+ readable=latest();assert.match(JSON.stringify(readable),/Gezellige call/);assert.match(JSON.stringify(readable),/Open bericht/);assert.match(JSON.stringify(readable),/Inhoud van embed/);
+ assert.deepEqual(readable.allowedMentions.parse,[]);
+ await require('../utils/eventEmbeds').logInteraction({guild:one,user:{id:'666666666666666666',username:'troy1991'},channelId:'555555555555555555',id:'interaction',customId:'radio:stop:private-value',isAutocomplete:()=>false,isChatInputCommand:()=>false,isButton:()=>true},'Afgehandeld');
+ readable=latest();assert.match(JSON.stringify(readable),/Troy/);assert.match(JSON.stringify(readable),/Gezellige call/);assert.ok(!JSON.stringify(readable).includes('private-value'));
+ client.emit(Events.GuildMemberUpdate,{guild:one,user:{id:'666666666666666666'},roles:{cache:new Map()}},{guild:one,user:{id:'666666666666666666'},roles:one.roles});
+ assert.match(JSON.stringify(latest()),/Politie/);
+ settings.updateValue(g,'Logging.Events.Audit','ja');
+ client.emit(Events.GuildAuditLogEntryCreate,{id:'audit-named',action:31,executorId:'666666666666666666',targetId:'777777777777777777',targetType:'Role',changes:[]},one);
+ readable=latest();assert.match(JSON.stringify(readable),/Troy/);assert.match(JSON.stringify(readable),/Politie/);
+ const names=require('../utils/logNames');assert.match(names.channel(one,'unavailable'),/Onbekend of verwijderd kanaal/);
+ assert.match(names.user(one,'unavailable'),/Onbekende gebruiker/);
+ assert.match(names.role(one,{id:'old-role',name:'Verwijderde rol'}),/Verwijderde rol/);
+ assert.equal(names.user(two,'666666666666666666').includes('Troy'),false,'No name lookup from another server');
  console.log('PASS Discord logging: routing, server isolation, config validation, event registration, no self-loop/pings, queue retry/persistence/limits, rights, retention and embed limits.');
 }
 run().catch(e=>{console.error(e);process.exitCode=1;}).finally(()=>{audit.stop();database.closeDatabase();fs.rmSync(temp,{recursive:true,force:true});});

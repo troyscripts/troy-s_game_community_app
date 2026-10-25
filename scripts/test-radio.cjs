@@ -12,8 +12,8 @@ const config = require('../config/config');
 const { Collection, ChannelType, PermissionsBitField, PermissionFlagsBits: P } = require('discord.js');
 const childProcess = require('node:child_process');
 const originalSpawn = childProcess.spawn;
-let spawned = [], failConnection = false;
-childProcess.spawn = () => { const child = new EventEmitter(); child.stdout = new PassThrough(); child.stderr = new PassThrough(); child.kill = () => {child.killed = true;}; spawned.push(child); return child; };
+let spawned = [], failConnection = false, spawnMode = "audio";
+childProcess.spawn = () => { const child = new EventEmitter(); child.stdout = new PassThrough(); child.stderr = new PassThrough(); child.kill = () => {child.killed = true;}; spawned.push(child); process.nextTick(()=>{if(spawnMode==='audio')child.stdout.write(Buffer.alloc(3840));else if(spawnMode==='failure')child.emit('exit',187,null);}); return child; };
 const voicePath = require.resolve('@discordjs/voice');
 const oldVoice = require.cache[voicePath];
 require.cache[voicePath] = { id: voicePath, filename: voicePath, loaded: true, exports: {
@@ -25,7 +25,7 @@ require.cache[voicePath] = { id: voicePath, filename: voicePath, loaded: true, e
     async entersState(c) { if(failConnection) throw Error('connection timeout');return c; }
 }};
 const logger = require('../utils/logger');
-const warnings=[];const oldWarn=logger.warn;logger.warn=message=>warnings.push(message);
+const warnings=[], infos=[];const oldWarn=logger.warn,oldInfo=logger.info;logger.warn=message=>warnings.push(message);logger.info=message=>infos.push(message);
 const radio = require('../services/radioService');
 const panel = require('../services/radioPanel');
 const command = require('../commands/community/radio');
@@ -70,7 +70,24 @@ function interaction(f, sub, args={}) {
         await radio.exclusive('busy',async()=>{});
         const a=guild('a'),b=guild('b'),client=new EventEmitter();client.user={id:'bot'};
         radio.install(client);radio.install(client);assert.equal(client.listenerCount('voiceStateUpdate'),1);
-        const s=await radio.start(a.channel,defaults.Radio.Stations.Station1,defaults.Radio);
+        spawnMode='failure';
+        await assert.rejects(radio.start(a.channel,defaults.Radio.Stations.Station1,defaults.Radio));
+        assert.equal(infos.some(x=>x.includes(': gestart in kanaal')),false);
+        assert.equal(radio.status('a'),undefined);assert.equal(spawned.at(-1).killed,true);
+        spawnMode='manual';
+        const starting=radio.start(a.channel,defaults.Radio.Stations.Station1,defaults.Radio);
+        await new Promise(resolve=>setImmediate(resolve));
+        assert.equal(infos.some(x=>x.includes(': gestart in kanaal')),false);
+        spawned.at(-1).stdout.write(Buffer.alloc(3840,1));
+        const s=await starting;assert.ok(infos.some(x=>x.includes(': gestart in kanaal')));
+        assert.equal(s.child.stdout.readableLength,3840,'PCM must remain available to the player');
+        spawnMode='audio';
+        const stalled=new EventEmitter();stalled.stdout=new PassThrough();
+        await assert.rejects(radio.waitForAudio(stalled,5),/Timed out/);
+        assert.equal(stalled.listenerCount('exit'),0);assert.equal(stalled.stdout.listenerCount('readable'),0);
+        const cancelled=new EventEmitter();cancelled.stdout=new PassThrough();
+        const waiting=radio.waitForAudio(cancelled);cancelled.stdout.destroy();await assert.rejects(waiting,/ended/);
+        assert.equal(cancelled.listenerCount('exit'),0);
         await radio.start(b.channel,defaults.Radio.Stations.Station1,defaults.Radio);
         assert.equal(radio.volume('a',200),100);assert.equal(radio.status('b').volume,30);
         const replacement=await radio.start(a.channel,defaults.Radio.Stations.Station2,defaults.Radio);
@@ -97,7 +114,7 @@ function interaction(f, sub, args={}) {
         active.emptyTimer._onTimeout();assert.equal(radio.status('a'),undefined);assert.equal(active.child.killed,true);
         console.log('Radio: paneel, lokalisatie, serverisolatie, rechten, /leave, foutopruiming en leeg kanaal geslaagd.');
     } finally {
-        radio.stopAll();logger.warn=oldWarn;childProcess.spawn=originalSpawn;
+        radio.stopAll();logger.warn=oldWarn;logger.info=oldInfo;childProcess.spawn=originalSpawn;
         if(oldVoice)require.cache[voicePath]=oldVoice;else delete require.cache[voicePath];
         database.db.close();fs.rmSync(tmp,{recursive:true,force:true});
     }

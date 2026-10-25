@@ -1,8 +1,22 @@
 # Troy’s Game Community Bot — User Manual
 
-## Current guide for 3.1.9
+Version numbering: 3.1.9 is followed by 3.2.0; each incremented component rolls over after 9.
 
-This manual covers **3.1.9**, updated **25 October 2026**. Older release sections below provide background; follow this section where current behaviour differs. Command examples use the stored Dutch names; Discord may show localized labels.
+## Update 3.2.0 — readable logs and confirmed radio startup
+
+New logs show available display names/usernames, channel names and role names, with IDs as secondary information. Names are captured when events are queued; later renames do not change stored logs. No extra Discord fetch is made for each log. Missing entities have an explicit unknown/deleted label and ID. Existing posted logs and old queued payloads are not rewritten.
+
+Voice fields use readable labels such as **Voice channel**, **Self-muted microphone** and **Screen sharing**, with Yes/No instead of true/false when English log localization is selected. Some existing log descriptions remain Dutch. No voice channel is shown as ‘Geen kanaal’. Commands, buttons and menus have separate user/channel fields. Message logs include an **Open bericht** link and available embed text. Deleted messages cannot be recovered through their links. Logs do not ping users. Interaction logs still exclude arguments, form input and private responses.
+
+Radio only reports a successful start after FFmpeg provides decoded audio and the player reaches the playing state. The first audio bytes are preserved. Waiting for initial audio is limited to 20 seconds; timeout, failure or cancellation cleans up playback and does not report success. A stream can still fail after it has started.
+
+Default and saved station URLs are unchanged, including the working original Veronica station. This does not repair external TLS/network failures.
+
+**Update from 3.1.9:** stop, replace the update files at their matching paths (including the new `utils/logNames.js`) and restart. Dependencies, config fields and commands are unchanged; no command redeployment is needed. Preserve `.env`, the database and private `data/` files. See [UPDATE-3.2.0.md](UPDATE-3.2.0.md). Older sections below describe earlier releases.
+
+## Features and setup through 3.1.9
+
+This section covers features through **3.1.9**; the **3.2.0** corrections are described above. Older release sections below provide background; follow this section where current behaviour differs. Command examples use the stored Dutch names; Discord may show localized labels.
 
 ### Listen to radio together
 
@@ -68,7 +82,7 @@ Settings persist per server and apply immediately to new messages. Existing mess
 
 Users and roles are mentioned once per message. Repeated references show a plain name (or ID if unavailable). Repeated `@everyone` and `@here` references are also made non-pinging.
 
-**Bot version 3.1.9 · Updated 25 October 2026**
+**Bot version 3.2.0 · Updated 25 October 2026**
 
 ## New in 3.1.1: ticket messages and member-list fix
 

@@ -49,7 +49,12 @@ async function logInteraction(i, state) {
             tr("**Van:** <@{0}>    **In:** {1}\n\n", i.user.id, i.channelId ? `<#${i.channelId}>` : tr("Onbekend kanaal")) +
             tr("**Type:** {0}\n**Actie:** `{1}`\n**Status:** {2}", kind, action, tr(state)),
             tr("Gebruiker-ID: {0} | Interactie-ID: {1}", i.user.id, i.id));
-        require('../services/discordAudit').enqueue(i.guild,'Commands',kind,`${action} — ${state}\nGebruiker ${i.user.id}; kanaal ${i.channelId}; interactie ${i.id}`);
+        const names = require('./logNames');
+        require('../services/discordAudit').enqueue(i.guild,'Commands',kind,`${action} — ${state}`, [
+            {name:'Gebruiker',value:names.user(i.guild,i.member?.user ? i.member : i.user)},
+            {name:'Kanaal',value:names.channel(i.guild,i.channel||i.channelId)},
+            {name:'Interactie-ID',value:i.id}
+        ]);
     } catch {
         logger.warn('Interactie kon niet als embed worden gelogd.');
     }

@@ -1268,5 +1268,17 @@
   "Ongeldig opgeslagen YouTube-kanaal-ID. Stel het juiste UC-kanaal-ID in via /notify youtube-id.": "Invalid stored YouTube channel ID. Set the correct UC channel ID using /notify youtube-id.",
   "Twitch gaf geen geldige gebruikerslijst terug; later opnieuw proberen.": "Twitch returned an invalid user list; try again later.",
   "Twitch-kanaal niet gevonden voor gebruikersnaam {0}. Controleer de exacte kanaal-URL.": "Twitch channel not found for username {0}. Check the exact channel URL.",
-  "Twitch-gebruikersgegevens komen niet overeen met {0}; niets verstuurd.": "Twitch user data does not match {0}; nothing was sent."
+  "Twitch-gebruikersgegevens komen niet overeen met {0}; niets verstuurd.": "Twitch user data does not match {0}; nothing was sent.",
+  "Spraakkanaal": "Voice channel",
+  "Microfoon zelf gedempt": "Self-muted microphone",
+  "Geluid zelf uitgeschakeld": "Self-deafened",
+  "Microfoon door server gedempt": "Server-muted microphone",
+  "Geluid door server uitgeschakeld": "Server-deafened",
+  "Scherm delen": "Screen sharing",
+  "Camera": "Camera",
+  "Spreken onderdrukt": "Speaking suppressed",
+  "Spreekverzoek": "Request to speak",
+  "Ja": "Yes",
+  "Nee": "No",
+  "Voor: {0}\nNa: {1}": "Before: {0}\nAfter: {1}"
 }

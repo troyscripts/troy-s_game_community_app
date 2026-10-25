@@ -1,14 +1,18 @@
 # Installatiehandleiding — Troy’s Game Community Bot
 
+## Bijwerken vanaf 3.1.9
+
+Stop de bot, neem de gewijzigde bestanden inclusief `utils/logNames.js` over en herstart. Deze update verandert geen dependencies, configvelden, database-indeling of slashcommands. Bewaar je bestaande `.env`, database en eigen gegevens. Het versieverschil in het lockbestand is alleen het botversienummer. Publiceer deze versie als **v3.2.0**. Zie [UPDATE-3.2.0.md](UPDATE-3.2.0.md). Bij een nieuwe installatie blijft `npm ci --no-audit --no-fund` nodig.
+
 ## Snel naar de huidige installatie
 
 Gebruik het volledige pakket voor een nieuwe installatie. De ZIP met alleen handleidingen bevat geen botcode. Bij het volledige pakket kopieer je de inhoud van `troy-s_game_community_app/` naar de projecthoofdmap, zodat `package.json` naast `index.js` staat.
 
-Vanaf 3.1.9 is de fout `Missing: opusscript@0.0.8 from lock file` hersteld. Neem `package.json` en `package-lock.json` samen over en voer `npm ci --no-audit --no-fund` uit. Gebruik geen `--ignore-scripts` voor de productie-installatie. Als de fout blijft staan, controleer of daadwerkelijk beide bestanden uit 3.1.9 zijn geüpload.
+Sinds 3.1.9 is de fout `Missing: opusscript@0.0.8 from lock file` hersteld. Neem `package.json` en `package-lock.json` samen over en voer `npm ci --no-audit --no-fund` uit. Gebruik geen `--ignore-scripts` voor de productie-installatie. Als de fout blijft staan, controleer of daadwerkelijk beide bestanden uit 3.2.0 zijn geüpload.
 
 Voor internetradio: [RADIO-HANDLEIDING.md](RADIO-HANDLEIDING.md). Voor Discordlogs en 18+-controle: [LOGGING-HANDLEIDING.md](LOGGING-HANDLEIDING.md). Voor softmoderatie: [SOFTMODERATIE.md](SOFTMODERATIE.md).
 
-Deze handleiding is voor iedereen die de bot downloadt en onder een eigen Discord-applicatie wil draaien. Bijgewerkt voor versie 3.1.9. Je hebt geen programmeerkennis nodig, maar wel toegang tot het bestandbeheer en de startinstellingen van je hosting.
+Deze handleiding is voor iedereen die de bot downloadt en onder een eigen Discord-applicatie wil draaien. Bijgewerkt voor versie 3.2.0. Je hebt geen programmeerkennis nodig, maar wel toegang tot het bestandbeheer en de startinstellingen van je hosting.
 
 ## 1. Wat heb je nodig?
 
@@ -182,7 +186,7 @@ Voor YouTube-/TikTokmeldingen: [NOTIFY-HANDLEIDING.md](NOTIFY-HANDLEIDING.md). V
 3. Voer `npm ci` uit als dependencies of het lockbestand gewijzigd zijn, en `npm run deploy` wanneer de update commands toevoegt of wijzigt.
 4. Volg eventuele migratie- of verwijderinstructies van die update. Start daarna opnieuw en test `/ping` en de gewijzigde functies.
 
-Voor de update van 3.1.8 naar 3.1.9 moet je `npm ci --no-audit --no-fund` uitvoeren wegens het herstelde lockbestand. Er zijn geen nieuwe slashcommands of configvelden in 3.1.9. `.env.example` is een voorbeeld, geen vervanging voor jouw `.env`.
+Als je vanaf 3.1.8 bijwerkt naar 3.2.0 moet je `npm ci --no-audit --no-fund` uitvoeren wegens het herstelde lockbestand. Er zijn geen nieuwe slashcommands of configvelden in 3.2.0. `.env.example` is een voorbeeld, geen vervanging voor jouw `.env`.
 
 De bot heeft standaard automatische databaseback-ups in `database/backups`. Bewaar daarnaast zelf een kopie buiten je hosting. De versiechecker meldt updates, maar installeert ze niet. Automatische changelogmeldingen gebruiken `Logging.Enabled` en `Logging.Channel`.
 

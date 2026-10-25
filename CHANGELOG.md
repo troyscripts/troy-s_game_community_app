@@ -1,3 +1,11 @@
+## 3.2.0 — 2026-10-25
+- Discordlogs tonen beschikbare gebruikers-, kanaal- en rolnamen met ID's als extra informatie; namen worden bij de gebeurtenis vastgelegd.
+- Leesbare voicevelden en Ja/Nee, herkenbare gebruikers/kanalen in interactielogs, berichtlinks en beschikbare embedtekst.
+- Audituitvoerders en doelen worden met beschikbare namen weergegeven; onbekende/verwijderde entiteiten krijgen een expliciete fallback. Geen extra pings of API-ophaalverzoeken.
+- Radio wacht op echte FFmpeg-audio én afspeelstatus voordat een succesvolle start wordt gemeld. Geen audio, voortijdig stoppen en fouten worden zonder succesmelding opgeruimd.
+- Werkende Veronica-stream en alle bestaande zenderinstellingen behouden. Geen nieuwe dependencies, configvelden of commands.
+- Nederlandse en Engelse gebruikershandleidingen en geraakte beheerhandleidingen bijgewerkt. Oude logs worden niet achteraf aangepast.
+
 ## 3.1.9 — 2026-10-25
 - Documentatie vóór publicatie bijgewerkt: Nederlandse en Engelse gebruikershandleiding, radio, notify, Twitch, installatie, GitHub, logs, softmoderatie en controle-uitleg. Verouderde versiekoppen en ontbrekende updateverwijzingen gecorrigeerd. Geen codewijziging of extra versieophoging.
 - Lockbestand hersteld voor schone installatie met npm 10 / Node.js 22 en npm 11 / Node.js 24.

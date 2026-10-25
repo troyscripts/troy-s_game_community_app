@@ -29,6 +29,36 @@ function ffmpegArgs(url) {
         '-protocol_whitelist', 'http,https,tcp,tls,crypto,httpproxy', '-rw_timeout', '15000000',
         '-i', url, '-vn', '-f', 's16le', '-ar', '48000', '-ac', '2', 'pipe:1'];
 }
+// Observe decoded PCM without consuming the first chunk: the audio player still needs it.
+function waitForAudio(child, timeoutMs = 20000) {
+    return new Promise((resolve, reject) => {
+        const stream = child.stdout;
+        let timer;
+        const cleanup = () => {
+            clearTimeout(timer);
+            stream.removeListener('readable', readable);
+            stream.removeListener('end', ended);
+            stream.removeListener('close', ended);
+            stream.removeListener('error', failed);
+            child.removeListener('error', failed);
+            child.removeListener('exit', ended);
+        };
+        const failed = error => { cleanup(); reject(error); };
+        const ended = () => failed(new Error('FFmpeg ended before audio was received'));
+        const readable = () => {
+            if (stream.readableLength > 0) { cleanup(); resolve(); }
+        };
+        stream.on('readable', readable);
+        stream.once('end', ended);
+        stream.once('close', ended);
+        stream.once('error', failed);
+        child.once('error', failed);
+        child.once('exit', ended);
+        timer = setTimeout(() => failed(new Error('Timed out waiting for FFmpeg audio')), timeoutMs);
+        if (stream.destroyed || child.exitCode != null || child.signalCode != null) ended();
+        else readable();
+    });
+}
 function bounded(value, fallback, min, max) {
     const n = Number(value);
     return Number.isFinite(n) ? Math.max(min, Math.min(max, Math.round(n))) : fallback;
@@ -125,6 +155,8 @@ async function start(channel, station, options) {
             if (code !== 0 && code !== null) fail(`stream kon niet worden afgespeeld (FFmpeg-code ${code}; zie FFmpeg-melding)`);
             else if (signal && sessions.get(channel.guild.id) === s) fail(`FFmpeg beëindigd door ${signal}`);
         });
+        await waitForAudio(s.child);
+        if (sessions.get(channel.guild.id) !== s) throw new Error('cancelled');
         s.resource = v.createAudioResource(s.child.stdout, { inputType: v.StreamType.Raw, inlineVolume: true });
         s.resource.volume.setVolume(s.volume / 100);
         connection.subscribe(player);
@@ -153,4 +185,4 @@ async function exclusive(guildId, callback) {
     try { return await callback(); } finally { locks.delete(guildId); }
 }
 function stopAll() { for (const id of sessions.keys()) stop(id, 'bot wordt afgesloten'); }
-module.exports = { safeDiagnostic, ffmpegArgs, validateUrl, bounded, status, stop, start, volume, exclusive, install, stopAll };
+module.exports = { waitForAudio, safeDiagnostic, ffmpegArgs, validateUrl, bounded, status, stop, start, volume, exclusive, install, stopAll };

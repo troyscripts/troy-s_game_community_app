@@ -1,5 +1,9 @@
 # Automatische controles
 
+## Controles voor 3.2.0
+
+Gerichte regressietests controleren radiostart zonder audio, FFmpeg-fout vóór audio, vertraagde eerste audio, behoud van die audiobytes, timeout en annulering. Logtests controleren namen, verdwenen kanalen/rollen, lege voicekanalen, leesbare booleans, berichtlinks, embedtekst, serverisolatie en het niet loggen van privé-interactiegegevens. Zie `UPDATE-3.2.0.md` voor de uiteindelijke testresultaten. De resultaten hieronder voor 3.1.9 zijn historisch.
+
 ## Controle van 3.1.9
 
 - Node.js 22.23.4 / npm 10.9.9: schone installatie geslaagd; alle 20 testbestanden geslaagd, met gerichte herhaling van de aangepaste platform- en radiotest.
