@@ -53,7 +53,7 @@ async function request(url, options = {}, json = true) {
             }
         }
     });
-    if (!response.ok) throw Object.assign(new Error(tr("{0}: HTTP {1}; controleer koppeling of probeer later opnieuw.", host, response.status)), {status:response.status});
+    if (!response.ok) throw Object.assign(new Error(tr("{0}: HTTP {1}; controleer koppeling of probeer later opnieuw.", host, response.status) + (isYoutube ? ` [YouTube-aanvraag: ${new URL(url).pathname}${new URL(url).search}]` : '')), {status:response.status});
     if (json && (!data || typeof data !== 'object')) throw new Error(tr("{0}: ongeldig JSON-antwoord ontvangen.", host));
     if (json && data.error && data.error?.code !== 'ok') throw new Error(tr("TikTok heeft de aanvraag geweigerd. Controleer toestemming, scopes en koppel zo nodig opnieuw."));
     return data;
@@ -92,8 +92,21 @@ async function youtube(row) {
             || html.match(/"channelMetadataRenderer"\s*:\s*\{[^}]*?"externalId"\s*:\s*"(UC[\w-]{22})"/)?.[1];
         if (!id) throw new Error(tr("YouTube-kanaal-ID niet gevonden. Gebruik /notify youtube-id met het UC-kanaal-ID uit YouTube Studio."));
     }
-    const xml = await request(`https://www.youtube.com/feeds/videos.xml?channel_id=${id}`,{},false);
-    return {resolvedId:id,items:parseFeed(xml,id)};
+    if (!/^UC[\w-]{22}$/.test(id)) throw new Error(tr('Ongeldig opgeslagen YouTube-kanaal-ID. Stel het juiste UC-kanaal-ID in via /notify youtube-id.'));
+    try {
+        let xml;
+        try { xml = await request(`https://www.youtube.com/feeds/videos.xml?channel_id=${id}`,{},false); }
+        catch (error) {
+            // Try the same public feed on the alternate allowed YouTube host.
+            // Always validate channel identity; failed feeds must never become empty successes.
+            if (error.status !== 404 && !(error.status >= 500)) throw error;
+            xml = await request(`https://youtube.com/feeds/videos.xml?channel_id=${id}`,{},false);
+        }
+        return {resolvedId:id,items:parseFeed(xml,id)};
+    } catch (error) {
+        error.resolvedId = id;
+        throw error;
+    }
 }
 function readTokens() {
     try { return JSON.parse(fs.readFileSync(tokenPath,'utf8')); }

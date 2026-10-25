@@ -1,12 +1,21 @@
-# Update 2.5.1 publiceren
+# Versie 3.1.9 publiceren
 
-Dit pakket bevat alleen gewijzigde en nieuwe bestanden ten opzichte van de aangeleverde `troy-s_game_community_app-main(4).zip` (2.5.0).
+## Bestanden klaarzetten
 
-1. Upload de inhoud naar dezelfde paden in de hoofdmap van de repository.
-2. Verwijder de bestanden uit `VERWIJDERDE-BESTANDEN.txt` ook op GitHub.
-3. Commit de wijzigingen en publiceer release `v2.5.1` als Latest. Gebruik het hoofdstuk 2.5.1 uit `CHANGELOG.md` als releasebeschrijving.
-4. Voeg desgewenst deze update-ZIP aan de release toe.
+1. Gebruik het volledige 3.1.9-pakket. Kopieer de inhoud van `troy-s_game_community_app/` naar de hoofdmap van je repository; maak geen extra tussenmap.
+2. Heb je de losse documentatiecorrectie ontvangen? Pak die uit over dezelfde hoofdmap en vervang de genoemde Markdown-bestanden. De codeversie blijft 3.1.9.
+3. Neem `.github/workflows/check.yml`, `package.json`, `package-lock.json`, de actuele handleidingen en `CHANGELOG.md` mee.
+4. Upload geen `.env`, databases, `node_modules`, logs, back-ups, transcripts of `data/notify-tokens.json`. Vanuit een gebruikte installatie kun je `npm run prepare:github` gebruiken; controleer de export voordat je publiceert.
+5. Deze correctie vereist geen bestandsverwijderingen.
 
-De versiechecker gebruikt de versie uit `package.json`; er is geen afzonderlijke wijziging van `config/updates.js` nodig. De automatische changelogmelding gebruikt de nieuwe versie en `CHANGELOG.md`, wanneer `Logging.Enabled` en `Logging.Channel` goed staan.
+## Controleren en publiceren
 
-Voor installatie op de host: zie `UPDATE-2.5.1.txt`. Upload geen `.env`, database, logs, back-ups of persoonlijke configuratie naar GitHub. Bewaar je lokale `config/defaults.js`; de vaste-configmodus is verwijderd, maar dit bestand blijft nodig als basisconfiguratie.
+Voer in een schone testkopie `npm ci --no-audit --no-fund` en `npm run ci` uit. Commit en push daarna de wijzigingen. Controleer in GitHub Actions dat **Botcontroles / Node.js 22** én **Node.js 24** slagen. Verwijder een mislukte controle niet om een installatieprobleem te verbergen.
+
+Publiceer release `v3.1.9` pas wanneer de code en documentatie compleet zijn. Gebruik het hoofdstuk 3.1.9 uit `CHANGELOG.md` als releasebeschrijving. Voeg desgewenst het volledige pakket toe. Publiceren gebeurt niet automatisch door deze ZIP te downloaden.
+
+De versiechecker gebruikt `package.json`; `config/defaults.js` haalt daar de globale botversie uit. De repository staat in `config/updates.js`; wijzig die alleen als je bewust een andere repository gebruikt.
+
+## Hosting bijwerken
+
+Stop de bot, bewaar `.env`, database en eigen `data/`-bestanden, upload het pakket en voer `npm ci --no-audit --no-fund` uit. Bij hosting die dit automatisch uitvoert, controleer je de installatielog na de herstart. Vanaf 3.1.8 zijn geen nieuwe slashcommands of configvelden toegevoegd. Zie [INSTALLATIE.md](INSTALLATIE.md) en [UPDATE-3.1.9.md](UPDATE-3.1.9.md).

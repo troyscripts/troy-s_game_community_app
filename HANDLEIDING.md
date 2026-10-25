@@ -1,12 +1,59 @@
 # Troy’s Game Community Bot — Gebruikershandleiding
 
+## Actueel in 3.1.9
+
+Deze handleiding beschrijft versie **3.1.9**, bijgewerkt op **25 oktober 2026**. De oudere releasehoofdstukken verderop blijven achtergrondinformatie; de actuele instructies in dit hoofdstuk gaan voor bij verschillen.
+
+### Samen radio luisteren
+
+1. Ga in een normaal server-spraakkanaal zitten en open de chat van dat kanaal.
+2. Gebruik `/radio paneel` en kies een zender. Iedereen in de call hoort dezelfde audio.
+3. Gebruik **Zachter**, **Harder**, **Nu luisteren** of **Stop radio**. Met `/leave` stopt de audio en verlaat de bot de call.
+
+| Command | Gebruik |
+| --- | --- |
+| `/radio lijst` | Ingestelde zendernummers bekijken |
+| `/radio start zender:1` | Een zender starten of wisselen |
+| `/radio volume percentage:30` | Volume tussen 0 en 100 instellen |
+| `/radio status` | Actuele zender, kanaal en volume bekijken |
+| `/radio stop` | Stoppen en de verbinding sluiten |
+| `/radio instellen zender:13 naam:Mijn radio url:https://example.com/live.mp3` | Voorbeeld voor een eigen vrije zenderplaats; vervang de voorbeeld-URL door een echte directe audiostream |
+
+Zenders instellen vereist owner-toegang volgens de botrechten of **Server beheren**. Luisteraars bedienen de radio vanuit hetzelfde kanaal; beheerders kunnen elders stoppen. Er zijn maximaal 25 zenderplaatsen en twaalf vooraf ingevulde zenders. Bestaande serverinstellingen kunnen afwijken.
+
+De bot heeft Kanaal bekijken, Verbinden en Spreken nodig, plus Berichten verzenden en Links insluiten voor het paneel. Stage-kanalen en privé-groepsgesprekken worden niet ondersteund. De standaardinstellingen zijn `Radio.DefaultVolume=30` en `Radio.EmptySeconds=60`; beheer ze via `/config`. De radio stopt bij een leeg kanaal na de ingestelde wachttijd. Na een botrestart moet je opnieuw een zender kiezen.
+
+Vanaf 3.1.9 blijft bij wisselen binnen hetzelfde kanaal de spraakverbinding behouden. FFmpeg-meldingen van een bewust gestopte oude sessie worden onderdrukt; echte streamfouten blijven zichtbaar. De melding ‘gestart’ volgt op de afspeelstatus, maar een stream kan daarna alsnog uitvallen. Zie [RADIO-HANDLEIDING.md](RADIO-HANDLEIDING.md) voor de volledige instellingen en foutdiagnose.
+
+### Creatormeldingen en diagnose
+
+Gebruik `/notify toevoegen`, `/notify lijst`, `/notify verwijderen` en `/notify test`. Beheer is voor de servereigenaar, globale owners/developers en ingestelde HeadAdmin-, Owner- of Developer-rollen. Een testbericht controleert alleen de Discord-verzending; het bewijst niet dat YouTube, Twitch of TikTok bereikbaar is.
+
+De normale controle loopt iedere vijf minuten. Bij fouten loopt de wachttijd op tot een uur. Consolemeldingen bevatten nu servernaam, server-ID en account. Afwisselende HTTP 404/5xx-meldingen worden tijdens een doorlopende foutperiode maximaal eenmaal per uur per creator gelogd. Andere fouten, handmatig opnieuw proberen en herstel kunnen aparte meldingen geven.
+
+YouTube probeert na HTTP 404/5xx dezelfde feed via de alternatieve YouTube-host. Een gevonden UC-kanaal-ID blijft bewaard als de feed tijdelijk faalt. Beide hosts kunnen dezelfde storing hebben: blijvende fouten zijn niet gegarandeerd opgelost. Twitch onderscheidt een niet gevonden account van een ongeldig API-antwoord. TikTok vereist nog steeds toestemming van de creator. Zie [NOTIFY-HANDLEIDING.md](NOTIFY-HANDLEIDING.md) en [TWITCH-HANDLEIDING.md](TWITCH-HANDLEIDING.md).
+
+### Discordlogs en moderatie
+
+Via `/config` stel je `Logging.Channel` als standaard en `Logging.Channels.…` per categorie in. Er zijn 21 categorieën. `/logs status`, `/logs test` en `/logs opnieuw` helpen bij controle en mislukte verzendingen. Zie [LOGGING-HANDLEIDING.md](LOGGING-HANDLEIDING.md) voor kanalen, rechten en de optionele 18+-controle.
+
+Softmoderatie controleert nieuwe en bewerkte tekst in toegankelijke kanalen en threads, met uitzonderingen voor ingestelde staff en beheer. Staff kan maatregelen beoordelen en een actieve time-out aanpassen. Een eerste duidelijke overtreding geeft een waarschuwing; herhaling kan standaard 24 uur time-out geven. Bij de afzonderlijke 18+-controle kunnen duidelijk herkende expliciete inhoud en ondersteunde afbeeldingen worden verwijderd met één geregistreerde warn. Twijfel of API-fouten leiden niet tot automatische straf. Zie [SOFTMODERATIE.md](SOFTMODERATIE.md).
+
+### Tickets: huidige sluitregels
+
+Een ticket zonder aangemaakte staffthread kan sluiten zonder staffthread-logkanaal. Is de thread verwijderd, dan wordt de ontbrekende archivering vastgelegd. Voor een aanwezige staffthread blijft veilige archivering vereist. Ontbrekende logkanalen of onvoldoende rechten kunnen sluiten nog blokkeren; de melding noemt het betrokken kanaal of de verwerkingsstap.
+
+### Bijwerken vanaf 3.1.8
+
+Stop de bot, maak een back-up, vervang de pakketbestanden en voer `npm ci --no-audit --no-fund` uit. Bewaar `.env`, database en eigen `data/`-bestanden. Herstart daarna. Er zijn geen nieuwe configvelden of slashcommands in 3.1.9. Node.js 24 wordt gebruikt; minimaal 22.12.0. Beide Node-versies zijn gecontroleerd, maar daadwerkelijke Discordrechten en streams moeten op de host worden getest.
+
 ### Nieuw in 3.1.2: beveiligingsupdate
 
 - Knoppen en formulieren: maximaal één actie tegelijk per gebruiker per server, met twee seconden wachttijd. Afgewezen herhaalklikken vullen het logkanaal niet.
 - Sluiten, verwijderen en exporteren van tickets controleren opnieuw de stafftoegang en rang van de behandelaar. Lagere staff kan een ticket van hogere staff niet afhandelen. Bestaande Owner-, Developer-, Administrator- en vaste botowner-toegang blijven behouden.
 - Transcriptverwerking: één export tegelijk voor de bot, maximaal 5000 berichten en 8 MB berichtgegevens per kanaal; HTML maximaal 8 MB. Geen ingebedde afbeeldingsdownloads. Bij overschrijding blijft het ticket behouden: geen stilzwijgend afgekapt archief. Een beheerder moet grote tickets volledig apart archiveren.
 - Transcriptbibliotheek blijft op de werkende 3.2.0; onderliggende Undici vastgezet op 6.29.1 en overige getroffen dependencies bijgewerkt.
-- Stop de bot, maak een back-up, vervang de updatebestanden, voer `npm ci` uit en herstart. Geen configuratiewijziging of commandoregistratie nodig. Zie `UPDATE-3.1.2.txt`.
+- Stop de bot, maak een back-up, vervang de updatebestanden, voer `npm ci` uit en herstart. Geen configuratiewijziging of commandoregistratie nodig. Zie `CHANGELOG.md`.
 
 ## Taal per server instellen
 De owner en bestaande bevoegde configuratiebeheerders kunnen kiezen:
@@ -21,7 +68,7 @@ De keuze wordt per server opgeslagen en werkt direct voor nieuwe berichten. Oude
 
 Gebruikers en rollen worden per bericht één keer getagd. Bij herhaling verschijnt alleen de naam als gewone tekst (of het ID als de naam niet beschikbaar is). Ook `@everyone` en `@here` worden niet herhaald als actieve vermelding.
 
-**Botversie 3.1.2 · Bijgewerkt op 21 oktober 2026**
+**Botversie 3.1.9 · Bijgewerkt op 25 oktober 2026**
 
 ## Nieuw in 3.1.1: ticketmeldingen en ledenlijst-fix
 
@@ -35,7 +82,7 @@ Kies een apart staff-only tekstkanaal, verschillend van `Tickets.LogChannel`, he
 
 Claimen en toegang wijzigen halen de volledige ledenlijst nu gepagineerd via de REST-API op, zonder gateway-opcode 8. Gelijktijdige aanvragen binnen dezelfde server delen één laadactie. Afgeronde lijsten worden niet langdurig bewaard, zodat latere acties opnieuw de staffrollen ophalen. Bij fouten worden geen onvolledige lijsten gebruikt. Sluiten/verwijderen bevestigt de interactie voordat het op een andere ticketactie wacht.
 
-**Update vanaf 3.1.0:** stop de bot, maak een back-up, vervang de bestanden en herstart. Geen nieuwe dependencies, configuratievelden, SQL of slashcommandregistratie nodig. De eerdere ticketconfiguratie blijft behouden. Zie `UPDATE-3.1.1.txt`.
+**Update vanaf 3.1.0:** stop de bot, maak een back-up, vervang de bestanden en herstart. Geen nieuwe dependencies, configuratievelden, SQL of slashcommandregistratie nodig. De eerdere ticketconfiguratie blijft behouden. Zie `CHANGELOG.md`.
 
 ## Nieuw in 3.1.0: ticketclaims, overnemen en staffthread-log
 
@@ -86,7 +133,7 @@ Zet dit aan in iedere deelnemende server, inclusief de bronserver. Voor time-out
 
 Elke server krijgt een eigen logmelding met **Time-out opheffen**. Die knop heft uitsluitend de time-out op in de server waar je klikt. Time-outs in andere servers blijven staan. De actuele rechten, rolhiërarchie en controle op later gewijzigde straffen blijven gelden. De automatische kanaalwaarschuwing vermeldt serveroverstijgende maatregelen bij beide strafopties.
 
-Update vanaf **3.0.8**: stop de bot, maak een back-up, vervang de meegeleverde bestanden en herstart. Geen nieuwe instellingen, dependencies of commandregistratie nodig. Bestaande deelname via `CrossServerBan` is direct ook van toepassing op nieuwe time-outs. Zie `UPDATE-3.0.9.txt`.
+Update vanaf **3.0.8**: stop de bot, maak een back-up, vervang de meegeleverde bestanden en herstart. Geen nieuwe instellingen, dependencies of commandregistratie nodig. Bestaande deelname via `CrossServerBan` is direct ook van toepassing op nieuwe time-outs. Zie `CHANGELOG.md`.
 
 ## Nieuw in 3.0.8: serveroverstijgende honeypot-ban
 
@@ -102,13 +149,13 @@ Elke server gebruikt zijn eigen `Honeypot.LogChannel` of `Logging.Channel`, met 
 
 Mislukte bans door rechten of rolpositie worden per server gelogd en houden andere servers niet tegen. Afwezige gebruikers worden overgeslagen. Er is geen permanente gedeelde banlijst: later toetreden leidt niet automatisch tot een ban. Eerder afgehandelde gebeurtenissen worden niet opnieuw uitgevoerd; fouten worden niet automatisch opnieuw geprobeerd. De kanaalwaarschuwing vermeldt de werking over meerdere servers wanneer deze optie aanstaat.
 
-**Update vanaf 3.0.7:** stop de bot, maak een back-up, vervang de meegeleverde bestanden en herstart. De database wordt automatisch uitgebreid met de herkomst van de ban; bestaande logknoppen blijven werken. Geen nieuwe dependencies of commandregistratie nodig. Zie `UPDATE-3.0.8.txt`.
+**Update vanaf 3.0.7:** stop de bot, maak een back-up, vervang de meegeleverde bestanden en herstart. De database wordt automatisch uitgebreid met de herkomst van de ban; bestaande logknoppen blijven werken. Geen nieuwe dependencies of commandregistratie nodig. Zie `CHANGELOG.md`.
 
 ## Nieuw in 3.0.7: zeven dagen berichten verwijderen bij honeypot-ban
 
 Bij een nieuwe honeypot-ban verwijdert Discord alle berichten van die gebruiker uit de afgelopen zeven dagen in de hele server, inclusief afbeeldingen en bijlagen. Dit geldt niet voor time-outs en werkt niet achteraf voor bestaande bans. De logknop heft de ban op, maar herstelt verwijderde berichten niet.
 
-**Update vanaf 3.0.6:** stop de bot, maak een back-up, vervang de bestanden uit het updatepakket op dezelfde paden en herstart met `npm start`. Geen configuratiewijziging, nieuwe dependencies of commandregistratie nodig. Zie `UPDATE-3.0.7.txt`.
+**Update vanaf 3.0.6:** stop de bot, maak een back-up, vervang de bestanden uit het updatepakket op dezelfde paden en herstart met `npm start`. Geen configuratiewijziging, nieuwe dependencies of commandregistratie nodig. Zie `CHANGELOG.md`.
 
 ## Nieuw in 3.0.6: honeypot-kanaal
 
@@ -168,7 +215,7 @@ De bot heeft toegang tot het honeypot-kanaal, de passende moderatierechten en ee
 
 ### Installatie van deze update
 
-Dit updatepakket is bedoeld voor **3.0.5 inclusief woningupgrades**. Stop de bot, maak een back-up van bestanden en database, plaats alle gewijzigde bestanden op dezelfde paden en start met `npm start`. De nieuwe configuratievelden en de honeypot-opslag worden automatisch toegevoegd. Er zijn geen nieuwe dependencies of slashcommando’s. Bestaande instellingen blijven behouden. `README.md`, `HANDLEIDING.md` en `MANUAL-EN.md` zijn meegeleverd; `/help` gebruikt deze handleidingen. Zie `UPDATE-3.0.6.txt`.
+Dit updatepakket is bedoeld voor **3.0.5 inclusief woningupgrades**. Stop de bot, maak een back-up van bestanden en database, plaats alle gewijzigde bestanden op dezelfde paden en start met `npm start`. De nieuwe configuratievelden en de honeypot-opslag worden automatisch toegevoegd. Er zijn geen nieuwe dependencies of slashcommando’s. Bestaande instellingen blijven behouden. `README.md`, `HANDLEIDING.md` en `MANUAL-EN.md` zijn meegeleverd; `/help` gebruikt deze handleidingen. Zie `CHANGELOG.md`.
 
 ## Nieuw in 3.0.5: woningupgrades via de makelaar
 
@@ -197,11 +244,11 @@ Iedere upgrade verhoogt de woningwaarde met 25%, samengesteld: `aankoopprijs × 
 
 Upgrades zijn alleen beschikbaar voor koopwoningen. Ze blijven behouden na herstart en bij economy-/voortgangsresets. Bij verkoop of verhuizing verdwijnen de upgrades van de oude woning; de volgende woning begint op niveau 0/0. Huurwoningen kunnen niet worden geüpgraded.
 
-**Bijwerken vanaf 3.0.4:** stop de bot, maak een back-up van bestanden en database en plaats de gewijzigde bestanden op dezelfde paden. Voer `npm run deploy` uit om de nieuwe makelaaropties te registreren en start met `npm start`. De database wordt automatisch uitgebreid; bestaande woningen blijven behouden. Er zijn geen nieuwe dependencies. Zie [UPDATE-3.0.5.txt](UPDATE-3.0.5.txt).
+**Bijwerken vanaf 3.0.4:** stop de bot, maak een back-up van bestanden en database en plaats de gewijzigde bestanden op dezelfde paden. Voer `npm run deploy` uit om de nieuwe makelaaropties te registreren en start met `npm start`. De database wordt automatisch uitgebreid; bestaande woningen blijven behouden. Er zijn geen nieuwe dependencies. Zie [CHANGELOG.md](CHANGELOG.md).
 
 ## Nieuw in 3.0.3
 
-`/bedrijf` beheert bedrijven, upgrades, beveiliging en verzekeringen. `/heist` opent een openbare groepsaanmelding. `/bank` biedt leningen en aflossingen. `/makelaar actie:verkopen bevestigen:Ja` verkoopt je koopwoning voor 75%. Alle prijzen, termijnen en spelregels staan in `UPDATE-3.0.3.txt`.
+`/bedrijf` beheert bedrijven, upgrades, beveiliging en verzekeringen. `/heist` opent een openbare groepsaanmelding. `/bank` biedt leningen en aflossingen. `/makelaar actie:verkopen bevestigen:Ja` verkoopt je koopwoning voor 75%. Alle prijzen, termijnen en spelregels staan in `CHANGELOG.md`.
 
 ## Nieuw in 3.0.2: makelaar en supermarkt
 

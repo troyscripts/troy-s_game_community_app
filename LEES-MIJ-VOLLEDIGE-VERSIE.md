@@ -1,38 +1,19 @@
-# Volledige bot — 2.4.7
+# Volledige bot — 3.1.9
 
-Dit is de volledige opgeschoonde broncode, inclusief alle updates van 2.4.7.
-Het is geen updatepakket. De bestanden staan direct in de hoofdmap van deze zip.
+Het volledige pakket bevat de botcode en actuele documentatie in de map `troy-s_game_community_app/`. Een ZIP met alleen handleidingen is uitsluitend een aanvulling en bevat geen botcode.
 
 ## Bestaande bot bijwerken
 
-1. Stop de bot en maak een privébackup van je huidige botmap.
-2. Bewaar je bestaande .env en databasebestanden: verwijder de bestaande botmap niet.
-3. Neem eventuele globale beheerders en VIP-rol-ID’s over naar je lokale .env,
-   zoals beschreven in GITHUB-INSTALLATIE.md. Geef gebruikers-ID’s op voor
-   OWNER_IDS/DEVELOPER_IDS en rol-ID’s voor VIP_ROLE_IDS.
-4. Pak deze zip uit in /home/container en voeg de mappen samen.
-   package.json staat dan op /home/container/package.json en updates.js op
-   /home/container/config/updates.js. Plaats geen extra tussenmap.
-5. De repositorylink staat al in config/updates.js:
-   https://github.com/troyscripts/troy-s_game_community_app
-   Laat GITHUB_REPOSITORY in .env leeg tenzij je deze bewust wilt overschrijven.
-6. Gebruik bij ontbrekende dependencies npm ci en start daarna met npm start.
+1. Stop de bot en maak een privéback-up van de bestaande installatie.
+2. Bewaar `.env`, de SQLite-database inclusief eventuele bijbehorende bestanden en je eigen bestanden in `data/`, waaronder TikTok-tokens.
+3. Kopieer de inhoud van de pakketmap naar je bestaande botmap. Op de gebruikelijke hosting staat `package.json` dan op `/home/container/package.json`; maak geen extra tussenmap.
+4. Neem `package.json` en `package-lock.json` beide over en voer `npm ci --no-audit --no-fund` uit. Gebruik Node.js 24; minimaal 22.12.0. Kopieer geen `node_modules` van je eigen pc.
+5. Start met `npm start` of de startknop van de hosting. Controleer de console, `/ping`, een radiozenderwissel en `/notify lijst`.
 
-## Nieuwe installatie
+Bijwerken van 3.1.8 naar 3.1.9 vereist geen nieuwe configvelden of commandoregistratie. Bestaande serverinstellingen blijven behouden. Als je een oudere versie overslaat, volg ook de relevante functiehandleidingen voor inrichting en commands.
 
-Volg README.md. Kopieer .env.example naar .env en vul je botgegevens in.
-Installeer dependencies met npm ci en start met npm start.
+## Nieuwe installatie en publiceren
 
-## GitHub
+Volg [INSTALLATIE.md](INSTALLATIE.md). Maak een eigen `.env` op basis van `.env.example`. Volg [GITHUB-INSTALLATIE.md](GITHUB-INSTALLATIE.md) voor publicatie; privégegevens horen niet in GitHub.
 
-Deze volledige zip bevat geen .env, databases, node_modules, logs of persoonlijke
-transcripts. .env.example en .gitignore zitten er wel in. Je projectnaam is behouden.
-De instructie “alleen gewijzigde bestanden” in GITHUB-INSTALLATIE.md beschrijft het
-losse eerdere updatepakket; deze zip is juist de volledige versie.
-
-De openbare repositorylink is al ingevuld in config/updates.js.
-Voor export vanuit een gebruikte installatie: npm run prepare:github.
-Upload nooit de privédata die later op je host is aangemaakt.
-
-Gecontroleerd: JavaScript-syntax, lokale moduleverwijzingen, aanwezigheid van
-config/updates.js en offline tests van de versiechecker. Geen live Discord-test.
+Lees [UPDATE-3.1.9.md](UPDATE-3.1.9.md) voor de reparaties en [CONTROLES.md](CONTROLES.md) voor uitgevoerde checks. De documentatiecorrectie verandert de codeversie niet. Live Discordrechten en streambereikbaarheid moeten op je hosting worden gecontroleerd.

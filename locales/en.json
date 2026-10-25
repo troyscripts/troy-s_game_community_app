@@ -1264,5 +1264,9 @@
   "Directe HTTP/HTTPS-audiostream, geen website of afspeellijst": "Direct HTTP/HTTPS audio stream, not a website or playlist",
   "Zendernummer uit /radio lijst": "Station number from /radio lijst",
   "Ga in deze call zitten en kies hieronder een zender. Iedereen in de call luistert mee.\nMet de knoppen regel je het volume of stop je de radio. Gebruik Nu luisteren voor de actuele zender en het volume.": "Join this call and choose a station below. Everyone in the call can listen.\nUse the buttons to adjust the volume or stop the radio. Use Now playing to check the current station and volume.",
-  "Stop de radio en haal de bot uit het spraakkanaal": "Stop the radio and disconnect the bot from voice"
+  "Stop de radio en haal de bot uit het spraakkanaal": "Stop the radio and disconnect the bot from voice",
+  "Ongeldig opgeslagen YouTube-kanaal-ID. Stel het juiste UC-kanaal-ID in via /notify youtube-id.": "Invalid stored YouTube channel ID. Set the correct UC channel ID using /notify youtube-id.",
+  "Twitch gaf geen geldige gebruikerslijst terug; later opnieuw proberen.": "Twitch returned an invalid user list; try again later.",
+  "Twitch-kanaal niet gevonden voor gebruikersnaam {0}. Controleer de exacte kanaal-URL.": "Twitch channel not found for username {0}. Check the exact channel URL.",
+  "Twitch-gebruikersgegevens komen niet overeen met {0}; niets verstuurd.": "Twitch user data does not match {0}; nothing was sent."
 }

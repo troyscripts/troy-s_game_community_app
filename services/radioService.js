@@ -34,7 +34,7 @@ function bounded(value, fallback, min, max) {
     return Number.isFinite(n) ? Math.max(min, Math.min(max, Math.round(n))) : fallback;
 }
 function status(guildId) { return sessions.get(guildId); }
-function stop(guildId, reason = 'gestopt') {
+function stop(guildId, reason = 'gestopt', keepConnection = false) {
     const s = sessions.get(guildId);
     if (!s) return false;
     sessions.delete(guildId);
@@ -42,7 +42,13 @@ function stop(guildId, reason = 'gestopt') {
     s.player.stop(true);
     s.child?.stdout.destroy();
     s.child?.kill('SIGKILL');
-    if (s.connection.state.status !== 'destroyed') s.connection.destroy();
+    if (keepConnection) {
+        s.connection.removeListener('error', s.onConnectionError);
+        s.connection.removeListener('stateChange', s.onConnectionState);
+    } else if (s.connection.state.status !== 'destroyed') {
+        // Keep guarded handlers attached for any late error during disconnect.
+        s.connection.destroy();
+    }
     logger.info(`[Radio] ${s.guild.name} (${guildId}) [${safeDiagnostic(s.name)}]: ${reason}.`);
     return true;
 }
@@ -81,8 +87,10 @@ async function start(channel, station, options) {
     const url = validateUrl(station.Url);
     let executable = 'ffmpeg';
     try { const bundled = require('ffmpeg-static'); if (bundled && existsSync(bundled)) executable = bundled; } catch { /* system FFmpeg */ }
-    stop(channel.guild.id, 'zender gewisseld');
-    const connection = v.joinVoiceChannel({ channelId: channel.id, guildId: channel.guild.id,
+    const previous = sessions.get(channel.guild.id);
+    const reuse = previous?.channelId === channel.id && previous.connection.state.status === v.VoiceConnectionStatus.Ready;
+    stop(channel.guild.id, 'zender gewisseld', reuse);
+    const connection = (reuse && previous.connection) || v.joinVoiceChannel({ channelId: channel.id, guildId: channel.guild.id,
         adapterCreator: channel.guild.voiceAdapterCreator, selfDeaf: true, selfMute: false });
     const player = v.createAudioPlayer({ behaviors: { noSubscriber: v.NoSubscriberBehavior.Stop } });
     const s = { guild: channel.guild, channelId: channel.id, name: station.Name || 'Radio', connection, player,
@@ -90,11 +98,13 @@ async function start(channel, station, options) {
     sessions.set(channel.guild.id, s);
     const fail = reason => { if (sessions.get(channel.guild.id) === s) stop(channel.guild.id, reason); };
     player.on('error', () => fail('audiofout; controleer stream en FFmpeg'));
-    connection.on('error', () => fail('verbindingsfout'));
-    connection.on('stateChange', (_old, state) => {
+    s.onConnectionError = () => fail('verbindingsfout');
+    s.onConnectionState = (_old, state) => {
         if (state.status === v.VoiceConnectionStatus.Disconnected || state.status === v.VoiceConnectionStatus.Destroyed)
             fail('spraakverbinding verbroken');
-    });
+    };
+    connection.on('error', s.onConnectionError);
+    connection.on('stateChange', s.onConnectionState);
     try {
         await v.entersState(connection, v.VoiceConnectionStatus.Ready, 20000);
         if (sessions.get(channel.guild.id) !== s) throw new Error('cancelled');
@@ -102,11 +112,12 @@ async function start(channel, station, options) {
         s.child = spawn(executable, ffmpegArgs(url), { stdio: ['ignore', 'pipe', 'pipe'] });
         let diagnosticCount = 0;
         s.child.stderr?.on('data', chunk => {
-            if (diagnosticCount++ >= 3) return;
+            if (sessions.get(channel.guild.id) !== s || diagnosticCount++ >= 3) return;
             const detail = safeDiagnostic(chunk.toString('utf8'));
             if (detail) logger.warn(`[Radio] ${s.guild.name} (${s.guild.id}) [${safeDiagnostic(s.name)}] FFmpeg: ${detail}`);
         });
         s.child.on('error', error => {
+            if (sessions.get(channel.guild.id) !== s) return;
             logger.warn(`[Radio] ${s.guild.name} (${s.guild.id}) [${safeDiagnostic(s.name)}] FFmpeg-startfout: ${safeDiagnostic(error.code || error.message)}`);
             fail('FFmpeg kon niet starten');
         });

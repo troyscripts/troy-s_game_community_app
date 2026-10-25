@@ -1,10 +1,10 @@
-# Softmoderatie — v3.1.3
+# Softmoderatie — v3.1.9
 
 ## Installeren en activeren
 
 1. Stop de bot en maak een back-up van je database en bestanden.
-2. Pak het updatepakket uit in de hoofdmap van je bestaande v3.1.2-bot en vervang de bestanden. Je `.env` en database worden niet meegeleverd of overschreven.
-3. Herstart de bot. Er zijn geen nieuwe dependencies of slashcommands; opnieuw registreren is niet nodig. De nieuwe tabel wordt automatisch aangemaakt.
+2. Neem de bestanden van het volledige pakket over in de hoofdmap van je bot. Je `.env` en database worden niet meegeleverd of overschreven.
+3. Voer bij de update naar 3.1.9 `npm ci --no-audit --no-fund` uit voor het herstelde lockbestand en herstart. Vanaf 3.1.8 zijn geen nieuwe slashcommands toegevoegd. Ontbrekende softmoderatietabellen worden bij opstarten automatisch aangemaakt.
 4. Controleer dat `GROQ_API_KEY` in je bestaande `.env` staat. Deze functie werkt onafhankelijk van `AIChat.Enabled` en `AIChat.Channels`.
 5. Stel via Discord in (owner/developer):
 

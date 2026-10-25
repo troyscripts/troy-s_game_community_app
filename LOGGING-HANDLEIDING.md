@@ -1,10 +1,10 @@
-# Discordlogs en 18+-moderatie — 3.1.6
+# Discordlogs en 18+-moderatie — 3.1.9
 
 ## Installatie
 
 Stop de bot, maak een back-up, kopieer het volledige pakket inclusief submappen,
 behoud `.env`, eigen configuratie, database en transcripts. Start opnieuw.
-Registreer het nieuwe `/logs`-commando met `npm run deploy`.
+Bij een eerste installatie of overstap van vóór 3.1.6 registreer je `/logs` met `npm run deploy`. Vanaf 3.1.8 is voor 3.1.9 geen nieuwe commandoregistratie nodig. Voer wel `npm ci --no-audit --no-fund` uit voor het herstelde lockbestand.
 Bestaande serverinstellingen blijven bewaard; nieuwe instellingen krijgen hun standaardwaarde.
 Neem de nieuwe `config/defaults.js` over; vervang die niet door de oude versie.
 Eventuele eigen wijzigingen in dat bestand kun je in de nieuwe versie terugzetten.

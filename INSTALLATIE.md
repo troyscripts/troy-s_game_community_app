@@ -1,12 +1,20 @@
 # Installatiehandleiding — Troy’s Game Community Bot
 
-Deze handleiding is voor iedereen die de bot downloadt en onder een eigen Discord-applicatie wil draaien. Geschikt voor versie 2.5.6. Je hebt geen programmeerkennis nodig, maar wel toegang tot het bestandbeheer en de startinstellingen van je hosting.
+## Snel naar de huidige installatie
+
+Gebruik het volledige pakket voor een nieuwe installatie. De ZIP met alleen handleidingen bevat geen botcode. Bij het volledige pakket kopieer je de inhoud van `troy-s_game_community_app/` naar de projecthoofdmap, zodat `package.json` naast `index.js` staat.
+
+Vanaf 3.1.9 is de fout `Missing: opusscript@0.0.8 from lock file` hersteld. Neem `package.json` en `package-lock.json` samen over en voer `npm ci --no-audit --no-fund` uit. Gebruik geen `--ignore-scripts` voor de productie-installatie. Als de fout blijft staan, controleer of daadwerkelijk beide bestanden uit 3.1.9 zijn geüpload.
+
+Voor internetradio: [RADIO-HANDLEIDING.md](RADIO-HANDLEIDING.md). Voor Discordlogs en 18+-controle: [LOGGING-HANDLEIDING.md](LOGGING-HANDLEIDING.md). Voor softmoderatie: [SOFTMODERATIE.md](SOFTMODERATIE.md).
+
+Deze handleiding is voor iedereen die de bot downloadt en onder een eigen Discord-applicatie wil draaien. Bijgewerkt voor versie 3.1.9. Je hebt geen programmeerkennis nodig, maar wel toegang tot het bestandbeheer en de startinstellingen van je hosting.
 
 ## 1. Wat heb je nodig?
 
 - Een Discord-account en een server waarop je apps mag toevoegen.
 - De volledige botbestanden, inclusief `package.json` en `package-lock.json`. Een ZIP met alleen updatebestanden is geen volledige installatie.
-- Een Node.js-host met blijvende opslag. Gebruik Node.js 24 LTS. De bot moet kunnen schrijven in zijn eigen map voor de database, logs en back-ups.
+- Een Node.js-host met blijvende opslag. Gebruik Node.js 24; de minimale versie is 22.12.0. De bot moet kunnen schrijven in zijn eigen map voor de database, logs en back-ups.
 - Je eigen Discord-bottoken. Voor AI gebruik je daarnaast je eigen GroqCloud-account en API-sleutel.
 
 De Discord-bot blijft op jouw hosting draaien. GroqCloud verzorgt alleen de AI; daarvoor hoef je geen eigen AI-pc, Ollama of GPU-server aan te houden. AI is optioneel: zonder Groq-sleutel kun je de overige botfuncties gebruiken.
@@ -174,7 +182,7 @@ Voor YouTube-/TikTokmeldingen: [NOTIFY-HANDLEIDING.md](NOTIFY-HANDLEIDING.md). V
 3. Voer `npm ci` uit als dependencies of het lockbestand gewijzigd zijn, en `npm run deploy` wanneer de update commands toevoegt of wijzigt.
 4. Volg eventuele migratie- of verwijderinstructies van die update. Start daarna opnieuw en test `/ping` en de gewijzigde functies.
 
-Voor de Groq-update 2.5.6 zijn geen nieuwe dependencies of slashcommands nodig. `.env.example` is een voorbeeld, geen vervanging voor jouw `.env`.
+Voor de update van 3.1.8 naar 3.1.9 moet je `npm ci --no-audit --no-fund` uitvoeren wegens het herstelde lockbestand. Er zijn geen nieuwe slashcommands of configvelden in 3.1.9. `.env.example` is een voorbeeld, geen vervanging voor jouw `.env`.
 
 De bot heeft standaard automatische databaseback-ups in `database/backups`. Bewaar daarnaast zelf een kopie buiten je hosting. De versiechecker meldt updates, maar installeert ze niet. Automatische changelogmeldingen gebruiken `Logging.Enabled` en `Logging.Channel`.
 

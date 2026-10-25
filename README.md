@@ -1,6 +1,23 @@
-# Troy’s Game Community Bot — 3.1.8
+# Troy’s Game Community Bot — 3.1.9
 
-## Nieuw in 3.1.6: uitgebreide logs en 18+-moderatie
+## Versie 3.1.9: installatie, radio en creatormeldingen
+
+De installatie met Node.js 22/npm 10 is hersteld. Radio wisselt binnen hetzelfde spraakkanaal zonder de verbinding te verbreken; afsluitmeldingen van oude sessies worden onderdrukt. Notify-logs noemen de server en creator. YouTube probeert bij HTTP 404/5xx ook de alternatieve YouTube-host; een blijvende externe fout blijft zichtbaar.
+
+**Bijwerken vanaf 3.1.8:** stop de bot, bewaar `.env`, database en eigen `data/`-bestanden, vervang de pakketbestanden en voer `npm ci --no-audit --no-fund` uit. Start daarna opnieuw. Geen nieuwe configvelden of slashcommands in 3.1.9. Gebruik Node.js 24; minimaal 22.12.0.
+
+| Handleiding | Inhoud |
+| --- | --- |
+| [HANDLEIDING.md](HANDLEIDING.md) / [MANUAL-EN.md](MANUAL-EN.md) | Nederlands en Engels; ook gebruikt door `/help` |
+| [RADIO-HANDLEIDING.md](RADIO-HANDLEIDING.md) | Paneel, zenders, volume, stoppen en streamfouten |
+| [NOTIFY-HANDLEIDING.md](NOTIFY-HANDLEIDING.md) / [TWITCH-HANDLEIDING.md](TWITCH-HANDLEIDING.md) | Creators, koppelingen en foutdiagnose |
+| [LOGGING-HANDLEIDING.md](LOGGING-HANDLEIDING.md) / [SOFTMODERATIE.md](SOFTMODERATIE.md) | Discordlogs, 18+-controle en staffbeoordeling |
+| [INSTALLATIE.md](INSTALLATIE.md) / [GITHUB-INSTALLATIE.md](GITHUB-INSTALLATIE.md) | Installatie en publicatie |
+| [CONTROLES.md](CONTROLES.md) / [UPDATE-3.1.9.md](UPDATE-3.1.9.md) | Testresultaten, grenzen en update-instructies |
+
+De onderstaande oudere releasehoofdstukken beschrijven wanneer functies zijn toegevoegd. Gebruik voor de huidige installatie de instructies hierboven.
+
+## Eerder toegevoegd in 3.1.6: uitgebreide logs en 18+-moderatie
 
 Stel één standaardlogkanaal en 21 afzonderlijke categoriekanalen in via `/config`.
 `/logs status`, `/logs test` en `/logs opnieuw` helpen bij het controleren en
@@ -20,7 +37,7 @@ Zonder opgeslagen staffthread is geen `Tickets.ThreadLogChannel` vereist om te
 sluiten. Een verwijderde opgeslagen staffthread wordt als ontbrekend vastgelegd
 in het aparte stafflog en lokaal; daarna kan het ticketgesprek worden bewaard
 en het ticket worden gesloten. Ontbrekende botrechten blijven een blokkade.
-Zie `UPDATE-3.1.5.txt`. Er zijn geen nieuwe instellingen of slashcommands.
+Zie `CHANGELOG.md`. Er zijn geen nieuwe instellingen of slashcommands.
 
 
 ## Nieuw in 3.1.4: automatische controles
@@ -37,7 +54,7 @@ Alle kanalen, uitzondering voor staffrollen, waarschuwing en 24 uur time-out bij
 - Sluiten, verwijderen en exporteren van tickets controleren opnieuw de stafftoegang en rang van de behandelaar. Lagere staff kan een ticket van hogere staff niet afhandelen. Bestaande Owner-, Developer-, Administrator- en vaste botowner-toegang blijven behouden.
 - Transcriptverwerking: één export tegelijk voor de bot, maximaal 5000 berichten en 8 MB berichtgegevens per kanaal; HTML maximaal 8 MB. Geen ingebedde afbeeldingsdownloads. Bij overschrijding blijft het ticket behouden: geen stilzwijgend afgekapt archief. Een beheerder moet grote tickets volledig apart archiveren.
 - Transcriptbibliotheek blijft op de werkende 3.2.0; onderliggende Undici vastgezet op 6.29.1 en overige getroffen dependencies bijgewerkt.
-- Stop de bot, maak een back-up, vervang de updatebestanden, voer `npm ci` uit en herstart. Geen configuratiewijziging of commandoregistratie nodig. Zie `UPDATE-3.1.2.txt`.
+- Stop de bot, maak een back-up, vervang de updatebestanden, voer `npm ci` uit en herstart. Geen configuratiewijziging of commandoregistratie nodig. Zie `CHANGELOG.md`.
 
 ## Nieuw in 3.1.1: ticketmeldingen en ledenlijst-fix
 
@@ -51,7 +68,7 @@ Kies een apart staff-only tekstkanaal, verschillend van `Tickets.LogChannel`, he
 
 Claimen en toegang wijzigen halen de volledige ledenlijst nu gepagineerd via de REST-API op, zonder gateway-opcode 8. Gelijktijdige aanvragen binnen dezelfde server delen één laadactie. Afgeronde lijsten worden niet langdurig bewaard, zodat latere acties opnieuw de staffrollen ophalen. Bij fouten worden geen onvolledige lijsten gebruikt. Sluiten/verwijderen bevestigt de interactie voordat het op een andere ticketactie wacht.
 
-**Update vanaf 3.1.0:** stop de bot, maak een back-up, vervang de bestanden en herstart. Geen nieuwe dependencies, configuratievelden, SQL of slashcommandregistratie nodig. De eerdere ticketconfiguratie blijft behouden. Zie `UPDATE-3.1.1.txt`.
+**Update vanaf 3.1.0:** stop de bot, maak een back-up, vervang de bestanden en herstart. Geen nieuwe dependencies, configuratievelden, SQL of slashcommandregistratie nodig. De eerdere ticketconfiguratie blijft behouden. Zie `CHANGELOG.md`.
 
 ## Nieuw in 3.1.0: ticketclaims, overnemen en staffthread-log
 
@@ -102,7 +119,7 @@ Zet dit aan in iedere deelnemende server, inclusief de bronserver. Voor time-out
 
 Elke server krijgt een eigen logmelding met **Time-out opheffen**. Die knop heft uitsluitend de time-out op in de server waar je klikt. Time-outs in andere servers blijven staan. De actuele rechten, rolhiërarchie en controle op later gewijzigde straffen blijven gelden. De automatische kanaalwaarschuwing vermeldt serveroverstijgende maatregelen bij beide strafopties.
 
-Update vanaf **3.0.8**: stop de bot, maak een back-up, vervang de meegeleverde bestanden en herstart. Geen nieuwe instellingen, dependencies of commandregistratie nodig. Bestaande deelname via `CrossServerBan` is direct ook van toepassing op nieuwe time-outs. Zie `UPDATE-3.0.9.txt`.
+Update vanaf **3.0.8**: stop de bot, maak een back-up, vervang de meegeleverde bestanden en herstart. Geen nieuwe instellingen, dependencies of commandregistratie nodig. Bestaande deelname via `CrossServerBan` is direct ook van toepassing op nieuwe time-outs. Zie `CHANGELOG.md`.
 
 ## Nieuw in 3.0.8: serveroverstijgende honeypot-ban
 
@@ -118,13 +135,13 @@ Elke server gebruikt zijn eigen `Honeypot.LogChannel` of `Logging.Channel`, met 
 
 Mislukte bans door rechten of rolpositie worden per server gelogd en houden andere servers niet tegen. Afwezige gebruikers worden overgeslagen. Er is geen permanente gedeelde banlijst: later toetreden leidt niet automatisch tot een ban. Eerder afgehandelde gebeurtenissen worden niet opnieuw uitgevoerd; fouten worden niet automatisch opnieuw geprobeerd. De kanaalwaarschuwing vermeldt de werking over meerdere servers wanneer deze optie aanstaat.
 
-**Update vanaf 3.0.7:** stop de bot, maak een back-up, vervang de meegeleverde bestanden en herstart. De database wordt automatisch uitgebreid met de herkomst van de ban; bestaande logknoppen blijven werken. Geen nieuwe dependencies of commandregistratie nodig. Zie `UPDATE-3.0.8.txt`.
+**Update vanaf 3.0.7:** stop de bot, maak een back-up, vervang de meegeleverde bestanden en herstart. De database wordt automatisch uitgebreid met de herkomst van de ban; bestaande logknoppen blijven werken. Geen nieuwe dependencies of commandregistratie nodig. Zie `CHANGELOG.md`.
 
 ## Nieuw in 3.0.7: zeven dagen berichten verwijderen bij honeypot-ban
 
 Bij een nieuwe honeypot-ban verwijdert Discord alle berichten van die gebruiker uit de afgelopen zeven dagen in de hele server, inclusief afbeeldingen en bijlagen. Dit geldt niet voor time-outs en werkt niet achteraf voor bestaande bans. De logknop heft de ban op, maar herstelt verwijderde berichten niet.
 
-**Update vanaf 3.0.6:** stop de bot, maak een back-up, vervang de bestanden uit het updatepakket op dezelfde paden en herstart met `npm start`. Geen configuratiewijziging, nieuwe dependencies of commandregistratie nodig. Zie `UPDATE-3.0.7.txt`.
+**Update vanaf 3.0.6:** stop de bot, maak een back-up, vervang de bestanden uit het updatepakket op dezelfde paden en herstart met `npm start`. Geen configuratiewijziging, nieuwe dependencies of commandregistratie nodig. Zie `CHANGELOG.md`.
 
 ## Nieuw in 3.0.6: honeypot-kanaal
 
@@ -184,7 +201,7 @@ De bot heeft toegang tot het honeypot-kanaal, de passende moderatierechten en ee
 
 ### Installatie van deze update
 
-Dit updatepakket is bedoeld voor **3.0.5 inclusief woningupgrades**. Stop de bot, maak een back-up van bestanden en database, plaats alle gewijzigde bestanden op dezelfde paden en start met `npm start`. De nieuwe configuratievelden en de honeypot-opslag worden automatisch toegevoegd. Er zijn geen nieuwe dependencies of slashcommando’s. Bestaande instellingen blijven behouden. `README.md`, `HANDLEIDING.md` en `MANUAL-EN.md` zijn meegeleverd; `/help` gebruikt deze handleidingen. Zie `UPDATE-3.0.6.txt`.
+Dit updatepakket is bedoeld voor **3.0.5 inclusief woningupgrades**. Stop de bot, maak een back-up van bestanden en database, plaats alle gewijzigde bestanden op dezelfde paden en start met `npm start`. De nieuwe configuratievelden en de honeypot-opslag worden automatisch toegevoegd. Er zijn geen nieuwe dependencies of slashcommando’s. Bestaande instellingen blijven behouden. `README.md`, `HANDLEIDING.md` en `MANUAL-EN.md` zijn meegeleverd; `/help` gebruikt deze handleidingen. Zie `CHANGELOG.md`.
 
 ## Nieuw in 3.0.5: woningupgrades via de makelaar
 
@@ -213,11 +230,11 @@ Iedere upgrade verhoogt de woningwaarde met 25%, samengesteld: `aankoopprijs × 
 
 Upgrades zijn alleen beschikbaar voor koopwoningen. Ze blijven behouden na herstart en bij economy-/voortgangsresets. Bij verkoop of verhuizing verdwijnen de upgrades van de oude woning; de volgende woning begint op niveau 0/0. Huurwoningen kunnen niet worden geüpgraded.
 
-**Bijwerken vanaf 3.0.4:** stop de bot, maak een back-up van bestanden en database en plaats de gewijzigde bestanden op dezelfde paden. Voer `npm run deploy` uit om de nieuwe makelaaropties te registreren en start met `npm start`. De database wordt automatisch uitgebreid; bestaande woningen blijven behouden. Er zijn geen nieuwe dependencies. Zie [UPDATE-3.0.5.txt](UPDATE-3.0.5.txt).
+**Bijwerken vanaf 3.0.4:** stop de bot, maak een back-up van bestanden en database en plaats de gewijzigde bestanden op dezelfde paden. Voer `npm run deploy` uit om de nieuwe makelaaropties te registreren en start met `npm start`. De database wordt automatisch uitgebreid; bestaande woningen blijven behouden. Er zijn geen nieuwe dependencies. Zie [CHANGELOG.md](CHANGELOG.md).
 
 ## Nieuw in 3.0.3: bedrijven, heists en bank
 
-Gebruik `/bedrijf`, `/heist`, `/bank` en `/makelaar actie:verkopen`. Zie `UPDATE-3.0.3.txt` voor installatie, prijzen en alle spelregels.
+Gebruik `/bedrijf`, `/heist`, `/bank` en `/makelaar actie:verkopen`. Zie `CHANGELOG.md` voor installatie, prijzen en alle spelregels.
 
 ## Nieuw in 3.0.2: wonen en boodschappen
 
@@ -227,7 +244,7 @@ Gebruik `/bedrijf`, `/heist`, `/bank` en `/makelaar actie:verkopen`. Zie `UPDATE
 - Huur elke 24 uur via bank, ook na downtime en bij onvoldoende saldo; opzeggen via `/makelaar`.
 - `/supermarkt`: eten en drinken kopen, voorraad bekijken en producten gebruiken.
 - Woningen, contracten en voorraad blijven behouden bij alle bestaande resets.
-- Zie `UPDATE-3.0.2.txt`, `HANDLEIDING.md` en `MANUAL-EN.md` voor de voorwaarden en commando’s.
+- Zie `CHANGELOG.md`, `HANDLEIDING.md` en `MANUAL-EN.md` voor de voorwaarden en commando’s.
 
 ## Nieuw in 3.0.1: verplichte rekeningen en economy-reset
 
@@ -351,7 +368,7 @@ Voor welkomstberichten stel je `Welcome.Enabled` in op `ja` en `Welcome.Channel`
 
 ## Bestaande installatie bijwerken
 
-Stop de bot, maak een back-up en kopieer de bestanden uit het updatepakket naar dezelfde paden in de botmap. Voor 3.0.5 voer je daarna `npm run deploy` uit en start je de bot opnieuw; zie [UPDATE-3.0.5.txt](UPDATE-3.0.5.txt). Voor 2.5.7 zijn geen nieuwe dependencies of slashcommandregistraties nodig; neem de nieuwe helper `utils/deferredReply.js` mee. Voor de Groq-update naar 2.5.6 zijn geen nieuwe dependencies of slashcommandregistraties nodig. Voeg voor AI je eigen GROQ_API_KEY en GROQ_MODEL toe aan je bestaande .env; zie [GROQ-INSTALLATIE.md](GROQ-INSTALLATIE.md). De automatische changelog gebruikt de bestaande logginginstellingen.
+Stop de bot, maak een back-up en kopieer de bestanden uit het updatepakket naar dezelfde paden in de botmap. Voor 3.0.5 voer je daarna `npm run deploy` uit en start je de bot opnieuw; zie [CHANGELOG.md](CHANGELOG.md). Voor 2.5.7 zijn geen nieuwe dependencies of slashcommandregistraties nodig; neem de nieuwe helper `utils/deferredReply.js` mee. Voor de Groq-update naar 2.5.6 zijn geen nieuwe dependencies of slashcommandregistraties nodig. Voeg voor AI je eigen GROQ_API_KEY en GROQ_MODEL toe aan je bestaande .env; zie [GROQ-INSTALLATIE.md](GROQ-INSTALLATIE.md). De automatische changelog gebruikt de bestaande logginginstellingen.
 
 ## Instellingen en gegevens
 

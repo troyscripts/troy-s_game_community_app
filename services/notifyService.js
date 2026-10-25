@@ -12,6 +12,11 @@ let active = null;
 let stopped = true;
 const failures = new Map();
 
+function logContext(client, row) {
+    const clean = value => String(value ?? '').replace(/[\x00-\x1f\x7f\x1b]/g, ' ').slice(0, 150);
+    const guild = client.guilds.cache.get(row.guild_id);
+    return `Notify #${row.id} (${row.platform}) [server: ${clean(guild?.name || 'onbekend')} / ${row.guild_id}] [account: ${clean(row.account)}]`;
+}
 function checkChannel(channel, guildId) {
     if (!channel || channel.guild?.id !== guildId || ![ChannelType.GuildText,ChannelType.GuildAnnouncement].includes(channel.type)) throw new Error(tr("Kies een tekst- of aankondigingskanaal in deze server."));
     const permissions = channel.permissionsFor(channel.guild.members.me);
@@ -96,19 +101,24 @@ async function tick(client) {
                 if (stopped) return;
                 if (result.resolvedId) store.resolved(row.id,result.resolvedId);
                 store.ingest(row,[...result.items].sort((a,b) => a.published-b.published));
-            } catch (error) { fetchError = error; }
+            } catch (error) {
+                fetchError = error;
+                if (row.platform === 'youtube' && /^UC[\w-]{22}$/.test(error.resolvedId || '')) store.resolved(row.id, error.resolvedId);
+            }
             if (stopped) return;
             if (row.platform !== 'twitch' || !fetchError) await deliver(client,row);
             if (fetchError) throw fetchError;
-            if (failure) logger.info(`Notify #${row.id} (${row.platform}): controle en aflevering weer geslaagd.`);
+            if (failure) logger.info(`${logContext(client, row)}: controle en aflevering weer geslaagd.`);
             failures.delete(row.id);
         } catch (error) {
             if (stopped) return;
             const message = error.message || tr("Onbekende notify-fout");
             const count = (failure?.count || 0)+1;
             store.error(row.id,message);
-            failures.set(row.id,{count,until:Date.now()+Math.min(60,5*2**Math.min(count-1,4))*60000,message});
-            if (failure?.message !== message) logger.warn(`Notify #${row.id} (${row.platform}): ${message}`);
+            const errorKey = error.status === 404 || error.status >= 500 ? 'platform-http' : message;
+            const logNow = failure?.errorKey !== errorKey || Date.now() - (failure?.loggedAt || 0) >= 3600000;
+            failures.set(row.id,{count,until:Date.now()+Math.min(60,5*2**Math.min(count-1,4))*60000,message,errorKey,loggedAt:logNow ? Date.now() : failure.loggedAt});
+            if (logNow) logger.warn(`${logContext(client, row)}: ${message}`);
         }
     }
 }
@@ -129,4 +139,4 @@ async function stopNotify() {
     if (active) await active;
 }
 function retry(id) { failures.delete(id); }
-module.exports = {withPingRole,startNotify,stopNotify,payload,checkChannel,retry};
+module.exports = {logContext,withPingRole,startNotify,stopNotify,payload,checkChannel,retry};

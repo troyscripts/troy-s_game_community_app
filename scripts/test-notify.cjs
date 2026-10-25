@@ -235,3 +235,25 @@ test('Twitch scheduler suppresses pending live alerts on API error and offline, 
         mode='live';await run();assert.equal(sends,1);await run();assert.equal(sends,1);
     }finally{providers.twitch=original;await service.stopNotify();}
 });
+
+
+test('notify diagnostics identify guild and creator without injected log lines', () => {
+    const client={guilds:{cache:new Map([['123',{name:'Test\nServer'}]])}};
+    const label=service.logContext(client,{id:52,platform:'twitch',guild_id:'123',account:'creator'});
+    assert.match(label,/Test Server \/ 123/);assert.match(label,/account: creator/);assert.ok(!label.includes('\n'));
+});
+
+test('YouTube retries alternate feed host, validates identity and retains resolved ID on failure', async () => {
+    const oldFetch=global.fetch;const urls=[];let mode='fallback';
+    global.fetch=async url=>{
+        urls.push(url);
+        if(mode==='broken' || new URL(url).hostname==='www.youtube.com') return {ok:false,status:404};
+        return {ok:true,status:200,text:async()=> mode==='wrong' ? feed('').replaceAll(channelId,'UC'+'b'.repeat(22)) : feed(entry('video000001','2026-10-25T12:00:00Z'))};
+    };
+    try {
+        const result=await providers.youtube({account:channelId});
+        assert.equal(result.items.length,1);assert.ok(urls.some(url=>new URL(url).hostname==='youtube.com'));
+        mode='wrong';await assert.rejects(()=>providers.youtube({account:channelId}),/hoort niet/);
+        mode='broken';await assert.rejects(()=>providers.youtube({account:channelId}),error=>error.resolvedId===channelId && error.status===404 && error.message.includes('/feeds/videos.xml?channel_id='));
+    } finally {global.fetch=oldFetch;}
+});

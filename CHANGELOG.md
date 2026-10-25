@@ -1,3 +1,13 @@
+## 3.1.9 — 2026-10-25
+- Documentatie vóór publicatie bijgewerkt: Nederlandse en Engelse gebruikershandleiding, radio, notify, Twitch, installatie, GitHub, logs, softmoderatie en controle-uitleg. Verouderde versiekoppen en ontbrekende updateverwijzingen gecorrigeerd. Geen codewijziging of extra versieophoging.
+- Lockbestand hersteld voor schone installatie met npm 10 / Node.js 22 en npm 11 / Node.js 24.
+- Radio behoudt bij zenderwissels in hetzelfde kanaal de bestaande spraakverbinding; oude sessiecallbacks kunnen de nieuwe sessie niet stoppen.
+- Verwachte FFmpeg-afsluitmeldingen van gestopte sessies worden onderdrukt; actieve streamfouten blijven zichtbaar.
+- Notify-logs bevatten servernaam, server-ID en creator. Afwisselende HTTP 404/5xx-fouten worden maximaal eens per uur per creator gemeld.
+- YouTube probeert na HTTP 404/5xx ook de feed via de alternatieve YouTube-host; kanaalcontrole blijft verplicht. Opgeloste kanaal-ID's blijven bewaard als het feedverzoek mislukt.
+- YouTube-fouten tonen het aangevraagde feedpad en kanaal-ID; Twitch onderscheidt ontbrekende accounts van ongeldige API-antwoorden.
+- Bestaande configuratie, database, accountkoppelingen en zenderinstellingen blijven behouden. Externe 404's, ontbrekende TikTok-koppelingen en onbereikbare radiostreams vereisen zo nodig apart herstel.
+
 ## 3.1.8 — 2026-10-24
 - Radio Veronica-homepagelinks worden bij instellen én afspelen omgezet naar de directe MP3-stream, inclusief links met Nederland.fm-tracking.
 - Radio Veronica als twaalfde standaardzender; bestaande eigen zenderinstellingen blijven behouden.

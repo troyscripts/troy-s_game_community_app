@@ -1,6 +1,16 @@
-# Creatormeldingen — 2.5.2
+# Creatormeldingen — 3.1.9
 
-De bot controleert iedere vijf minuten nieuwe YouTube- en TikTok-video’s. Per creatoraccount stel je een Discordkanaal in. Meerdere creators mogen hetzelfde kanaal gebruiken; iedere Discordserver heeft eigen instellingen.
+## Diagnose in 3.1.9
+
+Consolewaarschuwingen en herstelmeldingen bevatten servernaam, server-ID en account, bijvoorbeeld `Notify #52 (twitch) [server: Voorbeeldserver / 123…] [account: creator]`. Gebruik deze gegevens samen met `/notify lijst` in de juiste server.
+
+YouTube probeert na HTTP 404/5xx dezelfde feed op `youtube.com` nadat het verzoek via `www.youtube.com` is mislukt. Beide feedverzoeken kunnen één extra poging krijgen. Een gevonden UC-kanaal-ID wordt bewaard, ook bij feeduitval. De feed moet nog steeds exact bij dat kanaal horen; fouten worden nooit als een lege succesvolle controle verwerkt. Het feedpad en kanaal-ID staan in HTTP-foutmeldingen. De alternatieve host kan dezelfde storing hebben.
+
+De normale controle blijft vijf minuten. Na fouten loopt de wachttijd op via 5, 10, 20, 40 en maximaal 60 minuten. Tijdens een doorlopende foutperiode veroorzaken afwisselende HTTP 404/5xx-antwoorden maximaal één waarschuwing per uur per creator. Bij herstel volgt een herstelmelding. Andere foutsoorten, herstarten of handmatig opnieuw opslaan kunnen nieuwe meldingen geven.
+
+`/notify test` test uitsluitend de Discord-verzending. Gebruik `/notify lijst` voor de platformstatus. Een ontbrekende TikTok-koppeling moet nog steeds apart worden voltooid; Twitch-appgegevens horen in `.env`. Zie [TWITCH-HANDLEIDING.md](TWITCH-HANDLEIDING.md).
+
+De bot controleert iedere vijf minuten nieuwe YouTube- en TikTok-video’s en actieve Twitch-livestreams. Per creatoraccount stel je een Discordkanaal in. Meerdere creators mogen hetzelfde kanaal gebruiken; iedere Discordserver heeft eigen instellingen.
 
 ## Jouw accounts
 
@@ -60,7 +70,7 @@ Dit vraagt eenmalig technische inrichting door degene die de bot host. Iedere Ti
    TIKTOK_REDIRECT_URI=
    ```
 
-4. Stop de bot. Open een interactieve terminal in de botmap en voer `npm run notify:tiktok` uit. Een hostingpaneel zonder interactieve terminal kan dit script niet zelfstandig doorlopen: voer het dan lokaal met Node.js 20+ en de botdependencies uit en plaats daarna het gemaakte koppelbestand op de host.
+4. Stop de bot. Open een interactieve terminal in de botmap en voer `npm run notify:tiktok` uit. Een hostingpaneel zonder interactieve terminal kan dit script niet zelfstandig doorlopen: voer het dan lokaal met Node.js 24 (minimaal 22.12.0) en de botdependencies uit en plaats daarna het gemaakte koppelbestand op de host.
 5. Open de getoonde toestemmingslink, of laat de betreffende creator deze openen. Na toestemming kopieer je de volledige terugkeer-URL uit de adresbalk naar de terminal. Die URL bevat een kort geldige code: deel hem uitsluitend privé met de beheerder die deze koppeling gestart heeft, nooit in een openbaar kanaal.
 6. Het script controleert de beveiligingscode en de TikTok-gebruikersnaam. Tokens worden opgeslagen in `data/notify-tokens.json`. Kopieer bij een lokale koppeling dit bestand privé naar dezelfde locatie op de bot-host. Bewaar bestaande accounts wanneer je een volgend account koppelt; gebruik daarvoor de actuele kopie van het bestand.
 7. Start de bot. Controleer `/notify lijst` na ongeveer vijf minuten. De bot vernieuwt tokens automatisch zolang TikTok dit toestaat. Bij ingetrokken of verlopen toestemming moet de creator opnieuw koppelen.
@@ -92,7 +102,7 @@ Het tokenbestand is privé, hoort niet op GitHub en wordt niet door de gewone SQ
 
 ## Verbindingsdiagnose vanaf 2.5.3
 
-De basiscontrole draait iedere vijf minuten. Bij fouten loopt de wachttijd per creator op van 5 naar 10, 20, 40 en maximaal 60 minuten. Tijdelijke GET-verbindingsfouten en HTTP 502/503/504 krijgen eerst één extra poging na 750 milliseconden, met maximaal 20 seconden per poging. Een extra poging herhaalt geen Discordmelding.
+De basiscontrole draait iedere vijf minuten. Bij fouten loopt de wachttijd per creator op van 5 naar 10, 20, 40 en maximaal 60 minuten. Tijdelijke GET-verbindingsfouten en HTTP 500/502/503/504 krijgen eerst één extra poging na 750 milliseconden, met maximaal 20 seconden per poging. Een extra poging herhaalt geen Discordmelding.
 
 Waarschuwingen tonen de betrokken host en, indien beschikbaar, de foutcode. `ENOTFOUND`/`EAI_AGAIN` wijzen op naamresolutie; `ETIMEDOUT`/`UND_ERR_CONNECT_TIMEOUT`/`TIMEOUT` op een verlopen aanvraag; `ENETUNREACH` op een onbereikbaar netwerk. HTTP 403 of 429 betekent dat het platform de aanvraag weigert of beperkt. Deel bij aanhoudende problemen de nieuwe waarschuwing met je hoster. Een code is een aanwijzing, geen bewijs van de precieze oorzaak.
 

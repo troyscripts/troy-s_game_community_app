@@ -92,7 +92,7 @@ test('live YouTube feed format without UC prefix keeps exact channel validation'
         assert.equal(calls,2);
         calls=0;
         global.fetch=async()=>{calls++;return {ok:false,status:404};};
-        await assert.rejects(providers.youtube({account:id}),e=>e.status===404);
-        assert.equal(calls,2);
+        await assert.rejects(providers.youtube({account:id}),e=>e.status===404 && e.resolvedId===id);
+        assert.equal(calls,4); // Both allowed feed hosts get one retry.
     } finally {global.fetch=original;}
  });

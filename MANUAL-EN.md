@@ -1,12 +1,59 @@
 # Troy’s Game Community Bot — User Manual
 
+## Current guide for 3.1.9
+
+This manual covers **3.1.9**, updated **25 October 2026**. Older release sections below provide background; follow this section where current behaviour differs. Command examples use the stored Dutch names; Discord may show localized labels.
+
+### Listen to radio together
+
+1. Join a normal server voice channel and open its text chat.
+2. Run `/radio paneel` and choose a station. Everyone in the call hears the same audio.
+3. Use **Softer**, **Louder**, **Now playing** or **Stop radio**. `/leave` stops playback and disconnects the bot.
+
+| Command | Purpose |
+| --- | --- |
+| `/radio lijst` | List configured station numbers |
+| `/radio start zender:1` | Start or switch a station |
+| `/radio volume percentage:30` | Set volume from 0 to 100 |
+| `/radio status` | Show station, channel and volume |
+| `/radio stop` | Stop playback and disconnect |
+| `/radio instellen zender:13 naam:My radio url:https://example.com/live.mp3` | Example for an unused slot; replace the example URL with a real direct audio stream |
+
+Station management requires owner access under the bot permissions or **Manage Server**. Listeners control playback from the same voice channel; managers can stop it elsewhere. There are up to 25 slots and twelve default stations. Existing server settings may differ.
+
+The bot needs View Channel, Connect and Speak, plus Send Messages and Embed Links for the panel. Stage channels and private group calls are unsupported. Configure `Radio.DefaultVolume` (default 30) and `Radio.EmptySeconds` (default 60) through `/config`. The bot stops after the empty-channel delay. Playback does not automatically resume after a bot restart.
+
+In 3.1.9, switching stations within the same channel reuses the voice connection. Expected FFmpeg shutdown messages from the old session are suppressed; active stream failures remain visible. ‘Started’ follows the playing state, but playback can still fail afterwards. See [RADIO-HANDLEIDING.md](RADIO-HANDLEIDING.md) for the detailed Dutch guide.
+
+### Creator alerts and diagnostics
+
+Use `/notify toevoegen`, `/notify lijst`, `/notify verwijderen` and `/notify test`. Management is available to the server owner, global owners/developers and configured HeadAdmin, Owner or Developer roles. A test message only checks Discord delivery, not platform access.
+
+Normal checks run every five minutes, with backoff up to one hour after errors. Logs now identify the server name, server ID and creator. Alternating HTTP 404/5xx warnings are logged at most once an hour per creator during a continuous failure period. Other errors, manual retries and recovery can produce separate messages.
+
+After HTTP 404/5xx, YouTube tries the same feed on the alternate YouTube hostname. Resolved UC channel IDs are retained if fetching the feed fails. Both hosts may have the same outage, so this does not guarantee recovery. Twitch distinguishes a missing account from an invalid API response. TikTok still requires creator authorization. See [NOTIFY-HANDLEIDING.md](NOTIFY-HANDLEIDING.md) and [TWITCH-HANDLEIDING.md](TWITCH-HANDLEIDING.md).
+
+### Discord logs and moderation
+
+Set `Logging.Channel` as the default destination and `Logging.Channels.…` for any of the 21 categories through `/config`. `/logs status`, `/logs test` and `/logs opnieuw` help inspect and retry delivery. See [LOGGING-HANDLEIDING.md](LOGGING-HANDLEIDING.md) for permissions, destinations and optional adult-content moderation.
+
+Soft moderation checks new and edited text in accessible channels and threads, with configured staff/management exemptions. Staff can review actions and edit active timeout expiry. A first clear offence receives a warning; a repeated offence can receive a 24-hour timeout by default. The separate adult-content check can remove clearly identified explicit content and supported images and register one warning. Uncertainty and API failures do not trigger automatic punishment. See [SOFTMODERATIE.md](SOFTMODERATIE.md).
+
+### Current ticket closing rules
+
+Tickets without a staff thread can close without a staff-thread log destination. Missing/deleted threads are recorded as unavailable for archiving. Existing staff threads still require safe archiving. Missing log channels or insufficient permissions may still block closure; diagnostics identify the channel or processing step.
+
+### Update from 3.1.8
+
+Stop the bot, back up, replace the package files and run `npm ci --no-audit --no-fund`. Keep your `.env`, database and private `data/` files. Restart afterwards. Version 3.1.9 adds no config fields or slash commands. Use Node.js 24; minimum 22.12.0. Both Node versions were checked; live Discord permissions and streams still need testing on your host.
+
 ### New in 3.1.2: security update
 
 - Buttons and forms: one concurrent action per user per server, with a two-second cooldown. Rejected repeats do not fill the log channel.
 - Ticket close, delete and export recheck staff access and handler rank. Lower staff cannot handle a higher staff member's ticket. Existing Owner, Developer, Administrator and fixed bot-owner support access remains intact.
 - One transcript export at a time across the bot; at most 5000 messages and 8 MB source data per channel, with an 8 MB HTML output cap. No embedded image downloads. Oversized tickets remain intact and are never silently truncated; an administrator must archive them separately in full.
 - Working transcript library 3.2.0 retained; Undici pinned to 6.29.1 and affected dependencies updated.
-- Stop the bot, back up, replace update files, run `npm ci`, then restart. No configuration changes or command deployment required. See `UPDATE-3.1.2.txt`.
+- Stop the bot, back up, replace update files, run `npm ci`, then restart. No configuration changes or command deployment required. See `CHANGELOG.md`.
 
 ## Server language
 The owner and existing authorized configuration managers can choose:
@@ -21,7 +68,7 @@ Settings persist per server and apply immediately to new messages. Existing mess
 
 Users and roles are mentioned once per message. Repeated references show a plain name (or ID if unavailable). Repeated `@everyone` and `@here` references are also made non-pinging.
 
-**Bot version 3.1.2 · Updated 21 October 2026**
+**Bot version 3.1.9 · Updated 25 October 2026**
 
 ## New in 3.1.1: ticket messages and member-list fix
 
@@ -35,7 +82,7 @@ Choose a separate staff-only text channel, different from `Tickets.LogChannel`, 
 
 Claims and access changes now load members through paginated REST requests instead of gateway opcode 8. Concurrent requests within a server share one load. Completed lists are not cached long-term; later actions fetch staff roles again. Failed or partial lists are never used. Close/delete interactions are acknowledged before waiting for another ticket operation.
 
-**Update from 3.1.0:** stop the bot, back up, replace the supplied files and restart. No new dependencies, configuration fields, SQL or slash command registration are needed. Existing ticket settings remain intact. See `UPDATE-3.1.1.txt`.
+**Update from 3.1.0:** stop the bot, back up, replace the supplied files and restart. No new dependencies, configuration fields, SQL or slash command registration are needed. Existing ticket settings remain intact. See `CHANGELOG.md`.
 
 ## New in 3.1.0: ticket claims, takeover and staff-thread logs
 
@@ -86,7 +133,7 @@ Enable this in every participating server, including the source. Timeouts requir
 
 Each server receives its own **Remove timeout** button. Removal only affects the server where the button is clicked. Other servers' timeouts remain active. Current permissions, role hierarchy and protection for later changed punishments still apply. The automatic warning describes cross-server enforcement for both actions.
 
-Update from **3.0.8**: stop the bot, back up, replace the supplied files and restart. No new settings, dependencies or command registration are needed. Existing `CrossServerBan` opt-ins now also apply to new timeouts. See `UPDATE-3.0.9.txt`.
+Update from **3.0.8**: stop the bot, back up, replace the supplied files and restart. No new settings, dependencies or command registration are needed. Existing `CrossServerBan` opt-ins now also apply to new timeouts. See `CHANGELOG.md`.
 
 ## New in 3.0.8: cross-server honeypot bans
 
@@ -102,13 +149,13 @@ Each server uses its own `Honeypot.LogChannel` or `Logging.Channel`, with a sepa
 
 Permission or hierarchy failures are logged per server and do not block other servers. Absent users are skipped. This is not a persistent shared ban list: joining later does not automatically trigger a ban. Previously handled events are not repeated; failures are not automatically retried. The channel warning explains cross-server enforcement when enabled.
 
-**Updating from 3.0.7:** stop the bot, back up, replace the supplied files and restart. The database automatically adds source metadata and existing log buttons remain valid. No new dependencies or command registration are needed. See `UPDATE-3.0.8.txt`.
+**Updating from 3.0.7:** stop the bot, back up, replace the supplied files and restart. The database automatically adds source metadata and existing log buttons remain valid. No new dependencies or command registration are needed. See `CHANGELOG.md`.
 
 ## New in 3.0.7: delete seven days of messages on honeypot bans
 
 A new honeypot ban deletes that user's messages from the past seven days throughout the server, including images and attachments. This does not apply to timeouts or retroactively to existing bans. The log button removes the ban but cannot restore deleted messages.
 
-**Updating from 3.0.6:** stop the bot, back up your installation, replace the supplied files at their matching paths and restart with `npm start`. No configuration changes, new dependencies or command registration are required. See `UPDATE-3.0.7.txt`.
+**Updating from 3.0.6:** stop the bot, back up your installation, replace the supplied files at their matching paths and restart with `npm start`. No configuration changes, new dependencies or command registration are required. See `CHANGELOG.md`.
 
 ## New in 3.0.6: honeypot channel
 
@@ -168,7 +215,7 @@ The bot needs access to the honeypot channel, the appropriate moderation permiss
 
 ### Updating
 
-This patch requires **3.0.5 with home upgrades**. Stop the bot, back up files and database, copy all changed files to their matching paths and run `npm start`. New configuration fields and moderation storage are added automatically. There are no new dependencies or slash commands. Existing settings remain intact. Updated README and both manuals are included; `/help` uses these files. See the Dutch `UPDATE-3.0.6.txt` for installation notes.
+This patch requires **3.0.5 with home upgrades**. Stop the bot, back up files and database, copy all changed files to their matching paths and run `npm start`. New configuration fields and moderation storage are added automatically. There are no new dependencies or slash commands. Existing settings remain intact. Updated README and both manuals are included; `/help` uses these files. See the Dutch `CHANGELOG.md` for installation notes.
 
 ## New in 3.0.5: home upgrades through the estate agent
 
@@ -197,7 +244,7 @@ Every upgrade raises the property value by 25%, compounded: `purchase price × 1
 
 Only owned homes can be upgraded; rentals cannot. Upgrades survive restarts and economy/progress resets, including personal resets. Selling or moving removes the old home's upgrades; a new home starts at level 0/0.
 
-**Updating from 3.0.4:** stop the bot, back up files and database, copy the update files to their matching paths, run `npm run deploy` to register the new estate-agent options, then run `npm start`. The database migration runs automatically and preserves existing homes. No new dependencies are required. See `UPDATE-3.0.5.txt` for the Dutch installation notes.
+**Updating from 3.0.4:** stop the bot, back up files and database, copy the update files to their matching paths, run `npm run deploy` to register the new estate-agent options, then run `npm start`. The database migration runs automatically and preserves existing homes. No new dependencies are required. See `CHANGELOG.md` for the Dutch installation notes.
 
 ## New in 3.0.3: businesses, heists and loans
 

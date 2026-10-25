@@ -1,8 +1,23 @@
-# Twitch-livemeldingen — 2.5.4
+# Twitch-livemeldingen — 3.1.9
+
+## Foutmeldingen in 3.1.9
+
+Elke notify-waarschuwing noemt de server en ingestelde accountnaam. Zoek het bijbehorende nummer met `/notify lijst` in die server.
+
+| Melding | Controle |
+| --- | --- |
+| Kanaal niet gevonden voor gebruikersnaam | De gebruikerslijst is leeg. Vergelijk de gelogde naam met de exacte Twitch-profiel-URL; gebruik geen weergavenaam, clip of videolink |
+| Geen geldige gebruikerslijst | Twitch gaf geen bruikbaar API-antwoord; dit bewijst niet dat de creator ontbreekt |
+| Gebruikersgegevens komen niet overeen | De ontvangen accountgegevens passen niet bij de aanvraag; er wordt niets verstuurd |
+| Appgegevens ontbreken | Controleer `TWITCH_CLIENT_ID` en `TWITCH_CLIENT_SECRET` op de hosting |
+
+Corrigeer een onjuist opgeslagen account door de juiste creator toe te voegen en de verkeerde koppeling op het juiste nummer te verwijderen. Verwijderen wist ook de bijbehorende meldingswachtrij. Bij hetzelfde account kun je opnieuw toevoegen gebruiken om instellingen te wijzigen; geef kanaal en gewenste ping/berichtopties opnieuw op.
+
+De update bewijst niet dat een eerder gemeld Twitch-account verdwenen is en herstelt geen onbekende verkeerde gebruikersnaam automatisch. `/notify test` controleert alleen het Discordbericht. Vanaf 3.1.8 is voor deze update geen nieuwe commandoregistratie nodig.
 
 ## Wat deze update doet
 
-Algemene ondersteuning voor Twitch-streamers via `/notify toevoegen`. Meldingen bevatten een streamtitel, game/categorie, preview en kijklink. Iedere creator heeft per Discordserver een eigen meldingskanaal en optionele pingrol of pingkeuze 1 t/m 4. Alleen Head Admin, Owner en Developer mogen dit beheren.
+Algemene ondersteuning voor Twitch-streamers via `/notify toevoegen`. Meldingen bevatten een streamtitel, game/categorie, preview en kijklink. Iedere creator heeft per Discordserver een eigen meldingskanaal en optionele pingrol of pingkeuze 1 t/m 4. De servereigenaar, globale owners/developers en de ingestelde HeadAdmin-, Owner- en Developer-rollen mogen dit beheren.
 
 ## Eenmalig Twitch instellen
 

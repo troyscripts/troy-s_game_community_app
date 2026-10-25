@@ -40,7 +40,9 @@ async function twitch(row) {
     let id = row.resolved_id;
     if (!id) {
         const profile = await api(`users?login=${encodeURIComponent(login)}`);
-        if (!Array.isArray(profile.data) || profile.data.length !== 1 || profile.data[0].login?.toLowerCase() !== login || !/^\d+$/.test(profile.data[0].id)) throw new Error(tr("Twitch-kanaal niet gevonden. Controleer de gebruikersnaam."));
+        if (!Array.isArray(profile.data)) throw new Error(tr("Twitch gaf geen geldige gebruikerslijst terug; later opnieuw proberen."));
+        if (!profile.data.length) throw new Error(tr("Twitch-kanaal niet gevonden voor gebruikersnaam {0}. Controleer de exacte kanaal-URL.", login));
+        if (profile.data.length !== 1 || profile.data[0].login?.toLowerCase() !== login || !/^\d+$/.test(profile.data[0].id)) throw new Error(tr("Twitch-gebruikersgegevens komen niet overeen met {0}; niets verstuurd.", login));
         id = profile.data[0].id;
     }
     if (!/^\d+$/.test(id)) throw new Error(tr("Ongeldig Twitch-kanaal-ID. Verwijder de creator en voeg hem opnieuw toe."));

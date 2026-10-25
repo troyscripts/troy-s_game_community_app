@@ -1,4 +1,20 @@
-# Internetradio — 3.1.8
+# Internetradio — 3.1.9
+
+## Gedrag vanaf 3.1.9
+
+Een zenderwissel binnen hetzelfde kanaal behoudt de bestaande spraakverbinding. Oude afspeelcallbacks stoppen de nieuwe sessie niet. Bewust gestopte sessies veroorzaken geen FFmpeg-waarschuwing meer; fouten van de actieve sessie blijven zichtbaar. `/leave`, Stop en automatisch stoppen bij een leeg kanaal verbreken de verbinding wel.
+
+Bijwerken vanaf 3.1.8: voer na het vervangen van de bestanden `npm ci --no-audit --no-fund` uit. Het lockbestand bevat nu ook de ontbrekende optionele `opusscript@0.0.8`-dependency. Er zijn geen nieuwe slashcommands of configvelden.
+
+| Melding | Betekenis en vervolgstap |
+| --- | --- |
+| HTTP 404 bij openen stream | De aangevraagde stream is niet gevonden; controleer de directe stream-URL |
+| Connection timed out | De stream reageert niet op tijd; controleer vanaf de hosting |
+| Network is unreachable | De host kan het netwerkdoel niet bereiken; laat netwerkroute/toegang controleren |
+| Connection reset by peer tijdens actieve audio | De audioverbinding is afgebroken; bekijk de omliggende start-/stopmeldingen |
+| ‘Gestart’, kort daarna een fout | De afspeelstatus was bereikt, maar de stream viel vervolgens uit |
+
+Deze update wijzigt geen opgeslagen stream-URL's. Efteling/Piet Piraat of andere onbereikbare streams zijn hiermee niet automatisch hersteld.
 
 ## Installeren
 1. Stop de bot en pak het pakket uit over de botbestanden. Bewaar je `.env`, database en eigen gegevens.

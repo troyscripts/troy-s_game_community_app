@@ -24,6 +24,8 @@ require.cache[voicePath] = { id: voicePath, filename: voicePath, loaded: true, e
     createAudioResource() { return { volume: {setVolume(v){this.value=v;}}}; },
     async entersState(c) { if(failConnection) throw Error('connection timeout');return c; }
 }};
+const logger = require('../utils/logger');
+const warnings=[];const oldWarn=logger.warn;logger.warn=message=>warnings.push(message);
 const radio = require('../services/radioService');
 const panel = require('../services/radioPanel');
 const command = require('../commands/community/radio');
@@ -72,7 +74,10 @@ function interaction(f, sub, args={}) {
         await radio.start(b.channel,defaults.Radio.Stations.Station1,defaults.Radio);
         assert.equal(radio.volume('a',200),100);assert.equal(radio.status('b').volume,30);
         const replacement=await radio.start(a.channel,defaults.Radio.Stations.Station2,defaults.Radio);
-        assert.equal(s.child.killed,true);assert.equal(s.connection.state.status,'destroyed');assert.equal(radio.status('a'),replacement);
+        assert.equal(s.child.killed,true);assert.equal(s.connection.state.status,'ready');assert.equal(replacement.connection,s.connection);assert.equal(s.connection.listenerCount('error'),1);assert.equal(s.connection.listenerCount('stateChange'),1);assert.equal(radio.status('a'),replacement);
+        const before=warnings.length;s.child.stderr.write('Connection reset by peer');assert.equal(warnings.length,before);
+        replacement.child.stderr.write('actual stream failure');assert.equal(warnings.length,before+1);
+        s.child.emit('exit', 1, null);s.player.emit('error',Error('old stream'));assert.equal(radio.status('a'),replacement);
         const old=a.member.voice.channelId;a.member.voice.channelId='elsewhere';a.member.voice.channel={id:'elsewhere',type:ChannelType.GuildVoice};
         const wrong=interaction(a,'stop');await require('../commands/community/leave').execute(client,wrong);
         assert.ok(radio.status('a'));assert.match(wrong.result.content,/ander kanaal/);
@@ -92,7 +97,7 @@ function interaction(f, sub, args={}) {
         active.emptyTimer._onTimeout();assert.equal(radio.status('a'),undefined);assert.equal(active.child.killed,true);
         console.log('Radio: paneel, lokalisatie, serverisolatie, rechten, /leave, foutopruiming en leeg kanaal geslaagd.');
     } finally {
-        radio.stopAll();childProcess.spawn=originalSpawn;
+        radio.stopAll();logger.warn=oldWarn;childProcess.spawn=originalSpawn;
         if(oldVoice)require.cache[voicePath]=oldVoice;else delete require.cache[voicePath];
         database.db.close();fs.rmSync(tmp,{recursive:true,force:true});
     }
