@@ -32,6 +32,8 @@ module.exports = {
             status: "online"
         });
 
+        await require("../services/broadcastNetwork").start(client);
+
         startVersionReporter(client);
         startConnectionMonitor(client);
         require("../services/updateChecker").startUpdateChecker();

@@ -1,6 +1,24 @@
-# Troy’s Game Community Bot — 3.2.0
+# Troy’s Game Community Bot — 3.2.2
 
 Versieafspraak: na 3.1.9 volgt 3.2.0; elk volgnummer telt tot en met 9.
+
+## Update 3.2.2 — drie botinstallaties verbinden
+
+Volledig pakket, inclusief `/say` vanaf Admin en het eigenaarscommand `/botbericht`. De optionele koppeling gebruikt bot **1486317240319082597** als centraal meldpunt. Alleen gebruiker **709486570293559356** mag publiceren, via het command van die centrale bot. Ontvangers halen meldingen uit de centrale SQLite-wachtrij op; er is geen extra betaalde database nodig.
+
+**Begin bij [BOTBERICHT-KOPPELING.md](BOTBERICHT-KOPPELING.md).** Daar staan de complete vervangstappen, de extra poort en de instellingen per installatie. `.env.example` bevat alle nieuwe velden met uitleg. Vul de twee andere bot-ID's, een zelf gegenereerde gedeelde sleutel en je eigen hostingadres/poort in. Zonder die instellingen is de koppeling standaard uitgeschakeld en werkt het command lokaal.
+
+**Maak per bot eerst een back-up van `.env`, de database en eigen `data/`-bestanden.** Vervang de code, behoud de eigen gegevens, draai `npm ci`, werk de commands bij met `npm run deploy` en herstart. Geen nieuwe npm-dependencies. De opstartcontrole blijft het aantal servers van iedere bot afzonderlijk tonen; de centrale wachtrij telt unieke bestemmingen van alle gekoppelde bots.
+
+De koppeling voorkomt gelijktijdige dubbele verzendingen naar een gedeelde Discord-server en bewaart afleverbevestigingen. Na een onzekere crash tijdens het versturen wordt niet automatisch opnieuw verzonden: controleer dan het doelkanaal. De handleiding beschrijft dit herstelpad en het verschil tussen in de wachtrij en afgeleverd.
+
+## Update 3.2.1 — botbericht en Admin-toegang
+
+- `/botbericht bericht:...`: alleen Discord-ID `709486570293559356` kan een bericht naar `Logging.Channel` van alle servers sturen. Geen kanaal ingesteld: overslaan. Een fout bij één server stopt de overige verzendingen niet.
+- `/say`: vanaf de ingestelde Admin-rol, inclusief HeadAdmin, Developer en Owner. Servereigenaren, globale Owners/Developers en gebruikers met Discord Administrator behouden toegang. Alleen Manage Messages, Moderator of HeadModerator is onvoldoende.
+- Botberichten worden letterlijk geplaatst, zonder vertaling of pings, ook wanneer gewone logging is uitgeschakeld maar het botlogkanaal nog ingesteld is. Het resultaat is alleen zichtbaar voor de uitvoerder.
+
+**Bijwerken vanaf 3.2.0:** stop de bot, vervang de pakketbestanden en behoud je `.env`, database en eigen `data/`. Voer `npm run deploy` uit om `/botbericht` te registreren en herstart de bot. Er zijn geen nieuwe dependencies of configvelden. Discord kan commands zichtbaar laten voor andere gebruikers; de bot controleert bij uitvoering altijd de toegang.
 
 ## Update 3.2.0 — duidelijke logs en betrouwbare radiostart
 

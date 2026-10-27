@@ -705,9 +705,19 @@ Reset a user’s economy. Required: `gebruiker`.
 
 Access: bot owner or a configured Owner, Head Admin or Admin role. A Developer role, server ownership or Administrator alone is not sufficient for this command.
 
+### /botbericht
+
+**Since 3.2.2:** with `BROADCAST_ENABLED=true`, publish only through central bot **1486317240319082597**. All three installations share its persistent queue; receivers post to their configured bot log channels. The command confirms queuing, not delivery. Startup server counts remain local to each bot. Configure the shared secret, three bot IDs and allocated address/port in each `.env`; see [BOTBERICHT-KOPPELING.md](BOTBERICHT-KOPPELING.md). The hub uses the existing SQLite database. Offline receivers catch up later; ambiguous in-flight crashes are not automatically retried, to avoid duplicates.
+
+**With the connection disabled (`false`), the following local behavior applies:**
+
+Use `/botbericht bericht:Your announcement` to post the exact text to every server's configured bot log channel (`Logging.Channel`). Only user ID `709486570293559356` may execute it, even when other users are administrators or configured owners/developers. Maximum 2000 characters; no translation or mention notifications. Disabled regular logging does not exclude a configured channel.
+
+Servers without a channel are skipped. Missing/inaccessible channels or missing bot permissions count as failures; other servers continue. The caller receives private totals; console logs identify servers by name and ID. Concurrent broadcasts are rejected. Running it again sends a new message to all destinations.
+
 ### /say
 
-Make the bot send a message. Normally requires Manage Messages. You must be able to view and send messages in the target channel, and the bot needs access too.
+Make the bot send a message. Requires the configured Admin, HeadAdmin, Developer or Owner role, server ownership, global Owner/Developer access, or Discord Administrator. Moderator, HeadModerator and Manage Messages alone are insufficient. You must be able to view and send messages in the target channel, and the bot needs access too.
 
 Required: `bericht` (message, 1–2,000 characters) and `embed` (whether to send an embed). Optional: `kanaal`, the destination channel.
 

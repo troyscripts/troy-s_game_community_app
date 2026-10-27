@@ -1,3 +1,18 @@
+## 3.2.2 — 2026-10-27
+- Optionele centrale botbericht-koppeling voor meerdere installaties van dezelfde GitHub-code. Centrale identiteit vast op bot 1486317240319082597; publiceren blijft uitsluitend voor gebruiker 709486570293559356 via deze bot.
+- Bestaande SQLite-database bewaart berichten, geregistreerde bestemmingen, centrale reserveringen en lokale ontvangstbewijzen. Ontvangers halen wachtende berichten na een storing op. Eén reservering per melding en Discord-server, ook bij overlappende bots.
+- Ontvangende bots kunnen via de netwerkinterface geen meldingen publiceren. Verzoeken en antwoorden zijn versleuteld/geauthenticeerd met AES-256-GCM, met bot-ID-controle, tijdvenster, replaycontrole en begrensde verzoeken.
+- Bij een onzekere verzending wordt niet automatisch opnieuw verstuurd om dubbele berichten te vermijden. Definitieve fouten en onzekere uitkomsten worden met servernaam/ID gelogd.
+- Koppeling start en stopt met de bot. Netwerkstoringen blokkeren de gewone opstartcontrole niet; serveraantallen blijven per bot. Geen nieuwe dependencies.
+- Volledige .env.example met aparte uitleg voor centraal/ontvangers en complete installatie-, back-up- en herstelhandleiding. README en Nederlandse/Engelse handleidingen bijgewerkt.
+
+## 3.2.1 — 2026-10-27
+- Nieuw `/botbericht bericht:...`, uitsluitend voor vaste boteigenaar `709486570293559356`; stuurt naar het ingestelde `Logging.Channel` van iedere server.
+- Serverinstellingen worden per bestemming gelezen. Geen kanaal: overslaan; onbereikbaar kanaal of onvoldoende rechten: fout registreren en doorgaan. Privé resultaat met aantallen, consolelogs met servernamen en ID's.
+- Letterlijke berichttekst, maximaal 2000 tekens, zonder pings; gelijktijdige broadcasts geblokkeerd.
+- `/say` vereist Admin of hoger via ingestelde rollen, Discord Administrator of bestaande eigenaar/developer-toegang. Manage Messages alleen is niet langer voldoende.
+- README en Nederlandse/Engelse handleiding bijgewerkt. Commands opnieuw registreren met `npm run deploy`.
+
 ## 3.2.0 — 2026-10-25
 - Discordlogs tonen beschikbare gebruikers-, kanaal- en rolnamen met ID's als extra informatie; namen worden bij de gebeurtenis vastgelegd.
 - Leesbare voicevelden en Ja/Nee, herkenbare gebruikers/kanalen in interactielogs, berichtlinks en beschikbare embedtekst.

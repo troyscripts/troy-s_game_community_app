@@ -93,7 +93,8 @@ module.exports = {
 
 
     category: "Fun",
-    permissions: ["ManageMessages"],
+    permissions: [],
+    adminOnly: true,
 
 
     guildOnly: true,
@@ -101,6 +102,13 @@ module.exports = {
 
 
     async execute(client, interaction) {
+
+        if (!require('../../utils/permissions').hasAdminAccess(interaction.member, interaction.user.id)) {
+            return send(interaction, "reply", {
+                content: "❌ Dit command is alleen beschikbaar vanaf Admin. / Admin or higher required.",
+                flags: MessageFlags.Ephemeral
+            });
+        }
 
         await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 

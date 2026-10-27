@@ -71,9 +71,22 @@ function hasPermission(member, permissions = []) {
     return permissions.every((permission) => member.permissions.has(permission));
 }
 
+function hasAdminAccess(member, userId) {
+    if (isBotOwner(userId)) return true;
+    if (!member?.guild || member?.user?.bot) return false;
+    if (hasOwnerAccess(member, userId) || isDeveloper(userId)) return true;
+    if (member.permissions?.has("Administrator")) return true;
+    return ['Admin', 'HeadAdmin'].some(key => {
+        const id = config.Roles?.[key];
+        return id && id !== member.guild.id && member.roles?.cache?.has(id);
+    });
+}
+
 function canUseCommand(interaction, command) {
     const userId = interaction.user.id;
+    if (command.botOwnerOnly) return isBotOwner(userId);
     if (isBotOwner(userId)) return true;
+    if (command.adminOnly && !hasAdminAccess(interaction.member, userId)) return false;
 
     if (command.notifyOnly && !hasNotifyAccess(interaction.member, userId)) return false;
 
@@ -101,6 +114,7 @@ function canUseCommand(interaction, command) {
 }
 
 module.exports = {
+    hasAdminAccess,
     hasNotifyAccess,
     isOwner,
     hasOwnerAccess,

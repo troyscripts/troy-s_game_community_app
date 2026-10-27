@@ -891,11 +891,21 @@ Reset de economie van een gebruiker.
 | --- | --- |
 | `/economy-reset` | `gebruiker` (verplicht): Welke gebruiker moet worden gereset? |
 
+### /botbericht
+
+**Vanaf 3.2.2:** met `BROADCAST_ENABLED=true` publiceer je uitsluitend bij centrale bot **1486317240319082597**. De drie installaties delen een wachtrij via die bot; ontvangende bots plaatsen de melding in hun ingestelde logkanalen. De commandreactie bevestigt opname in de wachtrij, geen aflevering. De normale opstartcontrole blijft per bot. Zie [BOTBERICHT-KOPPELING.md](BOTBERICHT-KOPPELING.md) voor installatie, offline gedrag en herstel bij onzekere verzendingen.
+
+**Met de koppeling uitgeschakeld (`false`) geldt het lokale gedrag hieronder:**
+
+Gebruik `/botbericht bericht:Je mededeling` om dezelfde tekst naar het ingestelde botlogkanaal (`Logging.Channel`) van alle servers te sturen. Alleen Discord-ID `709486570293559356` mag dit; andere owners, developers en administrators niet. Maximaal 2000 tekens, zonder vertaling of pings. Gewone logging mag uitgeschakeld zijn zolang het kanaal ingesteld is.
+
+Geen kanaal ingesteld: overgeslagen. Verwijderd/onbereikbaar kanaal of onvoldoende botrechten: mislukt, overige servers gaan door. Je krijgt privé de aantallen verstuurd, overgeslagen en mislukt. Consolelogs vermelden servernamen en ID's. Een tweede uitzending tijdens een lopende verzending wordt geweigerd. Opnieuw uitvoeren verstuurt opnieuw naar alle servers.
+
 ### /say
 
 Laat de bot een bericht sturen.
 
-**Toegang:** Standaard het Discord-recht Berichten beheren. Je moet het doelkanaal kunnen zien en er berichten kunnen sturen. Ook de bot heeft daar toegang nodig.
+**Toegang:** Vanaf de ingestelde Admin-rol: Admin, HeadAdmin, Developer of Owner. Ook servereigenaren, globale Owners/Developers en Discord Administrator hebben toegang. Moderator, HeadModerator en alleen Berichten beheren zijn onvoldoende. Je moet het doelkanaal kunnen zien en er berichten kunnen sturen. Ook de bot heeft daar toegang nodig.
 
 | Gebruik | Opties |
 | --- | --- |
