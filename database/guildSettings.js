@@ -419,6 +419,13 @@ function parseValue(path, rawValue, currentValue) {
         if (!Array.isArray(values)) throw new Error(tr("De waarde moet een lijst zijn."));
         values = values.map((item) => String(item).trim()).filter(Boolean);
 
+        if (["Logging.IgnoredAuthors", "Logging.IgnoredUserMentions", "Logging.IgnoredRoleMentions"].includes(path)) {
+            const role = path === "Logging.IgnoredRoleMentions";
+            const pattern = role ? /^(?:<@&(\d{17,20})>|(\d{17,20}))$/ : /^(?:<@!?(\d{17,20})>|(\d{17,20}))$/;
+            const ids = values.map(value => { const match = value.match(pattern); return match && (match[1] || match[2]); });
+            if (ids.some(id => !id) || ids.length > 100) throw new Error("Gebruik maximaal 100 geldige " + (role ? "rol" : "gebruikers") + "-ID's of mentions, gescheiden door komma's.");
+            return [...new Set(ids)];
+        }
         if (path === "StaffRoles" || path === "AIChat.Channels") {
             const ids = values.map(extractDiscordId);
             if (ids.some((id) => !id)) {

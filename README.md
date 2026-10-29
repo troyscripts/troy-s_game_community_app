@@ -1,4 +1,8 @@
-# Troy’s Game Community Bot — 3.2.2
+# Troy’s Game Community Bot — 3.2.3
+
+## Update 3.2.3 — berichtlogfilters en logreparaties
+
+Zie [UPDATE-3.2.3.md](UPDATE-3.2.3.md) voor installatie, voorbeelden van de nieuwe `/config`-filters, YouTube-API-fallback en verbindingsdiagnose. Bestaande instellingen blijven bewaard. Radio, TikTok en afsluitgedrag zijn niet gewijzigd.
 
 Versieafspraak: na 3.1.9 volgt 3.2.0; elk volgnummer telt tot en met 9.
 

@@ -3,6 +3,7 @@ const { PermissionFlagsBits: P, AuditLogEvent, Events } = require('discord.js');
 const config = require('../config/config');
 const logger = require('../utils/logger');
 const names = require('../utils/logNames');
+const logFilter = require('./logFilter');
 const { sendLogMessage, tr } = require('../utils/localization');
 const CATEGORIES = ['Messages','MessageEdits','MessageDeletes','Reactions','Members','Roles','Channels','Threads','Voice','Moderation','Invites','Server','Expressions','ScheduledEvents','Integrations','AutoMod','Commands','Audit','Presence','Typing','Polls'];
 let initialized=false, timer, busy=false, lastCleanup=0;
@@ -17,6 +18,9 @@ function db(){
             next_attempt INTEGER NOT NULL DEFAULT 0, error TEXT);
             CREATE INDEX IF NOT EXISTS discord_logs_pending ON discord_event_logs(status,next_attempt);
             CREATE INDEX IF NOT EXISTS discord_logs_guild ON discord_event_logs(guild_id,id);`);
+        if (!d.prepare('PRAGMA table_info(discord_event_logs)').all().some(column => column.name === 'source_json')) {
+            d.exec('ALTER TABLE discord_event_logs ADD COLUMN source_json TEXT');
+        }
         initialized=true;
     }
     return d;
@@ -44,10 +48,10 @@ function envelope(title, description='', fields=[]){
     }
     return {embeds:[{title:trim(title,200),description:desc||undefined,color:0x5865F2,fields:clean,timestamp:new Date().toISOString()}],allowedMentions:{parse:[],repliedUser:false}};
 }
-function enqueue(guild,category,title,description='',fields=[]){
+function enqueue(guild,category,title,description='',fields=[],source=null){
     if(!guild?.id||!CATEGORIES.includes(category))return null;
     return config.__context.run(guild.id,()=>{
-        if(!enabled(category))return null;
+        if(!enabled(category)||logFilter.ignored(source,config.Logging))return null;
         const channel=route(category);
         // No destination configured: do not silently collect message content on disk.
         if(!channel)return null;
@@ -55,8 +59,8 @@ function enqueue(guild,category,title,description='',fields=[]){
         const pending=d.prepare("SELECT COUNT(*) n FROM discord_event_logs WHERE guild_id=? AND status='pending'").get(guild.id).n;
         const status=pending>=config.Logging.QueueLimit?'failed':'pending';
         const payload=envelope(title,description,fields);
-        const result=d.prepare('INSERT INTO discord_event_logs(guild_id,category,channel_id,payload,created_at,status,error) VALUES(?,?,?,?,?,?,?)')
-            .run(guild.id,category,channel,JSON.stringify(payload),now,status,status==='failed'?'Wachtrijlimiet bereikt; lokaal bewaard':null);
+        const result=d.prepare('INSERT INTO discord_event_logs(guild_id,category,channel_id,payload,created_at,status,error,source_json) VALUES(?,?,?,?,?,?,?,?)')
+            .run(guild.id,category,channel,JSON.stringify(payload),now,status,status==='failed'?'Wachtrijlimiet bereikt; lokaal bewaard':null,source ? JSON.stringify(source) : null);
         d.prepare('DELETE FROM discord_event_logs WHERE guild_id=? AND (created_at<? OR id NOT IN (SELECT id FROM discord_event_logs WHERE guild_id=? ORDER BY id DESC LIMIT ?))')
             .run(guild.id,now-config.Logging.RetentionDays*86400000,guild.id,config.Logging.MaxRecords);
         return Number(result.lastInsertRowid);
@@ -77,8 +81,8 @@ async function drain(client){
             const row=db().prepare("SELECT * FROM discord_event_logs WHERE guild_id=? AND status='pending' AND next_attempt<=? ORDER BY id LIMIT 1").get(group.guild_id,Date.now());
             if(!row)continue;
             await config.__context.run(row.guild_id,async()=>{
-                if(!enabled(row.category)){
-                    db().prepare("UPDATE discord_event_logs SET status='cancelled',error='Logcategorie uitgeschakeld' WHERE id=?").run(row.id);return;
+                if(!enabled(row.category)||logFilter.ignored(row.source_json ? JSON.parse(row.source_json) : null,config.Logging)){
+                    db().prepare("UPDATE discord_event_logs SET status='cancelled',error='Logcategorie uitgeschakeld of berichtfilter actief' WHERE id=?").run(row.id);return;
                 }
                 try{
                     const guild=client.guilds.cache.get(row.guild_id);
@@ -170,10 +174,16 @@ function install(client){
     if(installed.has(client))return;installed.add(client);
     function on(name,fn){client.on(name,(...args)=>{try{Promise.resolve(fn(...args)).catch(e=>logger.warn(`Discordlog ${name}: ${e.message}`));}catch(e){logger.warn(`Discordlog ${name}: ${e.message}`);}});}
     const message=(m)=>m?.guild&&m.author?.id!==client.user?.id;
-    on(Events.MessageCreate,m=>{if(message(m))enqueue(m.guild,'Messages','Bericht geplaatst',m.url||'',messageDetails(m));});
-    on(Events.MessageDelete,m=>{if(message(m))enqueue(m.guild,'MessageDeletes','Bericht verwijderd','Auteur is niet noodzakelijk degene die het bericht verwijderde.',messageDetails(m));});
-    on(Events.MessageUpdate,(a,b)=>{if(message(b)&&(a.content!==b.content||a.attachments?.size!==b.attachments?.size))enqueue(b.guild,'MessageEdits','Bericht gewijzigd',b.url||'',[{name:'Auteur',value:names.user(b.guild,b.member||b.author||a.author)},{name:'Kanaal',value:names.channel(b.guild,b.channel||a.channel||b.channelId)},{name:'Bericht',value:names.messageLink(b)},{name:'Voor',value:a.content||'Vorige inhoud niet beschikbaar'},{name:'Na',value:b.content||'Nieuwe inhoud niet beschikbaar of leeg'}]);});
-    on(Events.MessageBulkDelete,(messages,ch)=>enqueue(ch.guild,'MessageDeletes','Berichten in bulk verwijderd',`${messages.size} berichten in ${names.channel(ch.guild,ch)}.`,[{name:'Bericht-ID’s (eerste 50)',value:[...messages.keys()].slice(0,50).join(', ')||'onbekend'}]));
+    on(Events.MessageCreate,m=>{if(message(m))enqueue(m.guild,'Messages','Bericht geplaatst',m.url||'',messageDetails(m),logFilter.source(m));});
+    on(Events.MessageDelete,m=>{if(message(m))enqueue(m.guild,'MessageDeletes','Bericht verwijderd','Auteur is niet noodzakelijk degene die het bericht verwijderde.',messageDetails(m),logFilter.source(m));});
+    on(Events.MessageUpdate,(a,b)=>{if(message(b)&&(a.content!==b.content||a.attachments?.size!==b.attachments?.size))enqueue(b.guild,'MessageEdits','Bericht gewijzigd',b.url||'',[{name:'Auteur',value:names.user(b.guild,b.member||b.author||a.author)},{name:'Kanaal',value:names.channel(b.guild,b.channel||a.channel||b.channelId)},{name:'Bericht',value:names.messageLink(b)},{name:'Voor',value:a.content||'Vorige inhoud niet beschikbaar'},{name:'Na',value:b.content||'Nieuwe inhoud niet beschikbaar of leeg'}],logFilter.source(b,a));});
+    on(Events.MessageBulkDelete,(messages,ch)=>{
+        if(!ch.guild)return;
+        config.__context.run(ch.guild.id,()=>{
+            const visible=[...messages.values()].filter(m=>message(m)&&!logFilter.ignored(logFilter.source(m),config.Logging));
+            if(visible.length)enqueue(ch.guild,'MessageDeletes','Berichten in bulk verwijderd',`${visible.length} niet-uitgesloten berichten in ${names.channel(ch.guild,ch)}.`,[{name:'Bericht-ID’s (eerste 50)',value:visible.slice(0,50).map(m=>m.id).join(', ')}]);
+        });
+    });
     for(const [event,label] of [[Events.MessageReactionAdd,'Reactie toegevoegd'],[Events.MessageReactionRemove,'Reactie verwijderd']])on(event,(reaction,user)=>{if(reaction.message?.guild&&user?.id!==client.user?.id)enqueue(reaction.message.guild,'Reactions',label,`${names.user(reaction.message.guild,user)} — ${reaction.emoji?.name||reaction.emoji?.id}\n${names.channel(reaction.message.guild,reaction.message.channel||reaction.message.channelId)}\n${names.messageLink(reaction.message)}`);});
     on(Events.MessageReactionRemoveAll,m=>{if(m.guild)enqueue(m.guild,'Reactions','Alle reacties verwijderd',`${names.channel(m.guild,m.channel||m.channelId)}\n${names.messageLink(m)}`);});
     on(Events.MessageReactionRemoveEmoji,r=>{if(r.message.guild)enqueue(r.message.guild,'Reactions','Emoji-reacties verwijderd',`${names.channel(r.message.guild,r.message.channel||r.message.channelId)}\n${names.messageLink(r.message)}; emoji ${r.emoji?.name||r.emoji?.id}`);});
@@ -201,7 +211,7 @@ function install(client){
         }
     }
     on(Events.ThreadMembersUpdate,(added,removed,thread)=>enqueue(thread.guild,'Threads','Threadleden gewijzigd',names.channel(thread.guild,thread),[{name:'Toegevoegd',value:[...added.keys()].map(id=>names.user(thread.guild,id)).join('\n')||'Geen'},{name:'Verwijderd',value:[...removed.keys()].map(id=>names.user(thread.guild,id)).join('\n')||'Geen'}]));
-    on(Events.ChannelPinsUpdate,(ch,date)=>enqueue(ch.guild,'Channels','Vastgezette berichten gewijzigd',`${names.channel(ch.guild,ch)}; laatste pin ${date?.toISOString()||'onbekend'}`));
+    on(Events.ChannelPinsUpdate,(ch,date)=>enqueue(ch.guild,'Channels','Vastgezette berichten gewijzigd',`${names.channel(ch.guild,ch)}; laatste pin ${logFilter.pinTime(date)}`));
     on(Events.VoiceStateUpdate,(a,b)=>{
         const changes=diff(a,b,['channelId','selfMute','selfDeaf','serverMute','serverDeaf','streaming','selfVideo','suppress','requestToSpeakTimestamp']);
         const title=a.channelId!==b.channelId ? (!b.channelId ? 'Spraakkanaal verlaten' : !a.channelId ? 'Spraakkanaal betreden' : 'Verplaatst naar ander spraakkanaal') : 'Voice-status gewijzigd';

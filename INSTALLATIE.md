@@ -1,5 +1,9 @@
 # Installatiehandleiding — Troy’s Game Community Bot
 
+## Update 3.2.3 — berichtlogfilters en logreparaties
+
+Zie [UPDATE-3.2.3.md](UPDATE-3.2.3.md) voor installatie, voorbeelden van de nieuwe `/config`-filters, YouTube-API-fallback en verbindingsdiagnose. Bestaande instellingen blijven bewaard. Radio, TikTok en afsluitgedrag zijn niet gewijzigd.
+
 ## Bijwerken vanaf 3.1.9
 
 Stop de bot, neem de gewijzigde bestanden inclusief `utils/logNames.js` over en herstart. Deze update verandert geen dependencies, configvelden, database-indeling of slashcommands. Bewaar je bestaande `.env`, database en eigen gegevens. Het versieverschil in het lockbestand is alleen het botversienummer. Publiceer deze versie als **v3.2.0**. Zie [UPDATE-3.2.0.md](UPDATE-3.2.0.md). Bij een nieuwe installatie blijft `npm ci --no-audit --no-fund` nodig.

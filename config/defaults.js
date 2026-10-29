@@ -98,6 +98,10 @@ module.exports = {
         Console: true,
         Files: true,
         MessageDelete: true,
+        IgnoreBots: false, // ja = berichtlogs van alle bots/webhooks overslaan
+        IgnoredAuthors: [], // bot-/gebruikers-ID's; /config accepteert ook @gebruiker
+        IgnoredUserMentions: [], // berichten met deze gebruikersmentions overslaan
+        IgnoredRoleMentions: [], // berichten met deze rolmentions overslaan
         Channel: "", // standaard; lege categoriekanalen gebruiken dit kanaal
         RetentionDays: 30,
         MaxRecords: 50000,

@@ -104,6 +104,13 @@ async function youtube(row) {
         }
         return {resolvedId:id,items:parseFeed(xml,id)};
     } catch (error) {
+        if (process.env.YOUTUBE_API_KEY?.trim()) {
+            try { return await require('./youtubeApi').youtubeApi(id); }
+            catch (apiError) {
+                apiError.resolvedId = id;
+                throw apiError;
+            }
+        }
         error.resolvedId = id;
         throw error;
     }

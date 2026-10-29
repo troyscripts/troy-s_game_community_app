@@ -124,6 +124,7 @@ module.exports = {
                     tr("`Store.VIPRole` → aparte VIP-rol voor /store; de botrol moet erboven staan\n") +
                     tr("`Bump.Channel` → kanaalvermelding/ID voor een herinnering iedere 2 uur; `uit` schakelt deze uit\n") +
                     tr("`Bot.Language` → `nl`, `en` of `both` voor openbare berichten\n") +
+                    "`Logging.IgnoreBots` → `ja`/`nee`; `Logging.IgnoredAuthors`, `Logging.IgnoredUserMentions`, `Logging.IgnoredRoleMentions` → ID/mention-lijst of `geen`\n" +
                     tr("`Logging.Language` → `nl`, `en` of `both` voor Discord-logs (standaard `nl`)\n") +
                     "`Bot.Color` → `#c9a91b`\n" +
                     tr("`StaffRoles` → laat waarde leeg om rollen aan te klikken, of voer rol-ID's in\n") +

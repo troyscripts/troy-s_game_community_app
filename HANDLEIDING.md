@@ -1,5 +1,9 @@
 # Troy’s Game Community Bot — Gebruikershandleiding
 
+## Update 3.2.3 — berichtlogfilters en logreparaties
+
+Zie [UPDATE-3.2.3.md](UPDATE-3.2.3.md) voor installatie, voorbeelden van de nieuwe `/config`-filters, YouTube-API-fallback en verbindingsdiagnose. Bestaande instellingen blijven bewaard. Radio, TikTok en afsluitgedrag zijn niet gewijzigd.
+
 ## Update 3.2.0 — duidelijke logs en betrouwbare radiostart
 
 Nieuwe Discordlogs tonen weergavenamen/gebruikersnamen, kanaalnamen en rolnamen waar die beschikbaar zijn. ID's blijven als aanvullende informatie behouden. Namen worden bij de gebeurtenis vastgelegd, zodat latere naamwijzigingen de opgeslagen log niet veranderen. Er zijn geen extra Discord-ophaalverzoeken per log nodig. Bij ontbrekende gegevens staat er expliciet een onbekende/verwijderde gebruiker, rol of kanaal met ID. Al verstuurde logs en eerder opgeslagen wachtrijregels worden niet herschreven.

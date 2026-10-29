@@ -1,3 +1,11 @@
+## 3.2.3 — 2026-10-29
+- Per-server berichtlogfilters via /config: alle bots/webhooks, specifieke afzenders, gebruikersmentions en rolmentions. Nieuwe regels worden vóór opslag gefilterd; nieuwe wachtrijregels worden ook vóór aflevering opnieuw gecontroleerd. Moderatie en honeypot blijven actief.
+- Vastgezette berichten ondersteunen numerieke timestamps, Date, ISO-tekst en ontbrekende/ongeldige waarden.
+- YouTube: optionele officiële Data API v3-fallback via YOUTUBE_API_KEY bij RSS-fouten. Kanaalidentiteit en publicatiedatum worden gecontroleerd; fouten worden nooit als een lege geslaagde feed opgeslagen.
+- Notify-waarschuwingen maximaal eenmaal per uur per koppeling, ook bij kort herstel. Herstelmelding pas na drie opeenvolgende geslaagde controles.
+- Reconnectdiagnose herkent Discord-reconnectverzoeken en ontbrekende heartbeat-antwoorden zonder ruwe debugdata te loggen. Hersteltijd, shard-netwerkfoutcodes en maximale eventloopvertraging worden geregistreerd.
+- Versie, installatie- en beheerhandleidingen bijgewerkt. Geen nieuwe dependencies; bestaande serverinstellingen blijven behouden.
+
 ## 3.2.2 — 2026-10-27
 - Optionele centrale botbericht-koppeling voor meerdere installaties van dezelfde GitHub-code. Centrale identiteit vast op bot 1486317240319082597; publiceren blijft uitsluitend voor gebruiker 709486570293559356 via deze bot.
 - Bestaande SQLite-database bewaart berichten, geregistreerde bestemmingen, centrale reserveringen en lokale ontvangstbewijzen. Ontvangers halen wachtende berichten na een storing op. Eén reservering per melding en Discord-server, ook bij overlappende bots.

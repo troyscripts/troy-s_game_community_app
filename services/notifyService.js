@@ -11,6 +11,22 @@ let timer = null;
 let active = null;
 let stopped = true;
 const failures = new Map();
+// Keep diagnostic cooldowns across brief recoveries, independently of retry backoff.
+const notices = new Map();
+function failureNotice(id, errorKey, now = Date.now()) {
+    const previous = notices.get(id);
+    const logNow = !previous || now - previous.loggedAt >= 3600000;
+    notices.set(id, {errorKey, loggedAt: logNow ? now : previous.loggedAt, successes: 0, recovered: false});
+    return logNow;
+}
+function recoveryNotice(id) {
+    const notice = notices.get(id);
+    if (!notice || notice.recovered) return false;
+    notice.successes++;
+    if (notice.successes < 3) return false;
+    notice.recovered = true;
+    return true;
+}
 
 function logContext(client, row) {
     const clean = value => String(value ?? '').replace(/[\x00-\x1f\x7f\x1b]/g, ' ').slice(0, 150);
@@ -83,7 +99,10 @@ async function tick(client) {
         }
     }
     const youtubeChecks = new Map();
-    for (const row of store.list()) {
+    const rows = store.list();
+    const ids = new Set(rows.map(row => row.id));
+    for (const id of notices.keys()) if (!ids.has(id)) notices.delete(id);
+    for (const row of rows) {
         if (stopped) return;
         if (!client.guilds.cache.has(row.guild_id)) continue;
         const failure = failures.get(row.id);
@@ -108,7 +127,7 @@ async function tick(client) {
             if (stopped) return;
             if (row.platform !== 'twitch' || !fetchError) await deliver(client,row);
             if (fetchError) throw fetchError;
-            if (failure) logger.info(`${logContext(client, row)}: controle en aflevering weer geslaagd.`);
+            if (recoveryNotice(row.id)) logger.info(`${logContext(client, row)}: drie opeenvolgende controles en afleverpogingen geslaagd.`);
             failures.delete(row.id);
         } catch (error) {
             if (stopped) return;
@@ -116,8 +135,8 @@ async function tick(client) {
             const count = (failure?.count || 0)+1;
             store.error(row.id,message);
             const errorKey = error.status === 404 || error.status >= 500 ? 'platform-http' : message;
-            const logNow = failure?.errorKey !== errorKey || Date.now() - (failure?.loggedAt || 0) >= 3600000;
-            failures.set(row.id,{count,until:Date.now()+Math.min(60,5*2**Math.min(count-1,4))*60000,message,errorKey,loggedAt:logNow ? Date.now() : failure.loggedAt});
+            const logNow = failureNotice(row.id,errorKey);
+            failures.set(row.id,{count,until:Date.now()+Math.min(60,5*2**Math.min(count-1,4))*60000,message,errorKey,loggedAt:notices.get(row.id).loggedAt});
             if (logNow) logger.warn(`${logContext(client, row)}: ${message}`);
         }
     }
@@ -139,4 +158,4 @@ async function stopNotify() {
     if (active) await active;
 }
 function retry(id) { failures.delete(id); }
-module.exports = {logContext,withPingRole,startNotify,stopNotify,payload,checkChannel,retry};
+module.exports = {failureNotice,recoveryNotice,logContext,withPingRole,startNotify,stopNotify,payload,checkChannel,retry};

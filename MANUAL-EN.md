@@ -1,5 +1,15 @@
 # Troy’s Game Community Bot — User Manual
 
+## Update 3.2.3 — message log filters and diagnostics
+
+Use `/config instellen` with `Logging.IgnoreBots` (`ja`/`nee`), `Logging.IgnoredAuthors`, `Logging.IgnoredUserMentions` or `Logging.IgnoredRoleMentions`. Lists accept comma-separated IDs or matching Discord mentions; `geen` clears a list. Filters are per server and affect message creation, edits, deletion and cached bulk deletions. They do not disable moderation, honeypot or other event categories. Missing author/content data cannot be classified; such events remain logged. Old queued logs lack filter metadata and may still be delivered.
+
+Pins now accept numeric timestamps, Date objects and ISO strings. Reconnect diagnostics report recognized Discord reconnect requests, missing heartbeat acknowledgements, shard error codes, event loop maximum delay and recovery time; they do not prove a hosting fault.
+
+YouTube RSS retains retries and channel validation. Optional `YOUTUBE_API_KEY` enables a YouTube Data API v3 fallback (latest 50 uploads, validated channel/date) after RSS failure. Enable the API in your Google Cloud project, restrict the key to that API and monitor project quota. Leave empty for RSS only. Warnings are limited to one per hour per subscription even across short recoveries; recovery is reported after three successful checks.
+
+Stop the bot, back up `.env`, the database and custom data, replace application files including the new modules, retain private data and restart. New settings merge into existing server settings. No new dependencies or slash command registration needed. See [UPDATE-3.2.3.md](UPDATE-3.2.3.md).
+
 Version numbering: 3.1.9 is followed by 3.2.0; each incremented component rolls over after 9.
 
 ## Update 3.2.0 — readable logs and confirmed radio startup

@@ -1,4 +1,8 @@
-# Discordlogs en 18+-moderatie — 3.2.0
+# Discordlogs en 18+-moderatie — 3.2.3
+
+## Update 3.2.3 — berichtlogfilters en logreparaties
+
+Zie [UPDATE-3.2.3.md](UPDATE-3.2.3.md) voor installatie, voorbeelden van de nieuwe `/config`-filters, YouTube-API-fallback en verbindingsdiagnose. Bestaande instellingen blijven bewaard. Radio, TikTok en afsluitgedrag zijn niet gewijzigd.
 
 ## Update 3.2.0 — duidelijke logs en betrouwbare radiostart
 

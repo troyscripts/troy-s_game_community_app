@@ -257,3 +257,16 @@ test('YouTube retries alternate feed host, validates identity and retains resolv
         mode='broken';await assert.rejects(()=>providers.youtube({account:channelId}),error=>error.resolvedId===channelId && error.status===404 && error.message.includes('/feeds/videos.xml?channel_id='));
     } finally {global.fetch=oldFetch;}
 });
+
+test('brief recovery does not reset diagnostic cooldown; sustained recovery is reported once',()=>{
+    const id='diagnostic-test';
+    assert.equal(service.failureNotice(id,'platform-http',1000),true);
+    assert.equal(service.recoveryNotice(id),false);
+    assert.equal(service.failureNotice(id,'platform-http',2000),false);
+    assert.equal(service.recoveryNotice(id),false);
+    assert.equal(service.recoveryNotice(id),false);
+    assert.equal(service.recoveryNotice(id),true);
+    assert.equal(service.recoveryNotice(id),false);
+    assert.equal(service.failureNotice(id,'platform-http',3000),false);
+    assert.equal(service.failureNotice(id,'platform-http',3601000),true);
+});

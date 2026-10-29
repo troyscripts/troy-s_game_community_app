@@ -1,6 +1,21 @@
 const { tr } = require("../utils/localization");
 const { Events } = require("discord.js");
 const logger = require("../utils/logger");
+const { monitorEventLoopDelay } = require('node:perf_hooks');
+const { networkReason } = require('../utils/platformRequest');
+const gatewayHints = new Map();
+const reconnectStarted = new Map();
+let loopHistogram = null;
+function captureGatewayHint(message) {
+    const text = String(message);
+    const shard = text.match(/\[WS => Shard (\d+)\]/)?.[1];
+    if (shard === undefined || !text.includes('Destroying shard')) return;
+    // Whitelist labels only: raw debug text can contain session data.
+    const reason = text.includes('Reason: Told to reconnect by Discord') ? 'Discord vraagt reconnect'
+        : text.includes('Reason: Zombie connection') ? 'Heartbeat-antwoord ontbreekt'
+        : 'Gatewayverbinding wordt heropend; oorzaak onbekend';
+    gatewayHints.set(Number(shard), {reason, at: Date.now()});
+}
 
 const SAMPLE_INTERVAL_MS = 60_000;
 const MAX_SAMPLES = 1440; // maximaal 24 uur bij 1 meting per minuut
@@ -83,7 +98,8 @@ function recordSample(client, { announce = true } = {}) {
 
     const now = Date.now();
     if (lastSampleTickAt) {
-        eventLoopDelayMs = Math.max(0, now - lastSampleTickAt - SAMPLE_INTERVAL_MS);
+        eventLoopDelayMs = loopHistogram ? loopHistogram.max / 1e6 : Math.max(0, now - lastSampleTickAt - SAMPLE_INTERVAL_MS);
+        loopHistogram?.reset();
     }
     lastSampleTickAt = now;
 
@@ -124,16 +140,28 @@ function reconnectDiagnostics(client, shardId) {
     const rssMb = Math.round(memory.rss / 1024 / 1024);
     const ping = Number.isFinite(Number(client?.ws?.ping)) ? Math.round(Number(client.ws.ping)) : tr("onbekend");
     const uptime = formatDuration(process.uptime() * 1000);
-    return `shard=${shardId}, gateway=${ping}ms, sinds-vorige=${sincePrevious}, event-loop-delay=${Math.round(eventLoopDelayMs)}ms, heap=${heapMb}MB, rss=${rssMb}MB, uptime=${uptime}`;
+    const hint = gatewayHints.get(shardId);
+    const reason = hint && now - hint.at < 60000 ? hint.reason : 'onbekend; hosting of Discord niet vastgesteld';
+    gatewayHints.delete(shardId);
+    const loopMax = Math.round(Math.max(eventLoopDelayMs, (loopHistogram?.max || 0) / 1e6));
+    return `oorzaak=${reason}, shard=${shardId}, gateway=${ping}ms, sinds-vorige=${sincePrevious}, event-loop-max=${loopMax}ms, heap=${heapMb}MB, rss=${rssMb}MB, uptime=${uptime}`;
 }
 
 function startConnectionMonitor(client) {
     if (timer || !client) return;
     activeClient = client;
+    loopHistogram = monitorEventLoopDelay({resolution: 20});
+    loopHistogram.enable();
     startedAt = Date.now();
     lastSampleTickAt = startedAt;
 
     listeners = {
+        debug: captureGatewayHint,
+        shardError: (error, shardId) => {
+            clientErrors += 1;
+            if (isTimeout(error)) timeouts += 1;
+            logger.warn(`[Discord Connection Monitor] Netwerkfout op shard ${shardId}: ${networkReason(error)}.`);
+        },
         error: (error) => {
             clientErrors += 1;
             if (isTimeout(error)) timeouts += 1;
@@ -146,14 +174,20 @@ function startConnectionMonitor(client) {
         },
         shardReconnecting: (shardId) => {
             reconnects += 1;
+            reconnectStarted.set(shardId, Date.now());
             logger.warn(`[Discord Connection Monitor] Gateway reconnect op shard ${shardId}. Totaal: ${reconnects}. Diagnose: ${reconnectDiagnostics(client, shardId)}.`);
         },
         shardResume: (shardId, replayedEvents) => {
             resumes += 1;
-            logger.info(`[Discord Connection Monitor] Gateway hervat op shard ${shardId}; ${replayedEvents} events opnieuw afgespeeld.`);
+            const began = reconnectStarted.get(shardId);
+            const duration = began === undefined ? 'onbekend' : `${Date.now() - began}ms`;
+            reconnectStarted.delete(shardId);
+            logger.info(`[Discord Connection Monitor] Gateway hervat op shard ${shardId}; hersteltijd=${duration}; ${replayedEvents} events opnieuw afgespeeld.`);
         }
     };
 
+    client.on(Events.Debug, listeners.debug);
+    client.on(Events.ShardError, listeners.shardError);
     client.on(Events.Error, listeners.error);
     client.on(Events.ShardDisconnect, listeners.shardDisconnect);
     client.on(Events.ShardReconnecting, listeners.shardReconnecting);
@@ -169,7 +203,13 @@ function stopConnectionMonitor() {
     if (timer) clearInterval(timer);
     timer = null;
 
+    loopHistogram?.disable();
+    loopHistogram = null;
+    gatewayHints.clear();
+    reconnectStarted.clear();
     if (activeClient && listeners) {
+        activeClient.off(Events.Debug, listeners.debug);
+        activeClient.off(Events.ShardError, listeners.shardError);
         activeClient.off(Events.Error, listeners.error);
         activeClient.off(Events.ShardDisconnect, listeners.shardDisconnect);
         activeClient.off(Events.ShardReconnecting, listeners.shardReconnecting);
@@ -181,7 +221,7 @@ function stopConnectionMonitor() {
 }
 
 function getSnapshot(client = activeClient) {
-    if (client) recordSample(client, { announce: false });
+    // Reading the status must not shift the periodic measurement window.
     const valid = samples.map(sample => sample.ping).filter(Number.isFinite);
     const current = Number.isFinite(Number(client?.ws?.ping)) ? Math.round(Number(client.ws.ping)) : null;
     const average = valid.length ? Math.round(valid.reduce((sum, value) => sum + value, 0) / valid.length) : null;

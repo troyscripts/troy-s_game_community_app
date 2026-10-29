@@ -83,6 +83,37 @@ async function run(){
  assert.match(names.user(one,'unavailable'),/Onbekende gebruiker/);
  assert.match(names.role(one,{id:'old-role',name:'Verwijderde rol'}),/Verwijderde rol/);
  assert.equal(names.user(two,'666666666666666666').includes('Troy'),false,'No name lookup from another server');
+ // Per-server message filters apply before storing and again before delivery.
+ const count=()=>database.db.prepare('SELECT COUNT(*) n FROM discord_event_logs WHERE guild_id=?').get(g).n;
+ const botId='888888888888888888',userMention='999999999999999999',roleMention='777777777777777777';
+ settings.updateValue(g,'Logging.IgnoredAuthors',`<@!${botId}>`);
+ let before=count();
+ client.emit(Events.MessageCreate,{...base,author:{id:botId,bot:true}});assert.equal(count(),before);
+ settings.updateValue(g,'Logging.IgnoreBots','ja');
+ client.emit(Events.MessageCreate,{...base,author:{id:'other-bot',bot:true}});assert.equal(count(),before);
+ client.emit(Events.MessageDelete,{...base,author:{id:'other-bot',bot:true}});assert.equal(count(),before);
+ settings.updateValue(g,'Logging.IgnoredUserMentions',`<@${userMention}>`);
+ settings.updateValue(g,'Logging.IgnoredRoleMentions',`<@&${roleMention}>`);
+ for(const content of [`hi <@!${userMention}>`,`hi <@&${roleMention}>`]) {
+   client.emit(Events.MessageCreate,{...base,content});assert.equal(count(),before);
+   client.emit(Events.MessageUpdate,{...base,content},{...base,content:'removed mention'});assert.equal(count(),before);
+ }
+ assert.throws(()=>settings.updateValue(g,'Logging.IgnoredAuthors',`<@&${roleMention}>`));
+ assert.throws(()=>settings.updateValue(g,'Logging.IgnoredRoleMentions',`<@${botId}>`));
+ client.emit(Events.MessageCreate,{...base,guild:two,author:{id:botId,bot:true}});
+ assert.ok(database.db.prepare("SELECT id FROM discord_event_logs WHERE guild_id=? AND status='pending'").get(h));
+ const queued=audit.enqueue(one,'Messages','filter after enqueue','',[],{authorId:'123456789012345678',bot:false,users:[],roles:[]});
+ settings.updateValue(g,'Logging.IgnoredAuthors','123456789012345678');
+ database.db.prepare("UPDATE discord_event_logs SET status='sent' WHERE guild_id=? AND id!=?").run(g,queued);
+ await audit.drain(client);
+ assert.equal(database.db.prepare('SELECT status FROM discord_event_logs WHERE id=?').get(queued).status,'cancelled');
+ const visible={...base,id:'visible'};
+ client.emit(Events.MessageBulkDelete,new Map([['hidden',{...base,id:'hidden',author:{id:botId,bot:true}}],['visible',visible]]),{guild:one,id:'c'});
+ let bulk=JSON.parse(database.db.prepare('SELECT payload FROM discord_event_logs WHERE guild_id=? ORDER BY id DESC LIMIT 1').get(g).payload);
+ assert.match(JSON.stringify(bulk),/visible/);assert.ok(!JSON.stringify(bulk).includes('hidden'));
+ for(const date of [new Date('2026-10-29T12:00:00Z'),Date.parse('2026-10-29T12:00:00Z'),'2026-10-29T12:00:00Z',null,{},NaN]) {
+   before=count();client.emit(Events.ChannelPinsUpdate,{guild:one,id:'c'},date);assert.equal(count(),before+1);
+ }
  console.log('PASS Discord logging: routing, server isolation, config validation, event registration, no self-loop/pings, queue retry/persistence/limits, rights, retention and embed limits.');
 }
 run().catch(e=>{console.error(e);process.exitCode=1;}).finally(()=>{audit.stop();database.closeDatabase();fs.rmSync(temp,{recursive:true,force:true});});
