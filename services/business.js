@@ -101,7 +101,7 @@ async function syncMember(guild, u, roles) {
   data.done(guild.id, u);
 }
 const RULES =
-  "Eén bedrijf per soort per speler. Automatisch elk volledig uur op je bank, eerste betaling na één uur; gemiste uren worden na herstart ingehaald. Vast inkomen zonder VIP-/woningbonus. Stadium 1–5: iedere upgrade +10% van het basisinkomen (maximaal +40%); prijs per upgrade 20% van de basisprijs. Beveiliging 0–5: per niveau 10% van de basisprijs. Uitrusting 0–5: volgende upgrade kost €2.500 × het nieuwe niveau. Verzekering: direct 10% van de waarde inclusief upgrades, daarna elke 7 dagen opnieuw tegen de actuele waarde. Vervolgpremies en onverzekerde overvalschade kunnen je bank negatief maken. Opzeggen stopt toekomstige premies zonder restitutie. Bedrijven, upgrades en verzekeringen blijven bij resets behouden.";
+  "Eén bedrijf per soort per speler. Automatisch elk volledig uur op je bank, eerste betaling na één uur; gemiste uren worden na herstart ingehaald. Vast inkomen zonder VIP-/woningbonus. Stadium 1–5: iedere upgrade +10% van het basisinkomen (maximaal +40%); prijs per upgrade 20% van de basisprijs. Beveiliging 0–5: per niveau 10% van de basisprijs. Uitrusting 0–5: volgende upgrade kost €2.500 × het nieuwe niveau. Verzekering: direct 10% van de waarde inclusief upgrades, daarna elke 7 dagen opnieuw tegen de actuele waarde. Vervolgpremies en onverzekerde overvalschade kunnen je bank negatief maken. Opzeggen stopt alleen de verzekering zonder restitutie. Verkopen geeft 75% van de waarde inclusief upgrades en beveiliging terug op je bank en verwijdert het bedrijf en de bedrijfsrol. Openstaande inkomsten en premies worden eerst afgerekend. Bedrijven, upgrades en verzekeringen blijven bij resets behouden.";
 async function broker(client, i) {
   return guard(i, async () => {
     const g = i.guildId,
@@ -123,11 +123,11 @@ async function broker(client, i) {
           "\n\n" +
           pair(
             RULES,
-            "One business of each type per player. Automatic bank income every full hour, starting one hour after purchase; missed hours are caught up after restart. Fixed income without VIP/housing bonuses. Stages 1–5: each upgrade adds 10% of base income (maximum +40%) and costs 20% of base price. Security 0–5: each upgrade costs 10% of base price. Equipment 0–5: next upgrade costs €2,500 × the new level. Insurance costs 10% of the value including upgrades immediately and every 7 days at the current value. Renewal premiums and uninsured raid losses can make your bank balance negative. Cancelling ends future premiums without a refund. Businesses, upgrades and insurance survive resets.",
+            "One business of each type per player. Automatic bank income every full hour, starting one hour after purchase; missed hours are caught up after restart. Fixed income without VIP/housing bonuses. Stages 1–5: each upgrade adds 10% of base income (maximum +40%) and costs 20% of base price. Security 0–5: each upgrade costs 10% of base price. Equipment 0–5: next upgrade costs €2,500 × the new level. Insurance costs 10% of the value including upgrades immediately and every 7 days at the current value. Renewal premiums and uninsured raid losses can make your bank balance negative. Cancelling only ends insurance without a refund. Selling returns 75% of the value including upgrades and security to your bank and removes the business and its role. Outstanding income and premiums are settled first. Businesses, upgrades and insurance survive resets.",
           ) +
           pair(
-            "\n\nGebruik /bedrijf actie:kopen soort:… bevestigen:Ja.",
-            "\n\nUse /bedrijf action:kopen type:… confirm:True.",
+            "\n\nGebruik /bedrijf actie:kopen of actie:verkopen soort:… bevestigen:Ja.",
+            "\n\nUse /bedrijf actie:kopen or actie:verkopen soort:… bevestigen:True.",
           ),
       );
     if (a === "status") {
@@ -174,8 +174,9 @@ async function broker(client, i) {
       i.options.getString("betaalmiddel") || "bank",
     );
     let note = "";
-    if (a === "kopen") {
+    if (a === "kopen" || a === "verkopen") {
       try {
+        roles ||= await ensureRoles(i.guild);
         await syncMember(i.guild, u, roles);
       } catch (e) {
         logger.warn(`Bedrijfsrol: ${e.message}`);
@@ -185,6 +186,14 @@ async function broker(client, i) {
         );
       }
     }
+    if (a === "verkopen")
+      return reply(
+        i,
+        pair(
+          `✅ Bedrijf verkocht. Ontvangen op je bank: ${money(result.refund)} (75% van de bedrijfswaarde).${note}`,
+          `✅ Business sold. Received in your bank: ${money(result.refund)} (75% of the business value).${note}`,
+        ),
+      );
     return reply(
       i,
       pair(

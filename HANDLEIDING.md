@@ -1276,3 +1276,8 @@ Met `/notify` stel je een Discordkanaal in per YouTube-, TikTok- of Twitchaccoun
 Gebruik `/notify lijst`, `/notify toevoegen`, `/notify verwijderen` en `/notify test`. TikTok vereist eerst toestemming van de creator. Zie [NOTIFY-HANDLEIDING.md](NOTIFY-HANDLEIDING.md) voor de volledige uitleg en installatie.
 
 Twitch vereist `TWITCH_CLIENT_ID` en `TWITCH_CLIENT_SECRET` in `.env`, nooit een stream key. Controle iedere vijf minuten; een actieve stream wordt eenmaal bij de eerste detectie gemeld. Zie [TWITCH-HANDLEIDING.md](TWITCH-HANDLEIDING.md).
+
+
+### Bedrijf verkopen
+
+Verkoop een bedrijf met `/bedrijf actie:verkopen soort:klein bevestigen:Ja` (of `restaurant` / `kantoor`). Je ontvangt 75% van de bedrijfswaarde inclusief upgrades en beveiliging op je bank. Openstaande inkomsten en premies worden eerst afgerekend. Het bedrijf, de verzekering en de bijbehorende bedrijfsrol verdwijnen; openstaande heists tegen dit bedrijf worden geannuleerd. `opzeggen` stopt uitsluitend de verzekering.

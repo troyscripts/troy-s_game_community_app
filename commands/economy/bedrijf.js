@@ -12,6 +12,7 @@ module.exports = {
             "aanbod",
             "status",
             "kopen",
+            "verkopen",
             "upgrade",
             "beveiliging",
             "verzekeren",

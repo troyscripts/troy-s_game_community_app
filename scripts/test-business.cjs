@@ -237,6 +237,53 @@ async function run() {
   await service.broker(client, offer);
   assert.match(offer.response.content, /Business broker/);
   assert.ok(!/[\uE000-\uE002]/.test(offer.response.content));
+  // Sale: settlement, refund, ownership, roles, replay protection and rollback.
+  economy.setMoney(owner, g, 0, 100000);
+  b.change("sale-buy", g, owner, "kopen", "klein", "bank", now);
+  b.change("sale-upgrade", g, owner, "upgrade", "klein", "bank", now);
+  b.change("sale-security", g, owner, "beveiliging", "klein", "bank", now);
+  b.change("sale-insure", g, owner, "verzekeren", "klein", "bank", now);
+  const saleNow = now + b.WEEK;
+  const beforeSale = economy.getBalance(owner, g).bank;
+  b.createHeist("sale-heist", g, a, owner, "klein", "channel", saleNow);
+  const originalAddBank = economy.addBank;
+  economy.addBank = () => { throw Error("simulated write failure"); };
+  assert.throws(() => b.change("sale-fail", g, owner, "verkopen", "klein", "bank", saleNow));
+  economy.addBank = originalAddBank;
+  assert.ok(b.asset(g, owner, "klein"));
+  assert.equal(economy.getBalance(owner, g).bank, beforeSale);
+  assert.throws(() => b.change("sale-other", g, c, "verkopen", "klein", "bank", saleNow));
+  const sold = b.change("business-sale", g, owner, "verkopen", "klein", "bank", saleNow);
+  assert.equal(sold.refund, 9750);
+  assert.equal(economy.getBalance(owner, g).bank, beforeSale + 168 * 550 - 1300 + 9750);
+  assert.equal(b.asset(g, owner, "klein"), undefined);
+  assert.equal(b.heist("sale-heist").status, "cancelled");
+  const afterSale = economy.getBalance(owner, g).bank;
+  assert.deepEqual(b.change("business-sale", g, owner, "verkopen", "klein", "bank", saleNow), sold);
+  assert.equal(economy.getBalance(owner, g).bank, afterSale);
+  assert.throws(() => b.change("sale-again", g, owner, "verkopen", "klein", "bank", saleNow));
+  assert.equal(b.settle(g, owner, "klein", saleNow + b.WEEK), undefined);
+  // A later purchase can be sold through the actual command service.
+  b.change("sale-rebuy", g, owner, "kopen", "klein");
+  await service.syncMember(guild, owner, roles);
+  assert.ok(memberRoles.has(roles.klein.id));
+  const saleUI = interaction(owner, { actie: "verkopen", soort: "klein" });
+  saleUI.guildId = g;
+  saleUI.guild = guild;
+  saleUI.options.getBoolean = () => false;
+  await service.broker(client, saleUI);
+  assert.ok(b.asset(g, owner, "klein"), "Confirmation is required");
+  saleUI.options.getBoolean = () => true;
+  const beforeUISale = economy.getBalance(owner, g).bank;
+  await service.broker(client, saleUI);
+  assert.equal(economy.getBalance(owner, g).bank, beforeUISale + 7500);
+  assert.equal(b.asset(g, owner, "klein"), undefined);
+  assert.equal(memberRoles.has(roles.klein.id), false);
+  assert.equal(memberRoles.has(roles.kantoor.id), true);
+  assert.match(saleUI.response.content, /7\.500/);
+  assert.ok(!saleUI.response.content.includes("NaN"));
+  const command = require("../commands/economy/bedrijf").data.toJSON();
+  assert.ok(command.options.find(o => o.name === "actie").choices.some(c => c.value === "verkopen"));
   const reopened = new (require("better-sqlite3"))(defaults.Database.File);
   assert.equal(
     reopened

@@ -1,3 +1,10 @@
+## Bedrijvenverkoop — bugfix 2026-11-04
+
+- Echte actie `verkopen` toegevoegd: 75% van de bedrijfswaarde inclusief upgrades en beveiliging naar de bank, eigendom verwijderen en bedrijfsrol synchroniseren.
+- Uitbetaling en verwijderen vormen één database-transactie; herhaalde verwerking betaalt niet dubbel.
+- Openstaande inkomsten/premies worden afgerekend; open heists worden geannuleerd.
+- `opzeggen` blijft uitsluitend de verzekering stoppen.
+
 ## 3.2.3 — 2026-10-29
 - Per-server berichtlogfilters via /config: alle bots/webhooks, specifieke afzenders, gebruikersmentions en rolmentions. Nieuwe regels worden vóór opslag gefilterd; nieuwe wachtrijregels worden ook vóór aflevering opnieuw gecontroleerd. Moderatie en honeypot blijven actief.
 - Vastgezette berichten ondersteunen numerieke timestamps, Date, ISO-tekst en ontbrekende/ongeldige waarden.

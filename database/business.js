@@ -138,6 +138,19 @@ const change = db.transaction(
       settle(g, u, k, now);
       const r = asset(g, u, k);
       if (!r) fail(tr("Je bezit dit bedrijf niet."));
+      if (action === "verkopen") {
+        const refund = Math.floor(r.invested * 0.75);
+        economy.addBank(u, g, refund);
+        db.prepare(
+          "DELETE FROM business_assets WHERE guild_id=? AND user_id=? AND kind=?",
+        ).run(g, u, k);
+        // An open heist must never target a later purchase of the same type.
+        db.prepare(
+          "UPDATE business_heists SET status='cancelled' WHERE guild_id=? AND target=? AND kind=? AND status='open'",
+        ).run(g, u, k);
+        queue(g, u);
+        return { refund };
+      }
       if (action === "upgrade" || action === "beveiliging") {
         const field = action === "upgrade" ? "stage" : "security";
         if (r[field] >= 5) fail(tr("Maximum niveau 5 bereikt."));

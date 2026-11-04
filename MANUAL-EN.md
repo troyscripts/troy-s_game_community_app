@@ -1074,3 +1074,8 @@ Use `/notify lijst`, `/notify toevoegen`, `/notify verwijderen` and `/notify tes
 See [NOTIFY-HANDLEIDING.md](NOTIFY-HANDLEIDING.md) and [TWITCH-HANDLEIDING.md](TWITCH-HANDLEIDING.md) for detailed setup instructions in Dutch. These companion guides are separate from this English user manual.
 
 For support, go to https://discord.gg/nTzVy5uMWX
+
+
+### Selling a business
+
+Sell a business using `/bedrijf actie:verkopen soort:klein bevestigen:True` (or `restaurant` / `kantoor`). You receive 75% of its value including upgrades and security in your bank. Outstanding income and premiums are settled first. Ownership, insurance and its business role are removed; open heists against this business are cancelled. `opzeggen` only cancels insurance.
