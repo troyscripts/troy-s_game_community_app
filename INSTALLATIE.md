@@ -1,5 +1,9 @@
 # Installatiehandleiding — Troy’s Game Community Bot
 
+## Update 3.2.4 — dependency-onderhoud en bedrijvenverkoop
+
+Ongebruikte glob verwijderd; `npm run dev` gebruikt de ingebouwde Node-watchmodus in plaats van nodemon. De bedrijvenverkoopfix is inbegrepen. Stop de bot, maak een back-up, vervang de bestanden met behoud van `.env` en database, voer `npm ci` uit en start opnieuw. Zie [UPDATE-3.2.4.md](UPDATE-3.2.4.md).
+
 ## Update 3.2.3 — berichtlogfilters en logreparaties
 
 Zie [UPDATE-3.2.3.md](UPDATE-3.2.3.md) voor installatie, voorbeelden van de nieuwe `/config`-filters, YouTube-API-fallback en verbindingsdiagnose. Bestaande instellingen blijven bewaard. Radio, TikTok en afsluitgedrag zijn niet gewijzigd.
@@ -221,3 +225,9 @@ Stuur bij een hulpvraag de foutmelding, botversie en Node.js-versie mee. Laat to
 - [Groq API-limieten](https://console.groq.com/docs/rate-limits)
 
 De instructies zijn gecontroleerd tegen de meegeleverde botcode. Een volledige installatie op jouw hosting en met jouw Discord-/Groq-account moet daar worden getest.
+
+## Dependency-onderhoud (2026-11-04)
+
+Na deze update: stop de bot, vervang de bestanden (behoud je eigen `.env` en database), voer `npm ci` uit en start de bot weer. `npm ci` gebruikt de meegeleverde lockfile en verwijdert oude dependencies. Controleer daarna met `npm audit`. Gebruik geen `npm audit fix --force`.
+
+`npm start` blijft de normale startopdracht. `npm run dev` gebruikt nu `node --watch index.js` in plaats van nodemon: wijzigingen in geladen modules herstarten de bot. Nieuwe bestanden kunnen een handmatige herstart vereisen. De ongebruikte dependency glob is verwijderd. De waarschuwing van prebuild-install via better-sqlite3 kan nog verschijnen.

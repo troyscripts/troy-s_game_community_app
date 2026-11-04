@@ -1,11 +1,11 @@
 {
   "name": "troys-gamecommunity-bot",
-  "version": "3.2.3",
+  "version": "3.2.4",
   "description": "Professionele Discord Bot voor Troy's Gamecommunity",
   "main": "index.js",
   "scripts": {
     "start": "node .",
-    "dev": "nodemon .",
+    "dev": "node --watch index.js",
     "deploy": "node deploy-commands.js",
     "check": "node scripts/validate.js",
     "prepare:github": "node scripts/prepare-github.cjs",
@@ -37,11 +37,7 @@
     "dotenv": "^17.2.2",
     "ffmpeg-static": "5.3.0",
     "fs-extra": "^11.3.2",
-    "glob": "^11.0.3",
     "opusscript": "0.1.1"
-  },
-  "devDependencies": {
-    "nodemon": "^3.1.10"
   },
   "allowScripts": {
     "better-sqlite3@12.11.1": true

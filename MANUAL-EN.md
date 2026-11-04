@@ -1,5 +1,9 @@
 # Troy’s Game Community Bot — User Manual
 
+## Update 3.2.4 — dependency maintenance and business sales
+
+Removed unused glob; `npm run dev` now uses Node's built-in watch mode instead of nodemon. Includes the business-sale fix. Stop the bot, back up private data, replace application files while retaining `.env` and the database, run `npm ci`, then restart. Watch mode observes loaded modules; adding new files may require a manual restart. The prebuild-install warning from better-sqlite3 can remain.
+
 ## Update 3.2.3 — message log filters and diagnostics
 
 Use `/config instellen` with `Logging.IgnoreBots` (`ja`/`nee`), `Logging.IgnoredAuthors`, `Logging.IgnoredUserMentions` or `Logging.IgnoredRoleMentions`. Lists accept comma-separated IDs or matching Discord mentions; `geen` clears a list. Filters are per server and affect message creation, edits, deletion and cached bulk deletions. They do not disable moderation, honeypot or other event categories. Missing author/content data cannot be classified; such events remain logged. Old queued logs lack filter metadata and may still be delivered.

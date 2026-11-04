@@ -1,4 +1,8 @@
-# Troy’s Game Community Bot — 3.2.3
+# Troy’s Game Community Bot — 3.2.4
+
+## Update 3.2.4 — dependency-onderhoud en bedrijvenverkoop
+
+Ongebruikte glob verwijderd; `npm run dev` gebruikt de ingebouwde Node-watchmodus in plaats van nodemon. De bedrijvenverkoopfix is inbegrepen. Stop de bot, maak een back-up, vervang de bestanden met behoud van `.env` en database, voer `npm ci` uit en start opnieuw. Zie [UPDATE-3.2.4.md](UPDATE-3.2.4.md).
 
 ## Update 3.2.3 — berichtlogfilters en logreparaties
 
@@ -434,3 +438,9 @@ Deze broncode is lokaal gecontroleerd. Er is geen live Discord-test uitgevoerd.
 
 ## Internetradio
 Gebruik `/radio paneel` in de chat van je spraakkanaal. Kies een zender in de dropdown. Zie [RADIO-HANDLEIDING.md](RADIO-HANDLEIDING.md).
+
+## Dependency-onderhoud (2026-11-04)
+
+Na deze update: stop de bot, vervang de bestanden (behoud je eigen `.env` en database), voer `npm ci` uit en start de bot weer. `npm ci` gebruikt de meegeleverde lockfile en verwijdert oude dependencies. Controleer daarna met `npm audit`. Gebruik geen `npm audit fix --force`.
+
+`npm start` blijft de normale startopdracht. `npm run dev` gebruikt nu `node --watch index.js` in plaats van nodemon: wijzigingen in geladen modules herstarten de bot. Nieuwe bestanden kunnen een handmatige herstart vereisen. De ongebruikte dependency glob is verwijderd. De waarschuwing van prebuild-install via better-sqlite3 kan nog verschijnen.

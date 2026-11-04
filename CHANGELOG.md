@@ -1,3 +1,11 @@
+## 3.2.4 — 2026-11-04
+
+- Ongebruikte directe dependency `glob` verwijderd.
+- `nodemon` vervangen door `node --watch index.js` voor `npm run dev`; hierdoor vervalt ook de dependency op `minimatch`.
+- De bestaande Node-eis (>=22.12.0) blijft geldig. Watch-modus herstart bij wijzigingen in geladen modules; na het toevoegen van een nieuw bestand zo nodig handmatig herstarten.
+- `better-sqlite3` behouden. De onderhoudswaarschuwing van diens `prebuild-install` is hiermee niet verholpen.
+- Bedrijvenverkoopfix behouden; botversie verhoogd naar 3.2.4.
+
 ## Bedrijvenverkoop — bugfix 2026-11-04
 
 - Echte actie `verkopen` toegevoegd: 75% van de bedrijfswaarde inclusief upgrades en beveiliging naar de bank, eigendom verwijderen en bedrijfsrol synchroniseren.
