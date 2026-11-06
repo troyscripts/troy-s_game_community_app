@@ -274,3 +274,8 @@ Na deze update: stop de bot, vervang de bestanden (behoud je eigen `.env` en dat
 ## Ban op Discord-ID (3.6.1)
 
 Gebruik `/ban reden:Reden discord-id:123456789012345678` voor iemand die niet in de server zit. Voor aanwezige leden blijft `/ban reden:Reden gebruiker:@persoon` beschikbaar. Kies precies één doel. `dagen` is optioneel (0–7). Bestaande banrechten blijven gelden, met rolcontrole voor aanwezige leden. Een ban blokkeert toekomstige toegang tot deze server. Na updaten herstarten; zo nodig `npm run deploy` om het nieuwe command te registreren. Bewaar je .env en bestaande database.
+
+
+## Opstartwaarschuwingen (3.6.2)
+
+Kopieer bij deze update ook `data/notify-presets.json` (standaard `[]`) als je geen eigen imports gebruikt. Bestaande `/notify`-koppelingen blijven in de database bewaard. Eigen presets kun je behouden en optioneel aan een `guildId` binden. De ticketarchiefscan slaat verdwenen kanalen over zonder archief of ticketregistraties te verwijderen. Ontbrekende rechten en netwerkproblemen blijven zichtbaar als waarschuwing.

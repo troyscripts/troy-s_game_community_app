@@ -97,12 +97,20 @@ async function backfill(channel) {
  await flush(channel);
 }
 async function start(client) {
+ let missing = 0;
  for(const entry of evidence.channels()) {
   try {
    const guild=client.guilds.cache.get(entry.guild);if(!guild)continue;
    const channel=await guild.channels.fetch(entry.channel);
-   if(channel?.messages)await backfill(channel);
-  } catch(error) {logger.warn(`Ticketarchief opstartscan ${entry.guild}/${entry.channel}: ${error.message}`);}
+   if (!channel) { missing++; continue; }
+   if(channel.messages)await backfill(channel);
+  } catch(error) {
+   // A removed Discord channel is expected for historical tickets. Keep all evidence intact.
+   if (Number(error.code) === 10003) { missing++; continue; }
+   const name = String(client.guilds.cache.get(entry.guild)?.name || 'onbekend').replace(/[\r\n]/g, ' ');
+   logger.warn(`Ticketarchief opstartscan ${name} (${entry.guild})/${entry.channel}: ${error.message}`);
+  }
  }
+ if (missing) logger.info(`Ticketarchief opstartscan: ${missing} niet meer bestaande kanaalverwijzing(en) overgeslagen; opgeslagen archief behouden.`);
 }
 module.exports={tracked,capture,deleted,observe,flush,render,start,backfill,validURL};

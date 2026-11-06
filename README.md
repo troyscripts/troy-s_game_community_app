@@ -1,4 +1,4 @@
-# Troy’s Game Community Bot — 3.6.1
+# Troy’s Game Community Bot — 3.6.2
 
 ## Update 3.5.1 — leesbare transcripten
 

@@ -1,3 +1,10 @@
+## 3.6.2
+
+- Ticketarchief-opstartscan slaat verwijderde kanalen (Unknown Channel/10003 of null) over met één informatieve samenvatting. Berichten, versies, bijlagen en ticketregistraties blijven behouden.
+- Ontbrekende rechten en andere scanproblemen blijven waarschuwingen, nu met servernaam en kanaal-ID.
+- Openbare notify-startinstellingen zijn leeg: geen persoonlijke Troy-kanalen meer voor andere botinstallaties. Bestaande creatorinstellingen in de database blijven intact.
+- Eigen notify-presets kunnen optioneel een `guildId` bevatten; bots buiten die server slaan ze over. Echte kanaalproblemen vermelden het betreffende kanaal-ID.
+
 ## 3.6.1
 
 - `/ban` ondersteunt nu een los `discord-id`, ook voor gebruikers die niet in de server zitten.

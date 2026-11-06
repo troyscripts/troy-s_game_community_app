@@ -270,3 +270,22 @@ test('brief recovery does not reset diagnostic cooldown; sustained recovery is r
     assert.equal(service.failureNotice(id,'platform-http',3000),false);
     assert.equal(service.failureNotice(id,'platform-http',3601000),true);
 });
+
+
+test('public presets are empty; scoped imports skip other servers and preserve subscriptions', async () => {
+    assert.deepEqual(JSON.parse(fs.readFileSync(path.join(__dirname,'../data/notify-presets.json'),'utf8')), []);
+    reset();
+    const existing=store.save('other-guild','youtube','@existing','saved-channel');
+    const originalRead=fs.readFileSync;
+    let lookups=0;
+    const client={isReady:()=>true,channels:{fetch:async()=>{lookups++;return null;}},guilds:{cache:new Map([['guild-a',{}]])}};
+    async function run() {service.startNotify(client);for(let i=0;i<20;i++)await new Promise(r=>setImmediate(r));await service.stopNotify();}
+    try {
+        await run();assert.equal(lookups,0);assert.equal(store.get(existing.id,'other-guild').channel_id,'saved-channel');
+        fs.readFileSync=function(file,...args){return String(file).endsWith('notify-presets.json') ? JSON.stringify([{guildId:'other-guild',channelId:'123456789012345678',creators:[]}]) : originalRead.call(this,file,...args);};
+        await run();assert.equal(lookups,0);
+        fs.readFileSync=function(file,...args){return String(file).endsWith('notify-presets.json') ? JSON.stringify([{guildId:'guild-a',channelId:'123456789012345678',creators:[]}]) : originalRead.call(this,file,...args);};
+        await run();assert.equal(lookups,1);
+        assert.equal(store.get(existing.id,'other-guild').channel_id,'saved-channel');
+    } finally {fs.readFileSync=originalRead;await service.stopNotify();}
+});

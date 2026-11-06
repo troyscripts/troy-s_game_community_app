@@ -64,5 +64,25 @@ global.fetch=async url=>{downloads++;assert.match(url,/cdn.discordapp.com/);retu
  // Existing open tickets are backfilled from visible history.
  let page=0;channel.messages.fetch=async()=>page++?new Collection():new Collection([['historic',message({id:'historic',content:'zichtbaar oud bericht',attachments:new Collection()})]]);
  await restarted.backfill(channel);assert.match(restarted.render(channel,8*1024*1024).toString(),/zichtbaar oud bericht/);
+ // Missing channels are informational; permission and network failures remain warnings.
+ const logger=require('../utils/logger');const warnings=[],infos=[];
+ const oldWarn=logger.warn,oldInfo=logger.info;
+ logger.warn=m=>warnings.push(m);logger.info=m=>infos.push(m);
+ const snapshot=()=>JSON.stringify(['ticket_evidence_messages','ticket_evidence_versions','ticket_evidence_files','tickets','government_tickets'].map(t=>db.prepare(`SELECT * FROM ${t}`).all()));
+ const before=snapshot();let scanned=0;
+ try {
+  const guild={name:'Archive Test',channels:{fetch:async id=>{
+   if(id==='ticket')throw Object.assign(Error('Unknown Channel'),{code:10003});
+   if(id==='staff-thread')return null;
+   return {id,guild:{id:'g'},messages:{fetch:async()=>{scanned++;return new Collection();}}};
+  }}};
+  const client={guilds:{cache:new Map([['g',guild]])}};
+  await restarted.start(client);assert.equal(warnings.length,0);assert.equal(infos.length,1);assert.match(infos[0],/2 niet meer/);assert.equal(scanned,1);assert.equal(snapshot(),before);
+  for(const code of [50001,50013,'ECONNRESET']) {
+   warnings.length=0;infos.length=0;
+   guild.channels.fetch=async()=>{throw Object.assign(Error('failure'),{code});};
+   await restarted.start(client);assert.equal(warnings.length,3);assert.equal(infos.length,0);assert.match(warnings[0],/Archive Test/);assert.equal(snapshot(),before);
+  }
+ } finally {logger.warn=oldWarn;logger.info=oldInfo;}
  console.log('PASS: persistent originals/edits/deletions, removed file bytes, category moves, main/government/staff isolation, safe HTML, deduplication, restart, backfill, download failures/retry and merged export.');
 })().catch(e=>{console.error(e);process.exitCode=1;}).finally(()=>{global.fetch=originalFetch;db.close();fs.rmSync(tmp,{recursive:true,force:true});});
