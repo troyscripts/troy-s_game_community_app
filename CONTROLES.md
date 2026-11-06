@@ -1,41 +1,35 @@
-# Automatische controles
+# Automatische controles — 3.4.0
 
-## Controles voor 3.2.0
+## Ondersteuning
 
-Gerichte regressietests controleren radiostart zonder audio, FFmpeg-fout vóór audio, vertraagde eerste audio, behoud van die audiobytes, timeout en annulering. Logtests controleren namen, verdwenen kanalen/rollen, lege voicekanalen, leesbare booleans, berichtlinks, embedtekst, serverisolatie en het niet loggen van privé-interactiegegevens. Zie `UPDATE-3.2.0.md` voor de uiteindelijke testresultaten. De resultaten hieronder voor 3.1.9 zijn historisch.
+Vanaf 3.4.0 ondersteunt deze bot alleen Node.js 24.x. `package.json`, de root in `package-lock.json` en `.npmrc` (`engine-strict=true`) leggen dit vast. GitHub Actions installeert en controleert de bot op Node 24. Oude resultaten voor Node 22 horen bij eerdere releases en zijn geen actuele ondersteuningsbelofte.
 
-## Controle van 3.1.9
+## Uitgevoerde controles op 6 november 2026
 
-- Node.js 22.23.4 / npm 10.9.9: schone installatie geslaagd; alle 20 testbestanden geslaagd, met gerichte herhaling van de aangepaste platform- en radiotest.
-- Node.js 24.22.1 / npm 11.9.0: schone installatie en volledige `npm run ci` geslaagd, 20/20 testbestanden; laatste radio-aanpassing opnieuw getest.
-- Echte PCM-naar-Opus-encoding gecontroleerd op beide Node-versies.
-- Radioverbindingen en platformantwoorden zijn in regressietests gesimuleerd. Geen live Discord-login of luistertest op jouw hosting uitgevoerd.
+- Schone installatie met `npm ci --no-audit --no-fund`, inclusief installatiescripts, op Node.js 24.22.1 / npm 11.9.0.
+- De volledige `npm run ci`: syntax/bestanden, versies en alle 24 testbestanden.
+- Opstarttest zonder Discord-login: tijdelijke SQLite-database en 71 unieke slashcommands.
+- Nieuwe overheidstests: server- en afdelingsscheiding, expliciete kanaalrechten, toegang zonder staffrol, geweigerde stafftoegang, dubbele tickets, claimconflicten, sluiten en opgeslagen toegangslijsten. Het coördinatorpaneel heeft een eigen configuratie en toegangslijst.
+- Native SQLite schrijft en leest succesvol; echte PCM-naar-Opus-encoding geeft uitvoer; de geïnstalleerde FFmpeg 7.0.2 start met `-version`.
+- Node.js 22.23.4: `npm ci --dry-run` wordt met de bedoelde `EBADENGINE`-melding geweigerd door de nieuwe versiegrens.
+- Lokale Markdown-links gecontroleerd; ontbrekende historische updatebestanden verwijzen nu naar de meegeleverde changelog.
 
-De lockfile bevat de ontbrekende optionele `opusscript@0.0.8`-dependency naast de bestaande directe 0.1.1-versie. Bij die specifieke installatiefout moeten beide packagebestanden uit 3.1.9 worden overgenomen.
+De npm-waarschuwing dat `prebuild-install` niet meer onderhouden wordt, blijft afkomstig van de dependencyketen van `better-sqlite3`; de installatie en SQLite-controle slagen. Dit is geen npm-installatiefout en is niet verborgen of weggefilterd. Een dependency-audit maakt geen onderdeel uit van deze compatibiliteitscontrole.
 
-GitHub voert de workflow **Botcontroles** uit bij iedere push en pull request, op Node.js 22 en 24. De controle installeert met `npm ci` exact de lockfile en draait `npm run ci`. Een fout geeft een rode controle in GitHub Actions. Dit blokkeert een push niet; verplichte mergecontroles zijn een afzonderlijke repositoryinstelling.
+## Zelf controleren
 
-## Lokaal uitvoeren
-
-Gebruik een schone checkout/testkopie zonder productiegegevens:
+Gebruik een schone testkopie zonder productiegegevens, onder Node 24:
 
 ```sh
-npm ci
+node --version
+npm ci --no-audit --no-fund
 npm run ci
 ```
 
-- `npm run check`: JavaScript-syntax, dubbele commandnamen, vereiste bestanden, lokale imports en vertaal-JSON.
-- `npm run check:versions`: package, beide lockfileversies, globale configuratie, README-titel en eerste changeloghoofdstuk.
-- `npm test`: ontdekt alle `scripts/test-*.js` en `scripts/test-*.cjs`, start elk bestand in een afzonderlijk proces, toont alle fouten en stopt met foutcode als een test faalt. Per bestand geldt maximaal 120 seconden.
+`npm run check` controleert JavaScript-syntax, commandnamen, vereiste bestanden, lokale imports en vertaal-JSON. `npm run check:versions` vergelijkt package, lockfile, configuratie, README en changelog. `npm test` ontdekt de testbestanden automatisch en draait elk in een apart proces met een timeout.
 
-De tests omvatten economy/store/resets, woningen, bedrijven, leningen, talen, verjaardagen, tickets, softmoderatie, honeypot, creator-meldingen, Groq, netwerkfoutafhandeling, updatechecker, transcriptlimieten en opstartonderdelen. De opstarttest initialiseert een tijdelijke SQLite-database en laadt de echte slashcommand-builders.
+De tests gebruiken tijdelijke databases en gesimuleerde API-antwoorden. Er zijn geen Discord-token, echte botlogin, commandodeploy of publicatie gebruikt. Live Discordrechten, instellingen van jouw hosting, radioverbindingen en externe providerbereikbaarheid moeten daar nog worden gecontroleerd. Een geslaagde testreeks garandeert niet dat iedere externe dienst beschikbaar is.
 
-Er worden geen Discord-token of GitHub Actions-secrets gebruikt. Er is geen botlogin, commandodeploy of publicatie. De tests gebruiken testdatabases en gesimuleerde API-antwoorden. Ze bewijzen geen live Discord-rechten, bereikbaarheid van providers of correcte instellingen op jouw hosting.
+## GitHub en nieuwe releases
 
-## Nieuwe release
-
-Werk package.json, de twee rootversies in package-lock.json, de README-titel en het eerste changeloghoofdstuk bij. De globale config haalt de botversie al uit package.json. Oude versies in historische changelogteksten mogen blijven staan. Werk ook README, HANDLEIDING.md, MANUAL-EN.md en alle geraakte functie- en installatiehandleidingen bij. Controleer versiekoppen, voorbeelden, installatie-instructies en lokale bestandslinks; alleen de changelog bijwerken is niet voldoende. Een documentatiecorrectie vóór publicatie hoeft de botversie niet te verhogen.
-
-## GitHub Desktop
-
-Neem de volledige `.github`-map mee. Open na Push origin de Actions-tab van de repository en controleer beide Node.js-jobs. De workflow verschijnt pas na upload; deze download is niet automatisch gepusht.
+Neem `.github/workflows/check.yml` en `.npmrc` mee. Controleer na push **Botcontroles / Node.js 24** in Actions. De download wordt niet automatisch gepusht. Werk bij een nieuwe release package, lockfile, README, changelog, de Nederlandse en Engelse handleidingen en geraakte installatie-/functiehandleidingen bij. Historische changelogversies blijven intact.

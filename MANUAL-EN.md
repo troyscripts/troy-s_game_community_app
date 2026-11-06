@@ -1,5 +1,15 @@
 # Troy’s Game Community Bot — User Manual
 
+## Current release 3.4.0 — Node 24 and government tickets
+
+**Node.js 24.x is required.** This bot no longer supports Node 22. Switch your hosting profile to Node 24 before installing. Preserve `.env`, your database, custom configuration and private data. Upload `.npmrc`, `package.json` and `package-lock.json`, then run `npm ci --no-audit --no-fund` without `--ignore-scripts`. Never copy old or Windows `node_modules`. npm rejects unsupported Node versions with `EBADENGINE`; select Node 24 instead of bypassing the check.
+
+Five independent panels are available: `/politie`, `/ambulance`, `/pechhulp`, `/brandweer` and `/overheidscoordinator`. Use the `instellen` option to choose a department, select its Discord roles, responsible people and destination category, then activate it. Run the command without options to publish the panel. Setup requires Head Admin or higher access; handling requires only explicitly assigned department roles/users, never bot staff membership. The new interface is Dutch.
+
+Claim, transcript and confirmed-close actions are included. Closing retains the channel as an archive. Existing tickets retain their original access assignments. SQLite creates two new tables automatically and command registration runs at startup; use `npm run deploy` if needed. No new environment variables are required. See [Government tickets](OVERHEID-TICKETS.md) and [Validation](CONTROLES.md).
+
+Older release chapters below are historical. The current installation and runtime requirements above take precedence.
+
 ## Update 3.2.4 — dependency maintenance and business sales
 
 Removed unused glob; `npm run dev` now uses Node's built-in watch mode instead of nodemon. Includes the business-sale fix. Stop the bot, back up private data, replace application files while retaining `.env` and the database, run `npm ci`, then restart. Watch mode observes loaded modules; adding new files may require a manual restart. The prebuild-install warning from better-sqlite3 can remain.
@@ -12,7 +22,7 @@ Pins now accept numeric timestamps, Date objects and ISO strings. Reconnect diag
 
 YouTube RSS retains retries and channel validation. Optional `YOUTUBE_API_KEY` enables a YouTube Data API v3 fallback (latest 50 uploads, validated channel/date) after RSS failure. Enable the API in your Google Cloud project, restrict the key to that API and monitor project quota. Leave empty for RSS only. Warnings are limited to one per hour per subscription even across short recoveries; recovery is reported after three successful checks.
 
-Stop the bot, back up `.env`, the database and custom data, replace application files including the new modules, retain private data and restart. New settings merge into existing server settings. No new dependencies or slash command registration needed. See [UPDATE-3.2.3.md](UPDATE-3.2.3.md).
+Stop the bot, back up `.env`, the database and custom data, replace application files including the new modules, retain private data and restart. New settings merge into existing server settings. No new dependencies or slash command registration needed. See [Changelog 3.2.3](CHANGELOG.md).
 
 Version numbering: 3.1.9 is followed by 3.2.0; each incremented component rolls over after 9.
 
@@ -26,7 +36,7 @@ Radio only reports a successful start after FFmpeg provides decoded audio and th
 
 Default and saved station URLs are unchanged, including the working original Veronica station. This does not repair external TLS/network failures.
 
-**Update from 3.1.9:** stop, replace the update files at their matching paths (including the new `utils/logNames.js`) and restart. Dependencies, config fields and commands are unchanged; no command redeployment is needed. Preserve `.env`, the database and private `data/` files. See [UPDATE-3.2.0.md](UPDATE-3.2.0.md). Older sections below describe earlier releases.
+**Update from 3.1.9:** stop, replace the update files at their matching paths (including the new `utils/logNames.js`) and restart. Dependencies, config fields and commands are unchanged; no command redeployment is needed. Preserve `.env`, the database and private `data/` files. See [Changelog 3.2.0](CHANGELOG.md). Older sections below describe earlier releases.
 
 ## Features and setup through 3.1.9
 
@@ -73,7 +83,7 @@ Tickets without a staff thread can close without a staff-thread log destination.
 
 ### Update from 3.1.8
 
-Stop the bot, back up, replace the package files and run `npm ci --no-audit --no-fund`. Keep your `.env`, database and private `data/` files. Restart afterwards. Version 3.1.9 adds no config fields or slash commands. Use Node.js 24; minimum 22.12.0. Both Node versions were checked; live Discord permissions and streams still need testing on your host.
+Stop the bot, back up, replace the package files and run `npm ci --no-audit --no-fund`. Keep your `.env`, database and private `data/` files. Restart afterwards. Version 3.1.9 adds no config fields or slash commands. Use Node.js 24.x (required since 3.4.0). Both Node versions were checked; live Discord permissions and streams still need testing on your host.
 
 ### New in 3.1.2: security update
 
@@ -96,7 +106,7 @@ Settings persist per server and apply immediately to new messages. Existing mess
 
 Users and roles are mentioned once per message. Repeated references show a plain name (or ID if unavailable). Repeated `@everyone` and `@here` references are also made non-pinging.
 
-**Bot version 3.2.0 · Updated 25 October 2026**
+**Bot version 3.4.0 · Updated 6 November 2026**
 
 ## New in 3.1.1: ticket messages and member-list fix
 
@@ -1083,3 +1093,4 @@ For support, go to https://discord.gg/nTzVy5uMWX
 ### Selling a business
 
 Sell a business using `/bedrijf actie:verkopen soort:klein bevestigen:True` (or `restaurant` / `kantoor`). You receive 75% of its value including upgrades and security in your bank. Outstanding income and premiums are settled first. Ownership, insurance and its business role are removed; open heists against this business are cancelled. `opzeggen` only cancels insurance.
+

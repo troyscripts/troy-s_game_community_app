@@ -1,12 +1,20 @@
 # Troy’s Game Community Bot — Gebruikershandleiding
 
+## Actuele release 3.4.0 — Node 24 en overheidstickets
+
+**Node.js 24.x is vereist.** Node 22 wordt niet meer ondersteund door deze bot. Zet eerst je hostingprofiel op Node 24, neem `.npmrc` en beide packagebestanden over en voer `npm ci --no-audit --no-fund` uit. Bewaar je `.env`, database, eigen configuratie en privébestanden. Zie [UPDATE-3.4.0.md](UPDATE-3.4.0.md).
+
+De bot bevat vijf aparte ticketpanelen: `/politie`, `/ambulance`, `/pechhulp`, `/brandweer` en `/overheidscoordinator`. Kies met `instellen` een afdeling, koppel Discord-rollen/verantwoordelijken en een categorie, activeer en plaats daarna het paneel met het command zonder opties. Instellen vereist Head Admin of hoger; behandelen vereist uitsluitend de ingestelde afdelingsrechten. Nieuwe tabellen worden automatisch aangemaakt. Zie [OVERHEID-TICKETS.md](OVERHEID-TICKETS.md).
+
+Oudere releasehoofdstukken hieronder zijn historische informatie. Voor installatie, Node-ondersteuning en nieuwe commands gelden de instructies voor 3.4.0 hierboven.
+
 ## Update 3.2.4 — dependency-onderhoud en bedrijvenverkoop
 
 Ongebruikte glob verwijderd; `npm run dev` gebruikt de ingebouwde Node-watchmodus in plaats van nodemon. De bedrijvenverkoopfix is inbegrepen. Stop de bot, maak een back-up, vervang de bestanden met behoud van `.env` en database, voer `npm ci` uit en start opnieuw. Zie [UPDATE-3.2.4.md](UPDATE-3.2.4.md).
 
 ## Update 3.2.3 — berichtlogfilters en logreparaties
 
-Zie [UPDATE-3.2.3.md](UPDATE-3.2.3.md) voor installatie, voorbeelden van de nieuwe `/config`-filters, YouTube-API-fallback en verbindingsdiagnose. Bestaande instellingen blijven bewaard. Radio, TikTok en afsluitgedrag zijn niet gewijzigd.
+Zie [Changelog 3.2.3](CHANGELOG.md) voor installatie, voorbeelden van de nieuwe `/config`-filters, YouTube-API-fallback en verbindingsdiagnose. Bestaande instellingen blijven bewaard. Radio, TikTok en afsluitgedrag zijn niet gewijzigd.
 
 ## Update 3.2.0 — duidelijke logs en betrouwbare radiostart
 
@@ -18,7 +26,7 @@ Radio meldt pas ‘gestart’ wanneer FFmpeg gedecodeerde audiogegevens heeft ge
 
 De standaardzenders en jouw opgeslagen stream-URL's zijn niet gewijzigd. Gebruik de werkende originele Veronica-zender uit het paneel. Deze wijziging repareert geen externe TLS- of netwerkstoring.
 
-**Vanaf 3.1.9 bijwerken:** stop de bot, vervang de gewijzigde bestanden op dezelfde paden en herstart. Neem ook het nieuwe `utils/logNames.js` mee. Dependencies, configvelden en commands zijn niet gewijzigd; opnieuw registreren is niet nodig. Bewaar `.env`, database en eigen `data/`-bestanden. Zie [UPDATE-3.2.0.md](UPDATE-3.2.0.md). Oudere release-instructies hieronder beschrijven eerdere versies.
+**Vanaf 3.1.9 bijwerken:** stop de bot, vervang de gewijzigde bestanden op dezelfde paden en herstart. Neem ook het nieuwe `utils/logNames.js` mee. Dependencies, configvelden en commands zijn niet gewijzigd; opnieuw registreren is niet nodig. Bewaar `.env`, database en eigen `data/`-bestanden. Zie [Changelog 3.2.0](CHANGELOG.md). Oudere release-instructies hieronder beschrijven eerdere versies.
 
 ## Functies en inrichting tot en met 3.1.9
 
@@ -65,7 +73,7 @@ Een ticket zonder aangemaakte staffthread kan sluiten zonder staffthread-logkana
 
 ### Bijwerken vanaf 3.1.8
 
-Stop de bot, maak een back-up, vervang de pakketbestanden en voer `npm ci --no-audit --no-fund` uit. Bewaar `.env`, database en eigen `data/`-bestanden. Herstart daarna. Er zijn geen nieuwe configvelden of slashcommands in 3.1.9. Node.js 24 wordt gebruikt; minimaal 22.12.0. Beide Node-versies zijn gecontroleerd, maar daadwerkelijke Discordrechten en streams moeten op de host worden getest.
+Stop de bot, maak een back-up, vervang de pakketbestanden en voer `npm ci --no-audit --no-fund` uit. Bewaar `.env`, database en eigen `data/`-bestanden. Herstart daarna. Er zijn geen nieuwe configvelden of slashcommands in 3.1.9. Node.js 24.x is vereist vanaf 3.4.0. Beide Node-versies zijn gecontroleerd, maar daadwerkelijke Discordrechten en streams moeten op de host worden getest.
 
 ### Nieuw in 3.1.2: beveiligingsupdate
 
@@ -88,7 +96,7 @@ De keuze wordt per server opgeslagen en werkt direct voor nieuwe berichten. Oude
 
 Gebruikers en rollen worden per bericht één keer getagd. Bij herhaling verschijnt alleen de naam als gewone tekst (of het ID als de naam niet beschikbaar is). Ook `@everyone` en `@here` worden niet herhaald als actieve vermelding.
 
-**Botversie 3.2.0 · Bijgewerkt op 25 oktober 2026**
+**Botversie 3.4.0 · Bijgewerkt op 6 november 2026**
 
 ## Nieuw in 3.1.1: ticketmeldingen en ledenlijst-fix
 
@@ -1285,3 +1293,4 @@ Twitch vereist `TWITCH_CLIENT_ID` en `TWITCH_CLIENT_SECRET` in `.env`, nooit een
 ### Bedrijf verkopen
 
 Verkoop een bedrijf met `/bedrijf actie:verkopen soort:klein bevestigen:Ja` (of `restaurant` / `kantoor`). Je ontvangt 75% van de bedrijfswaarde inclusief upgrades en beveiliging op je bank. Openstaande inkomsten en premies worden eerst afgerekend. Het bedrijf, de verzekering en de bijbehorende bedrijfsrol verdwijnen; openstaande heists tegen dit bedrijf worden geannuleerd. `opzeggen` stopt uitsluitend de verzekering.
+

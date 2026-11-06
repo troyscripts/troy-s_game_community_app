@@ -17,7 +17,7 @@ Stop iedere bot voordat je de bestanden kopieert. Bewaar per installatie:
 
 Pak de ZIP uit. Plaats de **inhoud** van `troy-s_game_community_app-main` in de map met `package.json`; maak geen extra maplaag. Vervang de code, herstel/behoud de eigen bestanden uit stap 1 en neem nieuwe opties uit `.env.example` over in de bestaande `.env`. Het voorbeeldbestand bevat geen echte tokens of gedeelde sleutel.
 
-Voer `npm ci` uit met Node.js 22.12 of hoger (Node.js 24 aanbevolen voor je huidige hosting). De nieuwe koppeling voegt geen npm-dependencies toe. Laat de hosting de installatie uitvoeren als je paneel dat al doet. Gebruik `npm run deploy` om de slashcommands bij te werken en herstart. Bij het starten registreert de bot zijn commands ook via de bestaande opstartprocedure.
+Voer `npm ci` uit met Node.js 24.x (verplicht vanaf botversie 3.4.0). De nieuwe koppeling voegt geen npm-dependencies toe. Laat de hosting de installatie uitvoeren als je paneel dat al doet. Gebruik `npm run deploy` om de slashcommands bij te werken en herstart. Bij het starten registreert de bot zijn commands ook via de bestaande opstartprocedure.
 
 ## 3. Extra poort en gedeelde sleutel
 

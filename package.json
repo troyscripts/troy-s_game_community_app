@@ -1,6 +1,6 @@
 {
   "name": "troys-gamecommunity-bot",
-  "version": "3.2.4",
+  "version": "3.4.0",
   "description": "Professionele Discord Bot voor Troy's Gamecommunity",
   "main": "index.js",
   "scripts": {
@@ -25,7 +25,7 @@
     "test:radio": "node scripts/test-radio.cjs"
   },
   "engines": {
-    "node": ">=22.12.0"
+    "node": ">=24.0.0 <25.0.0"
   },
   "dependencies": {
     "@discordjs/voice": "0.19.2",

@@ -1,0 +1,46 @@
+{
+  "politie": [
+    "Korpsleiding",
+    "Teamchefs",
+    "Operationele Begeleiding en Training Leiding",
+    "Algemene Zaken Leiding",
+    "Recherche Leiding",
+    "Administratie",
+    "Interne Zaken",
+    "IBT Leiding",
+    "IBT",
+    "Operationele Diensten",
+    "Noodhulp Leiding",
+    "Werving & selectie",
+    "VOG Controleur",
+    "Team Events",
+    "DV&O"
+  ],
+  "ambulance": [
+    "Leidinggevende",
+    "Werving & Selectie",
+    "Instroom & Loopbaan",
+    "Personeelszaken & Integriteit",
+    "Opleiding & Bevoegdheden",
+    "Evenementen & Communicatie"
+  ],
+  "pechhulp": [
+    "Leidinggevende",
+    "Pechhulp",
+    "Recruitment",
+    "Personeelszaken",
+    "Opleiding & Ontwikkeling",
+    "Events & Organisatie"
+  ],
+  "brandweer": [
+    "Leidinggevende",
+    "Werving & Selectie",
+    "Personeelszaken",
+    "Opleiding & Oefeningen",
+    "Operationele Dienst",
+    "Evenementen"
+  ],
+  "overheidscoordinator": [
+    "Overheidscoördinator"
+  ]
+}

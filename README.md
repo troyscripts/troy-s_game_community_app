@@ -1,4 +1,16 @@
-# Troy’s Game Community Bot — 3.2.4
+# Troy’s Game Community Bot — 3.4.0
+
+## Actuele release 3.4.0 — Node 24 en overheidstickets
+
+**Node.js 24.x is vereist.** Node 22 wordt niet meer ondersteund door deze bot. Zet eerst je hostingprofiel op Node 24, neem `.npmrc` en beide packagebestanden over en voer `npm ci --no-audit --no-fund` uit. Bewaar je `.env`, database, eigen configuratie en privébestanden. Zie [UPDATE-3.4.0.md](UPDATE-3.4.0.md).
+
+De bot bevat vijf aparte ticketpanelen: `/politie`, `/ambulance`, `/pechhulp`, `/brandweer` en `/overheidscoordinator`. Kies met `instellen` een afdeling, koppel Discord-rollen/verantwoordelijken en een categorie, activeer en plaats daarna het paneel met het command zonder opties. Instellen vereist Head Admin of hoger; behandelen vereist uitsluitend de ingestelde afdelingsrechten. Nieuwe tabellen worden automatisch aangemaakt. Zie [OVERHEID-TICKETS.md](OVERHEID-TICKETS.md).
+
+Oudere releasehoofdstukken hieronder zijn historische informatie. Voor installatie, Node-ondersteuning en nieuwe commands gelden de instructies voor 3.4.0 hierboven.
+
+## Overheidstickets (3.3.1)
+
+Apart ticketsysteem voor politie, ambulance, pechhulp, brandweer en de overheidscoördinator. Instellen en panelen plaatsen met `/politie`, `/ambulance`, `/pechhulp`, `/brandweer` en `/overheidscoordinator`. Zie [OVERHEID-TICKETS.md](OVERHEID-TICKETS.md).
 
 ## Update 3.2.4 — dependency-onderhoud en bedrijvenverkoop
 
@@ -6,7 +18,7 @@ Ongebruikte glob verwijderd; `npm run dev` gebruikt de ingebouwde Node-watchmodu
 
 ## Update 3.2.3 — berichtlogfilters en logreparaties
 
-Zie [UPDATE-3.2.3.md](UPDATE-3.2.3.md) voor installatie, voorbeelden van de nieuwe `/config`-filters, YouTube-API-fallback en verbindingsdiagnose. Bestaande instellingen blijven bewaard. Radio, TikTok en afsluitgedrag zijn niet gewijzigd.
+Zie [Changelog 3.2.3](CHANGELOG.md) voor installatie, voorbeelden van de nieuwe `/config`-filters, YouTube-API-fallback en verbindingsdiagnose. Bestaande instellingen blijven bewaard. Radio, TikTok en afsluitgedrag zijn niet gewijzigd.
 
 Versieafspraak: na 3.1.9 volgt 3.2.0; elk volgnummer telt tot en met 9.
 
@@ -38,13 +50,13 @@ Radio meldt pas ‘gestart’ wanneer FFmpeg gedecodeerde audiogegevens heeft ge
 
 De standaardzenders en jouw opgeslagen stream-URL's zijn niet gewijzigd. Gebruik de werkende originele Veronica-zender uit het paneel. Deze wijziging repareert geen externe TLS- of netwerkstoring.
 
-**Vanaf 3.1.9 bijwerken:** stop de bot, vervang de gewijzigde bestanden op dezelfde paden en herstart. Neem ook het nieuwe `utils/logNames.js` mee. Dependencies, configvelden en commands zijn niet gewijzigd; opnieuw registreren is niet nodig. Bewaar `.env`, database en eigen `data/`-bestanden. Zie [UPDATE-3.2.0.md](UPDATE-3.2.0.md). Oudere release-instructies hieronder beschrijven eerdere versies.
+**Vanaf 3.1.9 bijwerken:** stop de bot, vervang de gewijzigde bestanden op dezelfde paden en herstart. Neem ook het nieuwe `utils/logNames.js` mee. Dependencies, configvelden en commands zijn niet gewijzigd; opnieuw registreren is niet nodig. Bewaar `.env`, database en eigen `data/`-bestanden. Zie [Changelog 3.2.0](CHANGELOG.md). Oudere release-instructies hieronder beschrijven eerdere versies.
 
 ## Versie 3.1.9: installatie, radio en creatormeldingen
 
 De installatie met Node.js 22/npm 10 is hersteld. Radio wisselt binnen hetzelfde spraakkanaal zonder de verbinding te verbreken; afsluitmeldingen van oude sessies worden onderdrukt. Notify-logs noemen de server en creator. YouTube probeert bij HTTP 404/5xx ook de alternatieve YouTube-host; een blijvende externe fout blijft zichtbaar.
 
-**Bijwerken vanaf 3.1.8:** stop de bot, bewaar `.env`, database en eigen `data/`-bestanden, vervang de pakketbestanden en voer `npm ci --no-audit --no-fund` uit. Start daarna opnieuw. Geen nieuwe configvelden of slashcommands in 3.1.9. Gebruik Node.js 24; minimaal 22.12.0.
+**Bijwerken vanaf 3.1.8:** stop de bot, bewaar `.env`, database en eigen `data/`-bestanden, vervang de pakketbestanden en voer `npm ci --no-audit --no-fund` uit. Start daarna opnieuw. Geen nieuwe configvelden of slashcommands in 3.1.9. Gebruik Node.js 24.x (vereist vanaf 3.4.0).
 
 | Handleiding | Inhoud |
 | --- | --- |
@@ -53,7 +65,7 @@ De installatie met Node.js 22/npm 10 is hersteld. Radio wisselt binnen hetzelfde
 | [NOTIFY-HANDLEIDING.md](NOTIFY-HANDLEIDING.md) / [TWITCH-HANDLEIDING.md](TWITCH-HANDLEIDING.md) | Creators, koppelingen en foutdiagnose |
 | [LOGGING-HANDLEIDING.md](LOGGING-HANDLEIDING.md) / [SOFTMODERATIE.md](SOFTMODERATIE.md) | Discordlogs, 18+-controle en staffbeoordeling |
 | [INSTALLATIE.md](INSTALLATIE.md) / [GITHUB-INSTALLATIE.md](GITHUB-INSTALLATIE.md) | Installatie en publicatie |
-| [CONTROLES.md](CONTROLES.md) / [UPDATE-3.1.9.md](UPDATE-3.1.9.md) | Testresultaten, grenzen en update-instructies |
+| [CONTROLES.md](CONTROLES.md) / [Changelog 3.1.9](CHANGELOG.md) | Testresultaten, grenzen en update-instructies |
 
 De onderstaande oudere releasehoofdstukken beschrijven wanneer functies zijn toegevoegd. Gebruik voor de huidige installatie de instructies hierboven.
 
@@ -82,7 +94,7 @@ Zie `CHANGELOG.md`. Er zijn geen nieuwe instellingen of slashcommands.
 
 ## Nieuw in 3.1.4: automatische controles
 
-GitHub Actions controleert iedere push en pull request op Node.js 22 en 24: schone installatie, code/bestanden, versies, database/commandos en alle regressietests. Lokaal: `npm ci` gevolgd door `npm run ci`. Zie CONTROLES.md.
+GitHub Actions controleert iedere push en pull request op Node.js 24: schone installatie, code/bestanden, versies, database/commandos en alle regressietests. Lokaal: `npm ci` gevolgd door `npm run ci`. Zie CONTROLES.md.
 
 ## Nieuw in 3.1.3: softmoderatie
 

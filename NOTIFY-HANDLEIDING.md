@@ -2,7 +2,7 @@
 
 ## Update 3.2.3 — berichtlogfilters en logreparaties
 
-Zie [UPDATE-3.2.3.md](UPDATE-3.2.3.md) voor installatie, voorbeelden van de nieuwe `/config`-filters, YouTube-API-fallback en verbindingsdiagnose. Bestaande instellingen blijven bewaard. Radio, TikTok en afsluitgedrag zijn niet gewijzigd.
+Zie [Changelog 3.2.3](CHANGELOG.md) voor installatie, voorbeelden van de nieuwe `/config`-filters, YouTube-API-fallback en verbindingsdiagnose. Bestaande instellingen blijven bewaard. Radio, TikTok en afsluitgedrag zijn niet gewijzigd.
 
 ## Diagnose in 3.1.9
 
@@ -74,7 +74,7 @@ Dit vraagt eenmalig technische inrichting door degene die de bot host. Iedere Ti
    TIKTOK_REDIRECT_URI=
    ```
 
-4. Stop de bot. Open een interactieve terminal in de botmap en voer `npm run notify:tiktok` uit. Een hostingpaneel zonder interactieve terminal kan dit script niet zelfstandig doorlopen: voer het dan lokaal met Node.js 24 (minimaal 22.12.0) en de botdependencies uit en plaats daarna het gemaakte koppelbestand op de host.
+4. Stop de bot. Open een interactieve terminal in de botmap en voer `npm run notify:tiktok` uit. Een hostingpaneel zonder interactieve terminal kan dit script niet zelfstandig doorlopen: voer het dan lokaal met Node.js 24.x en de botdependencies uit en plaats daarna het gemaakte koppelbestand op de host.
 5. Open de getoonde toestemmingslink, of laat de betreffende creator deze openen. Na toestemming kopieer je de volledige terugkeer-URL uit de adresbalk naar de terminal. Die URL bevat een kort geldige code: deel hem uitsluitend privé met de beheerder die deze koppeling gestart heeft, nooit in een openbaar kanaal.
 6. Het script controleert de beveiligingscode en de TikTok-gebruikersnaam. Tokens worden opgeslagen in `data/notify-tokens.json`. Kopieer bij een lokale koppeling dit bestand privé naar dezelfde locatie op de bot-host. Bewaar bestaande accounts wanneer je een volgend account koppelt; gebruik daarvoor de actuele kopie van het bestand.
 7. Start de bot. Controleer `/notify lijst` na ongeveer vijf minuten. De bot vernieuwt tokens automatisch zolang TikTok dit toestaat. Bij ingetrokken of verlopen toestemming moet de creator opnieuw koppelen.

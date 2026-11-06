@@ -1,25 +1,18 @@
-# Versie 3.2.0 publiceren
-
-## Bijwerken vanaf 3.1.9
-
-Stop de bot, neem de gewijzigde bestanden inclusief `utils/logNames.js` over en herstart. Deze update verandert geen dependencies, configvelden, database-indeling of slashcommands. Bewaar je bestaande `.env`, database en eigen gegevens. Het versieverschil in het lockbestand is alleen het botversienummer. Publiceer deze versie als **v3.2.0**. Zie [UPDATE-3.2.0.md](UPDATE-3.2.0.md). Bij een nieuwe installatie blijft `npm ci --no-audit --no-fund` nodig.
+# Versie 3.4.0 publiceren
 
 ## Bestanden klaarzetten
 
-1. Gebruik het volledige 3.2.0-pakket. Kopieer de inhoud van `troy-s_game_community_app/` naar de hoofdmap van je repository; maak geen extra tussenmap.
-2. Heb je de losse documentatiecorrectie ontvangen? Pak die uit over dezelfde hoofdmap en vervang de genoemde Markdown-bestanden. De codeversie blijft 3.2.0.
-3. Neem `.github/workflows/check.yml`, `package.json`, `package-lock.json`, de actuele handleidingen en `CHANGELOG.md` mee.
-4. Upload geen `.env`, databases, `node_modules`, logs, back-ups, transcripts of `data/notify-tokens.json`. Vanuit een gebruikte installatie kun je `npm run prepare:github` gebruiken; controleer de export voordat je publiceert.
-5. Deze correctie vereist geen bestandsverwijderingen.
+1. Kopieer de inhoud van het volledige pakket naar de hoofdmap van de repository.
+2. Neem de nieuwe overheidsticketbestanden, documentatie, `.github/workflows/check.yml`, `.npmrc`, `package.json` en `package-lock.json` over.
+3. Upload geen `.env`, databases, `node_modules`, logs, back-ups, transcripten of privébestanden in `data/`. Gebruik de schone volledige ZIP als bron en controleer de bestanden vóór publicatie.
+4. Gebruik Node.js 24.x. De GitHub-workflow ondersteunt vanaf 3.4.0 alleen Node 24.
 
 ## Controleren en publiceren
 
-Voer in een schone testkopie `npm ci --no-audit --no-fund` en `npm run ci` uit. Commit en push daarna de wijzigingen. Controleer in GitHub Actions dat **Botcontroles / Node.js 22** én **Node.js 24** slagen. Verwijder een mislukte controle niet om een installatieprobleem te verbergen.
+Voer in een schone testkopie `npm ci --no-audit --no-fund` en `npm run ci` uit. Commit en push daarna. Controleer in GitHub Actions dat **Botcontroles / Node.js 24** slaagt. Publiceer release `v3.4.0` met het bijbehorende hoofdstuk uit [CHANGELOG.md](CHANGELOG.md).
 
-Publiceer release `v3.2.0` pas wanneer de code en documentatie compleet zijn. Gebruik het hoofdstuk 3.2.0 uit `CHANGELOG.md` als releasebeschrijving. Voeg desgewenst het volledige pakket toe. Publiceren gebeurt niet automatisch door deze ZIP te downloaden.
-
-De versiechecker gebruikt `package.json`; `config/defaults.js` haalt daar de globale botversie uit. De repository staat in `config/updates.js`; wijzig die alleen als je bewust een andere repository gebruikt.
+De versiechecker gebruikt `package.json`; `config/defaults.js` haalt daar de botversie uit. De repository staat in `config/updates.js`. Deze download publiceert niets automatisch.
 
 ## Hosting bijwerken
 
-Stop de bot, bewaar `.env`, database en eigen `data/`-bestanden, upload het pakket en voer `npm ci --no-audit --no-fund` uit. Bij hosting die dit automatisch uitvoert, controleer je de installatielog na de herstart. Vanaf 3.1.8 zijn geen nieuwe slashcommands of configvelden toegevoegd. Zie [INSTALLATIE.md](INSTALLATIE.md) en [UPDATE-3.2.0.md](UPDATE-3.2.0.md).
+Zet vóór installatie het hostingprofiel op Node 24 en volg [UPDATE-3.4.0.md](UPDATE-3.4.0.md). Deze release voegt overheidsslashcommands en twee databasetabellen toe. Instellingen en panelen worden beschreven in [OVERHEID-TICKETS.md](OVERHEID-TICKETS.md).

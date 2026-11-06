@@ -1,16 +1,24 @@
 # Installatiehandleiding — Troy’s Game Community Bot
 
+## Actuele release 3.4.0 — Node 24 en overheidstickets
+
+**Node.js 24.x is vereist.** Node 22 wordt niet meer ondersteund door deze bot. Zet eerst je hostingprofiel op Node 24, neem `.npmrc` en beide packagebestanden over en voer `npm ci --no-audit --no-fund` uit. Bewaar je `.env`, database, eigen configuratie en privébestanden. Zie [UPDATE-3.4.0.md](UPDATE-3.4.0.md).
+
+De bot bevat vijf aparte ticketpanelen: `/politie`, `/ambulance`, `/pechhulp`, `/brandweer` en `/overheidscoordinator`. Kies met `instellen` een afdeling, koppel Discord-rollen/verantwoordelijken en een categorie, activeer en plaats daarna het paneel met het command zonder opties. Instellen vereist Head Admin of hoger; behandelen vereist uitsluitend de ingestelde afdelingsrechten. Nieuwe tabellen worden automatisch aangemaakt. Zie [OVERHEID-TICKETS.md](OVERHEID-TICKETS.md).
+
+Oudere releasehoofdstukken hieronder zijn historische informatie. Voor installatie, Node-ondersteuning en nieuwe commands gelden de instructies voor 3.4.0 hierboven.
+
 ## Update 3.2.4 — dependency-onderhoud en bedrijvenverkoop
 
 Ongebruikte glob verwijderd; `npm run dev` gebruikt de ingebouwde Node-watchmodus in plaats van nodemon. De bedrijvenverkoopfix is inbegrepen. Stop de bot, maak een back-up, vervang de bestanden met behoud van `.env` en database, voer `npm ci` uit en start opnieuw. Zie [UPDATE-3.2.4.md](UPDATE-3.2.4.md).
 
 ## Update 3.2.3 — berichtlogfilters en logreparaties
 
-Zie [UPDATE-3.2.3.md](UPDATE-3.2.3.md) voor installatie, voorbeelden van de nieuwe `/config`-filters, YouTube-API-fallback en verbindingsdiagnose. Bestaande instellingen blijven bewaard. Radio, TikTok en afsluitgedrag zijn niet gewijzigd.
+Zie [Changelog 3.2.3](CHANGELOG.md) voor installatie, voorbeelden van de nieuwe `/config`-filters, YouTube-API-fallback en verbindingsdiagnose. Bestaande instellingen blijven bewaard. Radio, TikTok en afsluitgedrag zijn niet gewijzigd.
 
 ## Bijwerken vanaf 3.1.9
 
-Stop de bot, neem de gewijzigde bestanden inclusief `utils/logNames.js` over en herstart. Deze update verandert geen dependencies, configvelden, database-indeling of slashcommands. Bewaar je bestaande `.env`, database en eigen gegevens. Het versieverschil in het lockbestand is alleen het botversienummer. Publiceer deze versie als **v3.2.0**. Zie [UPDATE-3.2.0.md](UPDATE-3.2.0.md). Bij een nieuwe installatie blijft `npm ci --no-audit --no-fund` nodig.
+Stop de bot, neem de gewijzigde bestanden inclusief `utils/logNames.js` over en herstart. Deze update verandert geen dependencies, configvelden, database-indeling of slashcommands. Bewaar je bestaande `.env`, database en eigen gegevens. Het versieverschil in het lockbestand is alleen het botversienummer. Publiceer deze versie als **v3.2.0**. Zie [Changelog 3.2.0](CHANGELOG.md). Bij een nieuwe installatie blijft `npm ci --no-audit --no-fund` nodig.
 
 ## Snel naar de huidige installatie
 
@@ -20,13 +28,13 @@ Sinds 3.1.9 is de fout `Missing: opusscript@0.0.8 from lock file` hersteld. Neem
 
 Voor internetradio: [RADIO-HANDLEIDING.md](RADIO-HANDLEIDING.md). Voor Discordlogs en 18+-controle: [LOGGING-HANDLEIDING.md](LOGGING-HANDLEIDING.md). Voor softmoderatie: [SOFTMODERATIE.md](SOFTMODERATIE.md).
 
-Deze handleiding is voor iedereen die de bot downloadt en onder een eigen Discord-applicatie wil draaien. Bijgewerkt voor versie 3.2.0. Je hebt geen programmeerkennis nodig, maar wel toegang tot het bestandbeheer en de startinstellingen van je hosting.
+Deze handleiding is voor iedereen die de bot downloadt en onder een eigen Discord-applicatie wil draaien. Bijgewerkt voor versie 3.4.0. Je hebt geen programmeerkennis nodig, maar wel toegang tot het bestandbeheer en de startinstellingen van je hosting.
 
 ## 1. Wat heb je nodig?
 
 - Een Discord-account en een server waarop je apps mag toevoegen.
 - De volledige botbestanden, inclusief `package.json` en `package-lock.json`. Een ZIP met alleen updatebestanden is geen volledige installatie.
-- Een Node.js-host met blijvende opslag. Gebruik Node.js 24; de minimale versie is 22.12.0. De bot moet kunnen schrijven in zijn eigen map voor de database, logs en back-ups.
+- Een Node.js-host met blijvende opslag. Gebruik uitsluitend Node.js 24.x. De bot moet kunnen schrijven in zijn eigen map voor de database, logs en back-ups.
 - Je eigen Discord-bottoken. Voor AI gebruik je daarnaast je eigen GroqCloud-account en API-sleutel.
 
 De Discord-bot blijft op jouw hosting draaien. GroqCloud verzorgt alleen de AI; daarvoor hoef je geen eigen AI-pc, Ollama of GPU-server aan te houden. AI is optioneel: zonder Groq-sleutel kun je de overige botfuncties gebruiken.
@@ -231,3 +239,4 @@ De instructies zijn gecontroleerd tegen de meegeleverde botcode. Een volledige i
 Na deze update: stop de bot, vervang de bestanden (behoud je eigen `.env` en database), voer `npm ci` uit en start de bot weer. `npm ci` gebruikt de meegeleverde lockfile en verwijdert oude dependencies. Controleer daarna met `npm audit`. Gebruik geen `npm audit fix --force`.
 
 `npm start` blijft de normale startopdracht. `npm run dev` gebruikt nu `node --watch index.js` in plaats van nodemon: wijzigingen in geladen modules herstarten de bot. Nieuwe bestanden kunnen een handmatige herstart vereisen. De ongebruikte dependency glob is verwijderd. De waarschuwing van prebuild-install via better-sqlite3 kan nog verschijnen.
+

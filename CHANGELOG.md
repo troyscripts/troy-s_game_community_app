@@ -1,3 +1,27 @@
+## 3.4.0 — Node.js 24 als ondersteunde runtime
+
+- Ondersteuning voor Node 22 beëindigd; package en lockfile vereisen Node 24.x.
+- `.npmrc` met engine-strict voorkomt installatie op een ongeschikte Node-versie.
+- GitHub Actions controleert voortaan alleen Node 24.
+- Installatie-, publicatie-, Nederlandse en Engelse handleidingen bijgewerkt; verouderde lokale documentlinks hersteld.
+- Alle overheidspanelen uit 3.3.1 blijven inbegrepen.
+
+## 3.3.1 — Overheidscoördinator
+
+- Eigen ticketpaneel via `/overheidscoordinator` voor de vanuit Gemert aangewezen coördinator.
+- Eigen behandelrollen, verantwoordelijken en ontvangstcategorie; geen stafflidmaatschap nodig.
+- Zelfde claim-, transcript- en sluitfuncties als de andere overheidspanelen.
+- Gescheiden van politie-, ambulance-, pechhulp- en brandweertickets.
+
+## 3.3.0 — Overheidstickets
+
+- Afzonderlijk systeem voor politie, ambulance, pechhulp en brandweer.
+- Instelbare rollen, verantwoordelijken, namen en categorieën per afdeling en server.
+- Head Admin of hoger plaatst panelen; behandelen vereist uitsluitend afdelingsrechten.
+- Privékanalen, claimen, begrensde HTML-transcripten en sluiten met bevestiging.
+- Instellingen en tickets blijven bewaard in SQLite. Bestaande tickets houden hun oorspronkelijke toegangslijst.
+
+
 ## 3.2.4 — 2026-11-04
 
 - Ongebruikte directe dependency `glob` verwijderd.
@@ -5,6 +29,7 @@
 - De bestaande Node-eis (>=22.12.0) blijft geldig. Watch-modus herstart bij wijzigingen in geladen modules; na het toevoegen van een nieuw bestand zo nodig handmatig herstarten.
 - `better-sqlite3` behouden. De onderhoudswaarschuwing van diens `prebuild-install` is hiermee niet verholpen.
 - Bedrijvenverkoopfix behouden; botversie verhoogd naar 3.2.4.
+
 
 ## Bedrijvenverkoop — bugfix 2026-11-04
 

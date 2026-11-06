@@ -10,7 +10,7 @@ Radio meldt pas ‘gestart’ wanneer FFmpeg gedecodeerde audiogegevens heeft ge
 
 De standaardzenders en jouw opgeslagen stream-URL's zijn niet gewijzigd. Gebruik de werkende originele Veronica-zender uit het paneel. Deze wijziging repareert geen externe TLS- of netwerkstoring.
 
-**Vanaf 3.1.9 bijwerken:** stop de bot, vervang de gewijzigde bestanden op dezelfde paden en herstart. Neem ook het nieuwe `utils/logNames.js` mee. Dependencies, configvelden en commands zijn niet gewijzigd; opnieuw registreren is niet nodig. Bewaar `.env`, database en eigen `data/`-bestanden. Zie [UPDATE-3.2.0.md](UPDATE-3.2.0.md). Oudere release-instructies hieronder beschrijven eerdere versies.
+**Vanaf 3.1.9 bijwerken:** stop de bot, vervang de gewijzigde bestanden op dezelfde paden en herstart. Neem ook het nieuwe `utils/logNames.js` mee. Dependencies, configvelden en commands zijn niet gewijzigd; opnieuw registreren is niet nodig. Bewaar `.env`, database en eigen `data/`-bestanden. Zie [Changelog 3.2.0](CHANGELOG.md). Oudere release-instructies hieronder beschrijven eerdere versies.
 
 ## Gedrag vanaf 3.1.9
 
@@ -30,7 +30,7 @@ Deze update wijzigt geen opgeslagen stream-URL's. Efteling/Piet Piraat of andere
 
 ## Installeren
 1. Stop de bot en pak het pakket uit over de botbestanden. Bewaar je `.env`, database en eigen gegevens.
-2. Gebruik Node.js 24 (minimaal 22.12.0) en voer `npm ci` uit. Dit installeert ook de voice-, Opus- en FFmpeg-pakketten. Gebruik geen `--ignore-scripts` in productie.
+2. Gebruik Node.js 24.x en voer `npm ci` uit. Dit installeert ook de voice-, Opus- en FFmpeg-pakketten. Gebruik geen `--ignore-scripts` in productie.
 3. Herstart de bot. Commands worden via de bestaande registratie bijgewerkt; eventueel `npm run deploy` uitvoeren.
 4. Geef de bot in het spraakkanaal **Kanaal bekijken**, **Verbinden**, **Spreken**, **Berichten verzenden** en **Links insluiten**. Voor slashcommands hebben gebruikers **Applicatieopdrachten gebruiken** nodig.
 5. Ga in een server-spraakkanaal zitten, open de bijbehorende chat en gebruik `/radio paneel`.
