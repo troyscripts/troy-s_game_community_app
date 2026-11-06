@@ -13,9 +13,14 @@ function init() {
         PRIMARY KEY(creator_id, item_id)
     );
     CREATE TABLE IF NOT EXISTS notify_migrations (name TEXT PRIMARY KEY);`);
+    if (!db.prepare('PRAGMA table_info(notify_items)').all().some(c => c.name === 'delivered')) db.exec('ALTER TABLE notify_items ADD COLUMN delivered INTEGER NOT NULL DEFAULT 0');
+    if (!db.prepare('PRAGMA table_info(notify_items)').all().some(c => c.name === 'hub_blocked')) db.exec('ALTER TABLE notify_items ADD COLUMN hub_blocked TEXT');
+    for (const column of ['hub_source INTEGER','hub_account TEXT']) {
+        if (!db.prepare('PRAGMA table_info(notify_creators)').all().some(c => c.name === column.split(' ')[0])) db.exec(`ALTER TABLE notify_creators ADD COLUMN ${column}`);
+    }
     if (!db.prepare('PRAGMA table_info(notify_creators)').all().some(c => c.name === 'role_slot')) db.exec('ALTER TABLE notify_creators ADD COLUMN role_slot INTEGER');
 }
-function list(guildId) { init(); return guildId ? db.prepare('SELECT * FROM notify_creators WHERE guild_id=? ORDER BY id').all(guildId) : db.prepare('SELECT * FROM notify_creators ORDER BY id').all(); }
+function list(guildId) { init(); return guildId ? db.prepare('SELECT c.*, (SELECT COUNT(*) FROM notify_items i WHERE i.creator_id=c.id AND i.hub_blocked IS NOT NULL) AS hub_blocked_count FROM notify_creators c WHERE guild_id=? ORDER BY id').all(guildId) : db.prepare('SELECT * FROM notify_creators ORDER BY id').all(); }
 function get(id, guildId) { init(); return db.prepare('SELECT * FROM notify_creators WHERE id=? AND guild_id=?').get(id, guildId); }
 function save(guildId, platform, account, channelId, roleId = null, message = '', roleSlot = null) {
     init();
@@ -34,7 +39,7 @@ function ingest(row, items, now = Date.now()) {
         if (current.platform === 'twitch') {
             const liveIds = new Set(items.map(item => item.id));
             for (const queued of pending(row.id)) {
-                if (!liveIds.has(queued.item_id)) sent(row.id,queued.item_id);
+                if (!liveIds.has(queued.item_id)) sent(row.id,queued.item_id,false);
             }
         }
         for (const item of items) {
@@ -44,8 +49,8 @@ function ingest(row, items, now = Date.now()) {
         db.prepare('UPDATE notify_creators SET baseline_at=COALESCE(baseline_at,?),checked_at=?,error=NULL WHERE id=?').run(now,now,row.id);
     })();
 }
-function pending(id) { return db.prepare('SELECT * FROM notify_items WHERE creator_id=? AND sent_at IS NULL ORDER BY rowid LIMIT 10').all(id); }
-function sent(id,itemId) { db.prepare('UPDATE notify_items SET sent_at=? WHERE creator_id=? AND item_id=?').run(Date.now(),id,itemId); }
+function pending(id) { return db.prepare('SELECT * FROM notify_items WHERE creator_id=? AND sent_at IS NULL AND hub_blocked IS NULL ORDER BY rowid LIMIT 10').all(id); }
+function sent(id,itemId,delivered=true) { db.prepare('UPDATE notify_items SET sent_at=?,delivered=? WHERE creator_id=? AND item_id=?').run(Date.now(),delivered?1:0,id,itemId); }
 function error(id,message) { db.prepare('UPDATE notify_creators SET error=? WHERE id=?').run(message.slice(0,300),id); }
 function seed(guildId, preset) {
     init();
@@ -59,4 +64,17 @@ function seed(guildId, preset) {
     })();
 }
 function seeded(channelId) { init(); return Boolean(db.prepare('SELECT 1 FROM notify_migrations WHERE name=?').get(`preset:${channelId}:v1`)); }
-module.exports = {seeded,init,list,get,save,remove,resolved,ingest,pending,sent,error,seed};
+function hubLink(id, source, account) {
+    init();db.prepare('UPDATE notify_creators SET hub_source=?,hub_account=? WHERE id=?').run(source,account,id);
+}
+function saveHub(guildId,platform,account,channelId,roleId,message,roleSlot,source) {
+    init();
+    const aliases=new Set([account,source.account,...(source.aliases||[])]);
+    const existing=list(guildId).find(r=>r.platform===platform && (aliases.has(r.account) || aliases.has(r.hub_account)));
+    const row=save(guildId,platform,existing?.account || account,channelId,roleId,message,roleSlot);
+    hubLink(row.id,source.id,source.account);
+    return get(row.id,guildId);
+}
+function recentSent(id) {init();return db.prepare('SELECT item_id FROM notify_items WHERE creator_id=? AND delivered=1 ORDER BY sent_at DESC LIMIT 100').all(id).map(r=>r.item_id);}
+function block(id,itemId,error) {db.prepare('UPDATE notify_items SET hub_blocked=? WHERE creator_id=? AND item_id=?').run(String(error).slice(0,700),id,itemId);}
+module.exports = {block,recentSent,hubLink,saveHub,seeded,init,list,get,save,remove,resolved,ingest,pending,sent,error,seed};

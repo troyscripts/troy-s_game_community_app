@@ -1,3 +1,14 @@
+## 3.7.0
+
+- Centrale notify-creators en gedeelde platformcontroles via de bestaande hub-URL, bot-ID-lijst en BROADCAST_SECRET; geen tweede sleutel of poort.
+- Iedere server kan creators toevoegen. Genormaliseerde links/handles hergebruiken dezelfde bron; YouTube-handles en UC-ID’s worden na platformherkenning gekoppeld.
+- Eigen Discordkanalen, pingrollen, berichtteksten en voortgang blijven lokaal per server. Verwijderen beëindigt alleen de eigen koppeling.
+- Hub haalt platformgegevens op; ontvangende bots gebruiken de gedeelde, gepagineerde resultaten. Tokens en API-sleutels blijven op de hub.
+- Persistente afleverreserveringen voorkomen dubbele meldingen per platform/video-of-stream/doelkanaal, ook bij twee bots in dezelfde server.
+- Onzekere verzendingen worden apart zichtbaar in /notify lijst en niet blind herhaald; volgende meldingen gaan door. Definitief geweigerde verzendingen kunnen opnieuw worden geprobeerd.
+- Bij hubuitval geen ongecoördineerde lokale fallback. Bots zonder hubkoppeling blijven zelfstandig werken.
+- Nieuwe regressietests voor aliases, gedeelde controles, versleuteld transport, rechten, kanaalisolatie, herstarts, timeouts en behouden serverinstellingen.
+
 ## 3.6.2
 
 - Ticketarchief-opstartscan slaat verwijderde kanalen (Unknown Channel/10003 of null) over met één informatieve samenvatting. Berichten, versies, bijlagen en ticketregistraties blijven behouden.

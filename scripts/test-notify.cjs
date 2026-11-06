@@ -289,3 +289,47 @@ test('public presets are empty; scoped imports skip other servers and preserve s
         assert.equal(store.get(existing.id,'other-guild').channel_id,'saved-channel');
     } finally {fs.readFileSync=originalRead;await service.stopNotify();}
 });
+
+
+test('hub-linked subscriptions preserve local settings, baseline and sent history', () => {
+    reset();const row=store.save('guild-a','youtube','@creator','first-channel','role-a','Own message',null);
+    store.ingest(row,[item('baseline001',10)],100);
+    assert.deepEqual(store.recentSent(row.id),[],'historical baseline is not delivery evidence');
+    store.ingest(row,[item('newvideo001',101)],200);store.sent(row.id,'newvideo001');
+    const source={id:99,account:'@creator',aliases:['@creator','UC'+'a'.repeat(22)]};
+    store.hubLink(row.id,source.id,source.account);
+    const reused=store.saveHub('guild-a','youtube','UC'+'a'.repeat(22),'second-channel','role-b','New text',null,source);
+    assert.equal(reused.id,row.id);assert.equal(reused.baseline_at,100);assert.equal(reused.channel_id,'second-channel');assert.equal(reused.role_id,'role-b');
+    assert.equal(store.list('guild-a').length,1);assert.deepEqual(store.recentSent(row.id),['newvideo001']);
+    store.ingest(reused,[item('uncertain01',102),item('lateritem01',103)],300);
+    store.block(row.id,'uncertain01','timeout');
+    assert.deepEqual(store.pending(row.id).map(r=>r.item_id),['lateritem01']);
+    assert.equal(store.list('guild-a')[0].hub_blocked_count,1);
+    store.saveHub('guild-b','youtube','@creator','another-channel',null,'',null,source);
+    store.remove(row.id,'guild-a');assert.equal(store.list('guild-b').length,1);
+});
+
+test('hub scheduler uses shared feed and coordinated send, no direct provider fallback', async () => {
+    reset();
+    const previous=process.env.BROADCAST_ENABLED;process.env.BROADCAST_ENABLED='true';
+    const network=require('../services/broadcastNetwork'), oldCall=network.notifyCall;
+    const {createHub}=require('../services/notifyHub');
+    let checks=0,sends=0;
+    const uc='UC'+'b'.repeat(22);
+    const hub=createHub(db,{account:providers.account,youtube:async()=>{checks++;return {resolvedId:uc,items:[{id:'hubvideo001',title:'Test',published:Date.now(),url:'https://www.youtube.com/watch?v=hubvideo001'}]};},twitch:async()=>({resolvedId:'1234',items:[{id:'8765',title:'Live',published:Date.now()-60000,url:'https://www.twitch.tv/creator'}]})});
+    network.notifyCall=(action,data)=>hub.handle('test-bot',action,data);
+    const guildId='111111111111111111',channelId='222222222222222222';
+    const row=store.save(guildId,'youtube','@hubcreator',channelId);store.ingest(row,[],Date.now()-10000);
+    const guild={id:guildId,name:'Hub test',members:{me:{}},channels:{fetch:async()=>channel}};
+    const channel={id:channelId,type:ChannelType.GuildText,guild,permissionsFor:()=>({has:()=>true}),send:async()=>{sends++;return {id:'333333333333333333'};}};
+    const client={isReady:()=>true,guilds:{cache:new Map([[guildId,guild]])},channels:{fetch:async()=>null}};
+    async function run(){service.retry(row.id);service.startNotify(client);for(let i=0;i<30;i++)await new Promise(r=>setImmediate(r));await service.stopNotify();await hub.settle();}
+    try {
+        await run();await run();assert.equal(checks,1);assert.equal(sends,1);
+        await run();assert.equal(sends,1);
+        const liveRow=store.save(guildId,'twitch','creator',channelId);store.ingest(liveRow,[],Date.now()-10000);
+        await run();service.retry(liveRow.id);await run();assert.equal(sends,2,'active stream older than local baseline must remain available');
+        network.notifyCall=async()=>{throw Error('hub offline');};
+        await run();assert.equal(checks,1);assert.equal(sends,2);assert.match(store.get(row.id,guildId).error,/hub offline/);
+    } finally {await service.stopNotify();await hub.stop();network.notifyCall=oldCall;if(previous===undefined)delete process.env.BROADCAST_ENABLED;else process.env.BROADCAST_ENABLED=previous;}
+});

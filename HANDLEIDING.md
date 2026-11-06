@@ -1328,3 +1328,8 @@ Verkoop een bedrijf met `/bedrijf actie:verkopen soort:klein bevestigen:Ja` (of 
 ## Ban op Discord-ID (3.6.1)
 
 Gebruik `/ban reden:Reden discord-id:123456789012345678` voor iemand die niet in de server zit. Voor aanwezige leden blijft `/ban reden:Reden gebruiker:@persoon` beschikbaar. Kies precies één doel. `dagen` is optioneel (0–7). Bestaande banrechten blijven gelden, met rolcontrole voor aanwezige leden. Een ban blokkeert toekomstige toegang tot deze server. Na updaten herstarten; zo nodig `npm run deploy` om het nieuwe command te registreren. Bewaar je .env en bestaande database.
+
+
+## Centrale notify (3.7.0)
+
+Gekoppelde bots gebruiken dezelfde hoofd-hub en BROADCAST_SECRET voor gedeelde creators en aflevercontrole. Iedere server kan creators blijven toevoegen en behoudt zijn eigen meldingskanaal, pingrol en tekst. Werk eerst de hoofd-hub bij en zet de benodigde platformkoppelingen daar klaar; werk daarna alle ontvangende bots bij. Zie [NOTIFY-HUB.md](NOTIFY-HUB.md).

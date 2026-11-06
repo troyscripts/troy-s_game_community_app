@@ -1,4 +1,4 @@
-# Troy’s Game Community Bot — 3.6.2
+# Troy’s Game Community Bot — 3.7.0
 
 ## Update 3.5.1 — leesbare transcripten
 
@@ -484,3 +484,7 @@ Gebruik `/gebruikersnaam naam:Mijn Bot` om de zichtbare naam binnen deze server 
 ## Bannen via Discord-ID
 
 `/ban reden:Reden discord-id:123456789012345678` werkt ook voor gebruikers buiten de server. Kies óf `gebruiker` óf `discord-id`. Bestaande banrechten en rolcontroles blijven gelden.
+
+## Gedeelde notify-hub
+
+Vanaf 3.7.0 gebruiken gekoppelde bots standaard de bestaande hubverbinding voor creators en aflevercontrole. Iedere server kan `/notify toevoegen` blijven gebruiken; bestaande creators worden hergebruikt. Kanalen, pingrollen en teksten blijven per server. Zie [NOTIFY-HUB.md](NOTIFY-HUB.md) voor de updatevolgorde en platformkoppelingen.

@@ -1297,5 +1297,8 @@
   "❌ Je kunt de bot zelf niet bannen.": "❌ You cannot ban the bot itself.",
   "❌ Je kunt de servereigenaar niet bannen.": "❌ You cannot ban the server owner.",
   "❌ Er bestaat geen Discord-gebruiker met dit ID.": "❌ No Discord user exists with this ID.",
-  "❌ Discord weigert de ban. Controleer mijn banrechten en rolpositie.": "❌ Discord rejected the ban. Check my ban permissions and role position."
+  "❌ Discord weigert de ban. Controleer mijn banrechten en rolpositie.": "❌ Discord rejected the ban. Check my ban permissions and role position.",
+  "Bestaande creator op de hoofd-hub hergebruikt.\n": "Existing creator on the main hub reused.\n",
+  "Creator toegevoegd aan de hoofd-hub.\n": "Creator added to the main hub.\n",
+  "⚠️ {0} onzekere melding(en) niet herhaald; controleer het doelkanaal.": "⚠️ {0} uncertain notification(s) were not repeated; check the destination channel."
 }

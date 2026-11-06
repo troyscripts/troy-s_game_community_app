@@ -126,3 +126,8 @@ De YouTube-feed kan het kanaal-ID zonder `UC` teruggeven. De vergelijking onders
 ## Twitch vanaf 2.5.4
 
 Kies Twitch bij `/notify toevoegen`. Zie [TWITCH-HANDLEIDING.md](TWITCH-HANDLEIDING.md) voor de eenmalige appkoppeling. De controle loopt iedere vijf minuten. Een actieve stream wordt ook bij de eerste controle gemeld, daarna eenmaal per stream-ID.
+
+
+## Centrale notify (3.7.0)
+
+Gekoppelde bots gebruiken dezelfde hoofd-hub en BROADCAST_SECRET voor gedeelde creators en aflevercontrole. Iedere server kan creators blijven toevoegen en behoudt zijn eigen meldingskanaal, pingrol en tekst. Werk eerst de hoofd-hub bij en zet de benodigde platformkoppelingen daar klaar; werk daarna alle ontvangende bots bij. Zie [NOTIFY-HUB.md](NOTIFY-HUB.md).

@@ -4,6 +4,7 @@ const config = require('../../config/config');
 const store = require('../../database/notify');
 const providers = require('../../services/notify/providers');
 const service = require('../../services/notifyService');
+const hub = require('../../services/notifyHub');
 const guildSettings = require('../../database/guildSettings');
 const { hasNotifyAccess } = require('../../utils/permissions');
 const data = new SlashCommandBuilder().setName('notify').setDescription("Beheer automatische creatormeldingen").setDMPermission(false)
@@ -55,17 +56,19 @@ module.exports = {data,category:'Beheer',guildOnly:true,dmAllowed:false,notifyOn
                     const role = slot ? await interaction.guild.roles.fetch(configuredId) : directRole;
                     if (slot && !role) throw new Error(tr("De ingestelde pingrol bestaat niet meer. Stel de rol opnieuw in."));
                     if (role && (role.id === interaction.guildId || role.managed || (!role.mentionable && !channel.permissionsFor(interaction.guild.members.me).has(PermissionFlagsBits.MentionEveryone)))) throw new Error(tr("Kies een vermeldbare, gewone rol; @everyone is niet toegestaan."));
+                    const source = hub.enabled() ? await hub.register(platform,account) : null;
                     const existing = store.list(interaction.guildId);
-                    if (existing.length >= 100 && !existing.some(r => r.platform === platform && r.account === account)) throw new Error(tr("Maximaal 100 creatoraccounts per server."));
-                    const row = store.save(interaction.guildId,platform,account,channel.id,slot ? null : role?.id || null,interaction.options.getString('bericht') || '',slot);
+                    if (existing.length >= 100 && !existing.some(r => r.platform === platform && (r.account === account || (source && [source.account,...(source.aliases||[])].includes(r.hub_account||r.account))))) throw new Error(tr("Maximaal 100 creatoraccounts per server."));
+                    const values=[interaction.guildId,platform,account,channel.id,slot ? null : role?.id || null,interaction.options.getString('bericht') || '',slot];
+                    const row = source ? store.saveHub(...values,source) : store.save(...values);
                     service.retry(row.id);
-                    return send(interaction, "editReply", {content:tr("Creator #{0}: **{1}** ({2}) → <#{3}>. Controle iedere vijf minuten. {4}{5}", row.id, account, platform, channel.id, platform === 'twitch' ? tr("Een actieve livestream wordt bij de eerste controle eenmaal gemeld. Twitch vereist TWITCH_CLIENT_ID en TWITCH_CLIENT_SECRET in .env.") : tr("Bestaande video’s worden bij de eerste succesvolle controle overgeslagen."), platform === 'tiktok' ? tr("\nTikTok vereist een geautoriseerde accountkoppeling; zie NOTIFY-HANDLEIDING.md.") : ''),allowedMentions:{parse:[]}});
+                    return send(interaction, "editReply", {content:(source ? (source.reused ? tr('Bestaande creator op de hoofd-hub hergebruikt.\n') : tr('Creator toegevoegd aan de hoofd-hub.\n')) : '')+tr("Creator #{0}: **{1}** ({2}) → <#{3}>. Controle iedere vijf minuten. {4}{5}", row.id, account, platform, channel.id, platform === 'twitch' ? tr("Een actieve livestream wordt bij de eerste controle eenmaal gemeld. Twitch vereist TWITCH_CLIENT_ID en TWITCH_CLIENT_SECRET in .env.") : tr("Bestaande video’s worden bij de eerste succesvolle controle overgeslagen."), platform === 'tiktok' ? tr("\nTikTok vereist een geautoriseerde accountkoppeling; zie NOTIFY-HANDLEIDING.md.") : ''),allowedMentions:{parse:[]}});
                 }
                 if (sub === 'lijst') {
                     const rows = store.list(interaction.guildId);
                     const page = interaction.options.getInteger('pagina') || 1;
                     const selected = rows.slice((page-1)*5,page*5);
-                    const lines = selected.map(service.withPingRole).map(r => tr("**#{0} — {1} ({2})**\nKanaal: <#{3}>{4}{5}\n{6}", r.id, r.account, r.platform, r.channel_id, r.role_id ? tr(" • Rol: <@&{0}>", r.role_id) : '', r.role_slot ? tr(" (pingkeuze {0})", r.role_slot) : '', r.error ? `⚠️ ${r.error}` : r.checked_at ? tr("Laatste controle: <t:{0}:R>", Math.floor(r.checked_at/1000)) : tr("Wacht op eerste controle.")));
+                    const lines = selected.map(service.withPingRole).map(r => tr("**#{0} — {1} ({2})**\nKanaal: <#{3}>{4}{5}\n{6}", r.id, r.account, r.platform, r.channel_id, r.role_id ? tr(" • Rol: <@&{0}>", r.role_id) : '', r.role_slot ? tr(" (pingkeuze {0})", r.role_slot) : '', r.hub_blocked_count ? tr('⚠️ {0} onzekere melding(en) niet herhaald; controleer het doelkanaal.',r.hub_blocked_count)+(r.error ? `\n${r.error}` : '') : r.error ? `⚠️ ${r.error}` : r.checked_at ? tr("Laatste controle: <t:{0}:R>", Math.floor(r.checked_at/1000)) : tr("Wacht op eerste controle.")));
                     return send(interaction, "editReply", {content:(lines.join('\n\n') || tr("Geen creators op deze pagina."))+tr("\n\nPagina {0}/{1}", page, Math.max(1,Math.ceil(rows.length/5))),allowedMentions:{parse:[]}});
                 }
                 const row = store.get(interaction.options.getInteger('id'),interaction.guildId);
@@ -78,7 +81,10 @@ module.exports = {data,category:'Beheer',guildOnly:true,dmAllowed:false,notifyOn
                     const id = interaction.options.getString('kanaal-id').trim();
                     if (row.platform !== 'youtube' || !/^UC[\w-]{22}$/.test(id)) throw new Error(tr("Kies een YouTube-creator en een geldig UC-kanaal-ID."));
                     if (row.resolved_id && row.resolved_id !== id && row.baseline_at !== null) throw new Error(tr("Dit account is al herkend. Voeg een ander kanaal als nieuwe creator toe."));
-                    await providers.youtube({...row, resolved_id:id});
+                    if (hub.enabled()) {
+                        const source=await hub.register('youtube',id);
+                        store.hubLink(row.id,source.id,source.account);
+                    } else await providers.youtube({...row, resolved_id:id});
                     store.resolved(row.id,id); service.retry(row.id);
                     return send(interaction, "editReply", tr("YouTube-kanaal-ID opgeslagen. De volgende controle volgt binnen vijf minuten."));
                 }

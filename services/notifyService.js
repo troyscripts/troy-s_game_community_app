@@ -7,6 +7,8 @@ const store = require('../database/notify');
 const providers = require('./notify/providers');
 const logger = require('../utils/logger');
 const config = require('../config/config');
+const hub = require('./notifyHub');
+const nextChecks = new Map();
 let timer = null;
 let active = null;
 let stopped = true;
@@ -74,8 +76,19 @@ async function deliver(client,row) {
             if (!role || role.id === guild.id || role.managed || (!role.mentionable && !channel.permissionsFor(guild.members.me)?.has(PermissionFlagsBits.MentionEveryone))) throw new Error(tr("De ingestelde pingrol bestaat niet of kan niet worden vermeld."));
         }
         if (stopped) return;
-        await send(channel, "send", payload(fresh,JSON.parse(pending.payload)));
-        store.sent(row.id,pending.item_id);
+        const item=JSON.parse(pending.payload);
+        let delivered=true;
+        if (hub.enabled()) {
+            try {const outcome=await hub.deliver(fresh,item,()=>send(channel,'send',payload(fresh,item)));delivered=outcome.sent;}
+            catch(error) {
+                if(!error.notifyDeliveryBlocked) throw error;
+                store.block(row.id,item.id,error.message);
+                logger.warn(`${logContext(client,row)}: melding ${item.id} onzeker; controleer kanaal ${fresh.channel_id}. Andere meldingen gaan door.`);
+                continue;
+            }
+        }
+        else await send(channel, "send", payload(fresh,item));
+        store.sent(row.id,pending.item_id,delivered);
     }
 }
 async function tick(client) {
@@ -104,17 +117,21 @@ async function tick(client) {
     const rows = store.list();
     const ids = new Set(rows.map(row => row.id));
     for (const id of notices.keys()) if (!ids.has(id)) notices.delete(id);
+    for (const id of nextChecks.keys()) if (!ids.has(id)) nextChecks.delete(id);
     for (const row of rows) {
         if (stopped) return;
         if (!client.guilds.cache.has(row.guild_id)) continue;
         const failure = failures.get(row.id);
-        if (failure?.until > Date.now()) continue;
+        if (failure?.until > Date.now() || (hub.enabled() && (nextChecks.get(row.id)||0)>Date.now())) continue;
         try {
             // Continue discovery during Discord failures and delivery during platform failures.
             let fetchError = null;
             try {
                 let result;
-                if (['youtube','twitch'].includes(row.platform)) {
+                if (hub.enabled()) {
+                    result=await hub.feed(row);
+                    store.hubLink(row.id,result.id,result.account);
+                } else if (['youtube','twitch'].includes(row.platform)) {
                     const key = `${row.platform}:${row.resolved_id || row.account}`;
                     if (!youtubeChecks.has(key)) youtubeChecks.set(key, providers[row.platform](row));
                     result = await youtubeChecks.get(key);
@@ -131,8 +148,14 @@ async function tick(client) {
             if (fetchError) throw fetchError;
             if (recoveryNotice(row.id)) logger.info(`${logContext(client, row)}: drie opeenvolgende controles en afleverpogingen geslaagd.`);
             failures.delete(row.id);
+            if(hub.enabled()) nextChecks.set(row.id,Date.now()+300000);
         } catch (error) {
             if (stopped) return;
+            if(error.notifyHubPending) {
+                store.error(row.id,error.message);
+                failures.set(row.id,{until:Date.now()+30000});
+                continue;
+            }
             const message = error.message || tr("Onbekende notify-fout");
             const count = (failure?.count || 0)+1;
             store.error(row.id,message);
@@ -146,12 +169,13 @@ async function tick(client) {
 function startNotify(client) {
     if (timer) return;
     stopped = false;
+    nextChecks.clear();
     const run = () => {
         if (active) return;
         active = tick(client).catch(error => logger.warn(`Notify-controle mislukt: ${error.message || 'onbekende fout'}; nieuwe poging over vijf minuten.`)).finally(() => { active = null; });
     };
     run();
-    timer = setInterval(run,5*60000); timer.unref();
+    timer = setInterval(run,hub.enabled()?30000:5*60000); timer.unref();
 }
 async function stopNotify() {
     stopped = true;
@@ -159,5 +183,5 @@ async function stopNotify() {
     timer = null;
     if (active) await active;
 }
-function retry(id) { failures.delete(id); }
+function retry(id) { failures.delete(id); nextChecks.delete(id); }
 module.exports = {failureNotice,recoveryNotice,logContext,withPingRole,startNotify,stopNotify,payload,checkChannel,retry};
