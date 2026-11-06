@@ -1318,3 +1318,13 @@ Twitch vereist `TWITCH_CLIENT_ID` en `TWITCH_CLIENT_SECRET` in `.env`, nooit een
 
 Verkoop een bedrijf met `/bedrijf actie:verkopen soort:klein bevestigen:Ja` (of `restaurant` / `kantoor`). Je ontvangt 75% van de bedrijfswaarde inclusief upgrades en beveiliging op je bank. Openstaande inkomsten en premies worden eerst afgerekend. Het bedrijf, de verzekering en de bijbehorende bedrijfsrol verdwijnen; openstaande heists tegen dit bedrijf worden geannuleerd. `opzeggen` stopt uitsluitend de verzekering.
 
+
+
+## Botnaam en begeleide installatie (3.6.0)
+
+`/gebruikersnaam naam:Mijn Bot` wijzigt de zichtbare naam op deze server en opent alle configuratiestappen. `/gebruikersnaam` hervat; `instelling` springt naar een veld. Alleen de servereigenaar en ingestelde Owner-/Developer-rollen hebben toegang. Instellingen afzonderlijk overslaan en later hervatten is mogelijk. Zie [INSTALLATIEMODUS.md](INSTALLATIEMODUS.md).
+
+
+## Ban op Discord-ID (3.6.1)
+
+Gebruik `/ban reden:Reden discord-id:123456789012345678` voor iemand die niet in de server zit. Voor aanwezige leden blijft `/ban reden:Reden gebruiker:@persoon` beschikbaar. Kies precies één doel. `dagen` is optioneel (0–7). Bestaande banrechten blijven gelden, met rolcontrole voor aanwezige leden. Een ban blokkeert toekomstige toegang tot deze server. Na updaten herstarten; zo nodig `npm run deploy` om het nieuwe command te registreren. Bewaar je .env en bestaande database.

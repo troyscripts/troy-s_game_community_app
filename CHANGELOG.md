@@ -1,3 +1,21 @@
+## 3.6.1
+
+- `/ban` ondersteunt nu een los `discord-id`, ook voor gebruikers die niet in de server zitten.
+- Kies precies één doel: de bestaande gebruikerskeuze of een Discord-ID. De reden blijft verplicht.
+- ID-validatie, bescherming tegen zelfban/botban/serverownerban en behoud van rolcontroles voor aanwezige leden.
+- Alleen Discord-fout Unknown Member wordt als afwezig lid behandeld; overige ophaalfouten blokkeren de actie.
+- Banbevestiging en eventuele DM pas na een succesvolle Discord-ban; foutmeldingen bij ongeldig account of ontbrekende botrechten.
+- Bevat alle wijzigingen van 3.6.0, inclusief de installatiemodus.
+
+## 3.6.0
+
+- `/gebruikersnaam`: servergebonden botnaam, embedfooter en AI-identiteit; start of hervat de installatie.
+- Alle Discord-configuratievelden afzonderlijk doorlopen, behouden, wijzigen of overslaan; voortgang blijft in SQLite bewaard.
+- Direct naar een instelling springen en overgeslagen instellingen hervatten, ook na een herstart.
+- Aanvullende stappen voor profielen, panelen, overheid, meldingen, agenda en hostinginstellingen.
+- Servereigenaar en ingestelde Owner-/Developer-rol gecontroleerd bij elk command, elke knop en elk formulier.
+- Verouderde schermen en gelijktijdige wijzigingen geblokkeerd; bestaande instellingen blijven behouden.
+
 ## 3.5.1 — Leesbare tickettranscripten
 
 - Gespreksweergave met namen, tijdstippen in Europe/Amsterdam en opgemaakte embeds in plaats van ruwe JSON.

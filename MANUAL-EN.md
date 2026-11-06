@@ -1118,3 +1118,13 @@ For support, go to https://discord.gg/nTzVy5uMWX
 
 Sell a business using `/bedrijf actie:verkopen soort:klein bevestigen:True` (or `restaurant` / `kantoor`). You receive 75% of its value including upgrades and security in your bank. Outstanding income and premiums are settled first. Ownership, insurance and its business role are removed; open heists against this business are cancelled. `opzeggen` only cancels insurance.
 
+
+
+## Bot name and guided installation (3.6.0)
+
+`/gebruikersnaam naam:My Bot` changes the server nickname, configured bot name and footer, then opens setup. Run without a name to resume; use `instelling` to jump to a setting. Only the Discord server owner and configured Owner/Developer roles can use it. Skip individual settings and resume later; progress survives restarts. Existing messages, the global username/application name and shared presence are unchanged. Additional configuration uses the commands shown in the final checklist. Hosting secrets stay outside Discord.
+
+
+## Ban by Discord ID (3.6.1)
+
+Use `/ban reden:Reason discord-id:123456789012345678` for users outside the server. Alternatively select `gebruiker`; provide exactly one target. Existing ban permissions and member hierarchy checks apply. Restart after updating; run `npm run deploy` if needed. Preserve .env and the database.

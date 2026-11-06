@@ -533,7 +533,15 @@ function setWelcomeMessage(guildId, message) {
     return value;
 }
 
+function setBotName(guildId, name) {
+    const serverConfig = getServerConfig(guildId);
+    serverConfig.Bot.Name = name;
+    serverConfig.Bot.Footer = name;
+    saveStored(guildId, serverConfig);
+}
+
 module.exports = {
+    setBotName,
     GLOBAL_PATHS,
     initialize,
     getGuildConfig,
