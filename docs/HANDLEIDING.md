@@ -1333,3 +1333,8 @@ Gebruik `/ban reden:Reden discord-id:123456789012345678` voor iemand die niet in
 ## Centrale notify (3.7.0)
 
 Gekoppelde bots gebruiken dezelfde hoofd-hub en BROADCAST_SECRET voor gedeelde creators en aflevercontrole. Iedere server kan creators blijven toevoegen en behoudt zijn eigen meldingskanaal, pingrol en tekst. Werk eerst de hoofd-hub bij en zet de benodigde platformkoppelingen daar klaar; werk daarna alle ontvangende bots bij. Zie [NOTIFY-HUB.md](NOTIFY-HUB.md).
+
+
+## Documentatie en /help (3.7.1)
+
+Alle documenten behalve README.md staan nu in `docs/` vanaf de projecthoofdmap. Upload de volledige map bij updates. `/help` geeft de standaardhandleiding; `/help document:overzicht` geeft de volledige lijst en `/help document:NOTIFY-HUB.md` het gekozen document. Zoek op een deel van de bestandsnaam. Nieuwe Markdown-, tekst-, PDF- en Word-documenten in docs en submappen verschijnen automatisch. De taalkeuze selecteert de NL/EN-standaardhandleiding; overige documenten blijven in hun oorspronkelijke taal. Plaats hier alleen openbare documentatie: iedere gebruiker kan deze via /help opvragen.

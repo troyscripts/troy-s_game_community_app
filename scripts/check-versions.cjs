@@ -15,7 +15,7 @@ function checkVersions(root) {
     })) if (value !== version) errors.push(`${name}: ${value}; verwacht ${version}.`);
     const heading = read('README.md').split(/\r?\n/)[0];
     if (!heading.endsWith(`— ${version}`)) errors.push('README-titel heeft een andere versie.');
-    const releases = [...read('CHANGELOG.md').matchAll(/^##\s+(\d+\.\d+\.\d+)(?:\s|$)/gm)].map(m => m[1]);
+    const releases = [...read('docs/CHANGELOG.md').matchAll(/^##\s+(\d+\.\d+\.\d+)(?:\s|$)/gm)].map(m => m[1]);
     if (releases[0] !== version || releases.filter(v => v === version).length !== 1) {
         errors.push('Changelog moet beginnen met één hoofdstuk voor de huidige versie.');
     }

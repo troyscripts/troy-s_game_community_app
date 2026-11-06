@@ -1133,3 +1133,8 @@ Use `/ban reden:Reason discord-id:123456789012345678` for users outside the serv
 ## Shared notification hub (3.7.0)
 
 Connected bots use the existing BROADCAST_SECRET, URL and allowed bot IDs for shared creators and delivery reservations. Each server can add creators and keeps its own channel, role and message. Update the main hub first, configure platform credentials and TikTok authorization there, then update receiving bots. Existing subscriptions are linked automatically. No independent fallback during hub outages. Uncertain deliveries are held for manual channel inspection, while later notifications continue. NOTIFY_HUB_ENABLED=false opts into standalone mode without cross-bot deduplication. See NOTIFY-HUB.md for migration and limitations.
+
+
+## Documentation and /help (3.7.1)
+
+All documentation except README.md is in the docs directory. Upload the entire directory when updating. `/help` sends the default manual; `/help document:overzicht` lists every document and `/help document:NOTIFY-HUB.md` downloads a selected file. Autocomplete searches filenames; new Markdown, text, PDF and Word documents in docs or its subdirectories appear automatically. The language option chooses the default manual only; other files retain their original language. Keep only public documentation in docs.

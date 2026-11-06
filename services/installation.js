@@ -16,7 +16,7 @@ const extraSteps = {
     '@overheidscoordinator': '/overheidscoordinator instellen (per afdeling), daarna /overheidscoordinator voor het paneel',
     '@radiopaneel': '/radio paneel',
     '@agenda': '/agenda toevoegen en /agenda tonen',
-    '@hosting': 'INSTALLATIE.md en .env.example: token, client-ID, AI/API-sleutels, centrale botkoppeling en globale status'
+    '@hosting': 'docs/INSTALLATIE.md en .env.example: token, client-ID, AI/API-sleutels, centrale botkoppeling en globale status'
 };
 function paths() { return [...settings.getEditablePaths(), ...Object.keys(extraSteps)]; }
 function allowed(interaction) {
