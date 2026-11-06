@@ -1128,3 +1128,8 @@ Sell a business using `/bedrijf actie:verkopen soort:klein bevestigen:True` (or 
 ## Ban by Discord ID (3.6.1)
 
 Use `/ban reden:Reason discord-id:123456789012345678` for users outside the server. Alternatively select `gebruiker`; provide exactly one target. Existing ban permissions and member hierarchy checks apply. Restart after updating; run `npm run deploy` if needed. Preserve .env and the database.
+
+
+## Shared notification hub (3.7.0)
+
+Connected bots use the existing BROADCAST_SECRET, URL and allowed bot IDs for shared creators and delivery reservations. Each server can add creators and keeps its own channel, role and message. Update the main hub first, configure platform credentials and TikTok authorization there, then update receiving bots. Existing subscriptions are linked automatically. No independent fallback during hub outages. Uncertain deliveries are held for manual channel inspection, while later notifications continue. NOTIFY_HUB_ENABLED=false opts into standalone mode without cross-bot deduplication. See NOTIFY-HUB.md for migration and limitations.

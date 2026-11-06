@@ -93,3 +93,8 @@ De bestaande opstartcontrole, kanaalscan en serveraantallen blijven per installa
 ## Controles in dit pakket
 
 De syntaxis, versieconsistentie en gerichte tests voor rechten, wachtrij, reserveringen, herstartadministratie en beveiligd lokaal HTTP-verkeer zijn gecontroleerd. Geen live Discord-berichten verstuurd; je echte hosting-IP, allocation en tokens moeten na installatie worden getest.
+
+
+## Centrale notify (3.7.0)
+
+Gekoppelde bots gebruiken dezelfde hoofd-hub en BROADCAST_SECRET voor gedeelde creators en aflevercontrole. Iedere server kan creators blijven toevoegen en behoudt zijn eigen meldingskanaal, pingrol en tekst. Werk eerst de hoofd-hub bij en zet de benodigde platformkoppelingen daar klaar; werk daarna alle ontvangende bots bij. Zie [NOTIFY-HUB.md](NOTIFY-HUB.md).

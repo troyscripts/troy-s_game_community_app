@@ -16,8 +16,12 @@ function validGuilds(value) {
     }
     return [...new Set(value)];
 }
-function handlerFor(store) {
+function handlerFor(store, notifyHub = null) {
     return async (botId, action, data) => {
+        if (typeof action === 'string' && action.startsWith('notify-')) {
+            if (!notifyHub) throw new Error('Centrale notify is niet actief; werk de hoofd-hub bij en controleer NOTIFY_HUB_ENABLED.');
+            return notifyHub.handle(botId, action, data);
+        }
         if (action === 'register') {
             store.register(botId, validGuilds(data.guildIds));
             return {ok:true};
@@ -128,7 +132,8 @@ async function start(client) {
         }
         const store=require('../database/broadcastStore').createStore(require('../database/database').db);
         state={client,options,store,central,work:null,stopping:false,lastError:0};
-        const handler=handlerFor(store);
+        if (central && require('./notifyHub').enabled()) state.notifyHub=require('./notifyHub').createHub(require('../database/database').db);
+        const handler=handlerFor(store,state.notifyHub);
         state.call=central ? (action,data)=>handler(botId,action,data) : (action,data)=>transport.request(options,botId,action,data);
         if(central) {
             state.server=transport.createServer(options,handler,store.acceptNonce);
@@ -145,6 +150,7 @@ async function start(client) {
         void tick(state);
     } catch(error) {
         state?.server?.close();
+        await state?.notifyHub?.stop();
         startupError=error.message;
         logger.error(`[Botbericht] Koppeling niet gestart: ${error.message}`);
     }
@@ -175,6 +181,12 @@ async function stop() {
         state.server.close(resolve);
         state.server.closeAllConnections();
     });
+    await state.notifyHub?.stop();
     active=null;
 }
-module.exports={start,stop,publish,handlerFor,deliver,flushReceipts};
+async function notifyCall(action,data) {
+    if(!active || active.stopping) throw new Error(startupError || 'De hoofd-hub is niet verbonden; notify wacht op de bestaande hubkoppeling.');
+    if(!['notify-register','notify-feed','notify-claim','notify-ack','notify-history'].includes(action)) throw new Error('Onbekende notify-actie.');
+    return active.call(action,data);
+}
+module.exports={start,stop,publish,handlerFor,deliver,flushReceipts,notifyCall};

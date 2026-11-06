@@ -279,3 +279,8 @@ Gebruik `/ban reden:Reden discord-id:123456789012345678` voor iemand die niet in
 ## Opstartwaarschuwingen (3.6.2)
 
 Kopieer bij deze update ook `data/notify-presets.json` (standaard `[]`) als je geen eigen imports gebruikt. Bestaande `/notify`-koppelingen blijven in de database bewaard. Eigen presets kun je behouden en optioneel aan een `guildId` binden. De ticketarchiefscan slaat verdwenen kanalen over zonder archief of ticketregistraties te verwijderen. Ontbrekende rechten en netwerkproblemen blijven zichtbaar als waarschuwing.
+
+
+## Centrale notify (3.7.0)
+
+Gekoppelde bots gebruiken dezelfde hoofd-hub en BROADCAST_SECRET voor gedeelde creators en aflevercontrole. Iedere server kan creators blijven toevoegen en behoudt zijn eigen meldingskanaal, pingrol en tekst. Werk eerst de hoofd-hub bij en zet de benodigde platformkoppelingen daar klaar; werk daarna alle ontvangende bots bij. Zie [NOTIFY-HUB.md](NOTIFY-HUB.md).
