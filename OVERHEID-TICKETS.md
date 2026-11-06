@@ -1,4 +1,4 @@
-# Overheidstickets — 3.4.1
+# Overheidstickets — 3.4.2
 
 Dit is een extra systeem naast de bestaande supporttickets. De afdelingen zijn gebaseerd op de screenshots en de template GemertRP Overheid. Het systeem werkt ook op andere servers: koppel altijd de rollen en categorieën van die server. Template-ID's worden niet gebruikt.
 
@@ -43,7 +43,11 @@ Behandelknoppen kijken uitsluitend naar de gekoppelde rollen/personen. Botstaff,
 
 Per persoon is maximaal één open ticket per afdeling mogelijk. Claims kennen één behandelaar toe; andere afdelingsmedewerkers kunnen blijven helpen. Alleen behandelaars kunnen sluiten. De aanvrager en behandelaars kunnen een HTML-transcript downloaden. Transcriptlimieten: 5000 berichten, 8 MB brongegevens/uitvoer en 60 seconden ophalen. Bij overschrijding blijft het ticket behouden.
 
-Sluiten vraagt bevestiging, blokkeert typen door de aanvrager en bewaart het kanaal als archief. Medewerkers behouden toegang. Daarna kan een nieuw ticket worden geopend. Download het transcript voordat een beheerder het archief via Discord verwijdert. Er wordt niets automatisch verwijderd en er is geen staffthread of algemeen staff-logkanaal nodig.
+Sluiten vraagt bevestiging en stuurt automatisch een HTML-transcript naar het al ingestelde **Tickets.LogChannel** van deze Discord-server. Het logbericht vermeldt dienst, afdeling, ticketnaam/ID, aanvrager, behandelaar en degene die sluit, zonder mentions te pingen. Zodra Discord de upload heeft bevestigd, wordt het ticketkanaal direct verwijderd. De bestaande Transcript-knop blijft beschikbaar voor een handmatige privédownload.
+
+Er is geen nieuw logkanaal of staffthread nodig. De bot moet in Tickets.LogChannel kunnen kijken, berichten versturen en bestanden bijvoegen, en in het ticket kunnen lezen en het kanaal verwijderen. Het logkanaal mag niet het ticket zelf zijn. Controleer dat het bestaande logkanaal alleen toegankelijk is voor de mensen die deze gesprekken mogen lezen.
+
+Bij een ontbrekend logkanaal of mislukte export/upload blijft het ticket bestaan. Mislukt alleen verwijderen, dan staat het transcript al in het logkanaal; probeer sluiten opnieuw. De bot maakt dan opnieuw een actueel transcript, zodat latere berichten ook worden meegenomen. Ook eerder gesloten archiefkanalen kunnen via de bestaande sluitknop worden geëxporteerd en verwijderd.
 
 Instellingenwijzigingen gelden voor **nieuwe tickets**. Bestaande tickets bewaren de oorspronkelijk gekoppelde rollen en personen; bezit of verlies van zo'n Discord-rol wordt bij behandelacties opnieuw gecontroleerd. Pas bij wisseling van een rechtstreeks aangewezen persoon ook bestaande kanaalrechten aan of sluit diens oude tickets.
 
@@ -51,7 +55,7 @@ De bot heeft in de doelcategorie nodig: Kanaal bekijken, Kanalen beheren, Rollen
 
 ## English quick guide
 
-Use `/politie`, `/ambulance`, `/pechhulp` or `/brandweer` with the `instellen` option to select a department. Choose real Discord roles, responsible users and a destination category, then activate the department. Run the same command without options to publish its panel in the current text channel. Optional `naam` renames the selected department. Setup requires the existing Head Admin or higher access. Handling uses only explicitly assigned department roles/users, never bot staff membership. Settings and tickets persist in SQLite. Existing tickets retain their original role/user assignments. Closing preserves the channel as an archive; download its transcript before manual deletion. The new interface is Dutch.
+Use `/politie`, `/ambulance`, `/pechhulp` or `/brandweer` with the `instellen` option to select a department. Choose real Discord roles, responsible users and a destination category, then activate the department. Run the same command without options to publish its panel in the current text channel. Optional `naam` renames the selected department. Setup requires the existing Head Admin or higher access. Handling uses only explicitly assigned department roles/users, never bot staff membership. Settings and tickets persist in SQLite. Existing tickets retain their original role/user assignments. After confirmation, closing uploads the transcript to the existing Tickets.LogChannel and then deletes the ticket channel. Failed export or delivery preserves the channel; retrying after a deletion failure creates a fresh transcript. The new interface is Dutch.
 
 The government coordinator has a separate `/overheidscoordinator` panel with its own roles, responsible users and destination category. No staff membership is required to handle these tickets. Configure it using `instellen`, activate it, then run the command without options to publish.
 

@@ -1,5 +1,9 @@
 # Installatiehandleiding — Troy’s Game Community Bot
 
+## Update 3.4.2 — overheidstickets sluiten en verwijderen
+
+Na bevestiging stuurt de bot het transcript naar het bestaande `Tickets.LogChannel` van deze server en verwijdert daarna direct het ticketkanaal. Bij een mislukte export of aflevering blijft het kanaal behouden. Geen nieuw logkanaal nodig; zie [OVERHEID-TICKETS.md](OVERHEID-TICKETS.md).
+
 ## Update 3.4.1 — leesbare ticketkeuzes
 
 Overheidspanelen tonen afdelingsnamen en een korte uitleg. Pas de uitleg aan met `omschrijving` samen met `instellen`. Gebruik het paneelcommando opnieuw in hetzelfde kanaal om een recent bestaand paneel bij te werken. Zie [OVERHEID-TICKETS.md](OVERHEID-TICKETS.md). Node 24.x blijft vereist.

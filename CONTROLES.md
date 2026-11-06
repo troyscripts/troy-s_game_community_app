@@ -1,4 +1,8 @@
-# Automatische controles — 3.4.1
+# Automatische controles — 3.4.2
+
+## Aanvullende controles voor 3.4.2
+
+De volledige `npm run ci` is geslaagd op Node 24.22.1: syntax/bestanden, versies en **25/25 testbestanden**. Nieuwe regressietests controleren ontbrekende/ongeldige logkanalen, logkanaal op de verkeerde server, onvoldoende rechten, exportfouten, uploadfouten en verwijderfouten. Er wordt pas verwijderd na een geslaagde transcriptupload; een nieuwe poging exporteert opnieuw. De overheidstest controleert ook de sluitactie via de echte componenthandler. Node 24.x en dependencies zijn ongewijzigd.
 
 ## Aanvullende controles voor 3.4.1
 

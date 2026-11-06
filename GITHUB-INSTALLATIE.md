@@ -1,4 +1,8 @@
-# Versie 3.4.1 publiceren
+# Versie 3.4.2 publiceren
+
+## Update 3.4.2 — overheidstickets sluiten en verwijderen
+
+Na bevestiging stuurt de bot het transcript naar het bestaande `Tickets.LogChannel` van deze server en verwijdert daarna direct het ticketkanaal. Bij een mislukte export of aflevering blijft het kanaal behouden. Geen nieuw logkanaal nodig; zie [OVERHEID-TICKETS.md](OVERHEID-TICKETS.md).
 
 ## Update 3.4.1 — leesbare ticketkeuzes
 
@@ -13,7 +17,7 @@ Overheidspanelen tonen afdelingsnamen en een korte uitleg. Pas de uitleg aan met
 
 ## Controleren en publiceren
 
-Voer in een schone testkopie `npm ci --no-audit --no-fund` en `npm run ci` uit. Commit en push daarna. Controleer in GitHub Actions dat **Botcontroles / Node.js 24** slaagt. Publiceer release `v3.4.1` met het bijbehorende hoofdstuk uit [CHANGELOG.md](CHANGELOG.md).
+Voer in een schone testkopie `npm ci --no-audit --no-fund` en `npm run ci` uit. Commit en push daarna. Controleer in GitHub Actions dat **Botcontroles / Node.js 24** slaagt. Publiceer release `v3.4.2` met het bijbehorende hoofdstuk uit [CHANGELOG.md](CHANGELOG.md).
 
 De versiechecker gebruikt `package.json`; `config/defaults.js` haalt daar de botversie uit. De repository staat in `config/updates.js`. Deze download publiceert niets automatisch.
 

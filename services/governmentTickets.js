@@ -7,6 +7,8 @@ const { display } = require('./governmentLabels');
 const { hasNotifyAccess } = require('../utils/permissions');
 const { canHandle } = require('./governmentAccess');
 const { createTranscript } = require('./boundedTranscript');
+const { closeTicket } = require('./governmentClose');
+const logger = require('../utils/logger');
 const locks = new Set();
 const row = component => new Row().addComponents(component);
 const button = (id,label,style=ButtonStyle.Secondary) => new Button().setCustomId(id).setLabel(label).setStyle(style);
@@ -135,16 +137,20 @@ async function interact(client,i) {
   }
   if(action==='transcript') return i.editReply({files:[await createTranscript(i.channel,{filename:`overheid-${i.channelId}.html`})]});
   if(action==='confirmclose') {
-   if(t.status==='closed') return i.editReply('Dit ticket is al gesloten.');
-   // Keep the channel as an archive; export remains possible and no messages are deleted.
-   await i.channel.permissionOverwrites.edit(t.owner,{SendMessages:false});
-   store.close(i.guildId,i.channelId);
-   await i.channel.send({content:'**Ticket gesloten.** Het kanaal blijft als archief bewaard. De aanvrager kan een nieuw ticket openen.',allowedMentions:{parse:[]}});
-   return i.editReply('Gesloten en bewaard. Download desgewenst een transcript; verwijderen kan via Discord.');
+   if(t.status==='deleted') return i.editReply('Dit ticket is al verwijderd.');
+   try {
+    await closeTicket(i,t);
+   } catch(error) {
+    logger.error(`[Overheid] Sluiten mislukt | server ${i.guild.name || i.guildId} | ticket ${i.channelId}: ${error.message}`);
+    return i.editReply(`Het ticket kon niet worden verwijderd. Het kanaal blijft behouden. Controleer Tickets.LogChannel en de botrechten en probeer opnieuw.\n${String(error.message).slice(0,1000)}`);
+   }
+   // The interaction channel has gone; failure to edit an ephemeral confirmation
+   // must not turn a successful archive/delete into a reported closing failure.
+   await i.editReply('Transcript opgeslagen in het ticketlogkanaal. Het ticket is verwijderd.').catch(()=>{});
   }
  } finally {locks.delete(key);}
 }
 function privateReplyWithButtons(i) {
- return i.reply({content:'Ticket sluiten? De aanvrager kan daarna niet meer typen. Het kanaal blijft als archief bestaan.',flags:MessageFlags.Ephemeral,components:[row(button('gov:confirmclose','Sluiten bevestigen',ButtonStyle.Danger))]});
+ return i.reply({content:'Ticket sluiten en verwijderen? Het transcript wordt eerst naar het ingestelde ticketlogkanaal gestuurd. Daarna wordt dit kanaal direct verwijderd.',flags:MessageFlags.Ephemeral,components:[row(button('gov:confirmclose','Sluiten bevestigen',ButtonStyle.Danger))]});
 }
 module.exports={configure,command,interact};

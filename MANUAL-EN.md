@@ -1,5 +1,9 @@
 # Troy’s Game Community Bot — User Manual
 
+## Update 3.4.2 — close and delete government tickets
+
+After confirmation, the bot uploads the transcript to the existing server-specific `Tickets.LogChannel` and immediately deletes the ticket channel. If export or delivery fails, the channel is preserved. No new log setting is needed.
+
 ## Update 3.4.1 — readable ticket choices
 
 Government panels now show readable department names and short descriptions. Role mentions in custom labels resolve to role names. Use `omschrijving` together with `instellen` to customize the description. Run the panel command again in the same channel to refresh the latest matching bot panel among the last 100 messages. Node 24.x is still required.
@@ -10,7 +14,7 @@ Government panels now show readable department names and short descriptions. Rol
 
 Five independent panels are available: `/politie`, `/ambulance`, `/pechhulp`, `/brandweer` and `/overheidscoordinator`. Use the `instellen` option to choose a department, select its Discord roles, responsible people and destination category, then activate it. Run the command without options to publish the panel. Setup requires Head Admin or higher access; handling requires only explicitly assigned department roles/users, never bot staff membership. The new interface is Dutch.
 
-Claim, transcript and confirmed-close actions are included. Closing retains the channel as an archive. Existing tickets retain their original access assignments. SQLite creates two new tables automatically and command registration runs at startup; use `npm run deploy` if needed. No new environment variables are required. See [Government tickets](OVERHEID-TICKETS.md) and [Validation](CONTROLES.md).
+Claim, transcript and confirmed-close actions are included. Closing uploads the transcript to Tickets.LogChannel and deletes the channel after successful delivery. Existing tickets retain their original access assignments. SQLite creates two new tables automatically and command registration runs at startup; use `npm run deploy` if needed. No new environment variables are required. See [Government tickets](OVERHEID-TICKETS.md) and [Validation](CONTROLES.md).
 
 Older release chapters below are historical. The current installation and runtime requirements above take precedence.
 

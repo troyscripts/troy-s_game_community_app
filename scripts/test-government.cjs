@@ -47,7 +47,17 @@ function interaction(id,user='opener',values=['0']) {
  const denied=interaction('gov:claim','staff');await svc.interact(null,denied);assert.match(denied.result.content,/Alleen de ingestelde/);
  const claim=interaction('gov:claim','worker');await svc.interact(null,claim);assert.equal(store.ticket('guild','ticket').claimed,'worker');
  const competing=interaction('gov:claim','responsible');await svc.interact(null,competing);assert.match(competing.result,/al geclaimd/);
- const close=interaction('gov:confirmclose','worker');await svc.interact(null,close);assert.equal(store.ticket('guild','ticket').status,'closed');assert.equal(store.existing('guild','politie','0','opener'),undefined);
+ const transcriptModule=require('../services/boundedTranscript');
+ const originalTranscript=transcriptModule.createTranscript;
+ transcriptModule.createTranscript=async()=>({attachment:Buffer.from('transcript'),name:'test.html'});
+ const originalLog=config.Tickets.LogChannel;config.Tickets.LogChannel='log';
+ let removed=false,logged=false;
+ const oldFetch=guild.channels.fetch;
+ guild.channels.fetch=async id=>id==='log'?{guildId:'guild',isTextBased:()=>true,permissionsFor:()=>new PermissionsBitField(PermissionsBitField.All),send:async()=>{logged=true;}}:oldFetch(id);
+ const oldPermissions=channel.permissionsFor;channel.permissionsFor=()=>new PermissionsBitField(PermissionsBitField.All);
+ channel.delete=async()=>{assert.equal(logged,true);removed=true;};
+ const close=interaction('gov:confirmclose','worker');await svc.interact(null,close);assert.equal(removed,true);assert.equal(store.ticket('guild','ticket').status,'deleted');
+ transcriptModule.createTranscript=originalTranscript;config.Tickets.LogChannel=originalLog;guild.channels.fetch=oldFetch;channel.permissionsFor=oldPermissions;assert.equal(store.existing('guild','politie','0','opener'),undefined);
  assert.equal(store.ticket('other','ticket'),undefined);
  // Configuration changes never mutate the ACL snapshot of an existing ticket.
  store.save('guild','politie','0',{roles:['new'],users:[],category:'category',enabled:true});

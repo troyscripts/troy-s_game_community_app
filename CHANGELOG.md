@@ -1,3 +1,10 @@
+## 3.4.2 — Overheidstickets verwijderen na transcript
+
+- Sluiten met bevestiging stuurt het HTML-transcript naar het bestaande `Tickets.LogChannel` en verwijdert daarna direct het ticketkanaal.
+- Geen tweede logkanaal of staffthread vereist. Behandelrechten blijven op de afdelingsrollen/personen gebaseerd.
+- Ontbrekend logkanaal, onvoldoende rechten of mislukte export/upload/verwijdering behouden het kanaal; opnieuw proberen maakt een actueel transcript.
+- Ook eerder gesloten overheidsticketarchieven kunnen via de sluitknop worden afgehandeld.
+
 ## 3.4.1 — Leesbare overheidsticketkeuzes
 
 - Rolmentions in aangepaste afdelingsnamen worden omgezet naar echte rolnamen; ontbrekende rollen vallen terug op de afdelingsnaam.

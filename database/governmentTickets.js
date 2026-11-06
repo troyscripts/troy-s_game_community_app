@@ -12,6 +12,7 @@ module.exports = {
  existing(g,s,d,u) { return db.prepare("SELECT * FROM government_tickets WHERE guild=? AND service=? AND department=? AND owner=? AND status='open'").get(g,s,d,u); },
  add(t) { db.prepare('INSERT INTO government_tickets(channel,guild,service,department,owner,access) VALUES (@channel,@guild,@service,@department,@owner,@access)').run(t); },
  claim(g,c,u) { return db.prepare("UPDATE government_tickets SET claimed=? WHERE guild=? AND channel=? AND claimed IS NULL AND status='open'").run(u,g,c).changes; },
+ deleted(g,c) { db.prepare("UPDATE government_tickets SET status='deleted' WHERE guild=? AND channel=?").run(g,c); },
  close(g,c) { db.prepare("UPDATE government_tickets SET status='closed' WHERE guild=? AND channel=?").run(g,c); },
  remove(g,c) { db.prepare('DELETE FROM government_tickets WHERE guild=? AND channel=?').run(g,c); }
 };

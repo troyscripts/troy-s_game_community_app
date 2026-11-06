@@ -1,4 +1,8 @@
-# Troy’s Game Community Bot — 3.4.1
+# Troy’s Game Community Bot — 3.4.2
+
+## Update 3.4.2 — overheidstickets sluiten en verwijderen
+
+Na bevestiging stuurt de bot het transcript naar het bestaande `Tickets.LogChannel` van deze server en verwijdert daarna direct het ticketkanaal. Bij een mislukte export of aflevering blijft het kanaal behouden. Geen nieuw logkanaal nodig; zie [OVERHEID-TICKETS.md](OVERHEID-TICKETS.md).
 
 ## Actuele release 3.4.0 — Node 24 en overheidstickets
 
