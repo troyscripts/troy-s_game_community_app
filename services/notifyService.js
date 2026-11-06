@@ -81,19 +81,21 @@ async function deliver(client,row) {
 async function tick(client) {
     if (stopped || !client.isReady()) return;
     store.init();
-    // Channel IDs are unique: only the owning guild receives Troy's presets.
+    // Public installs have no personal presets. Existing database subscriptions remain untouched.
     const presetPath = path.resolve(__dirname,'../data/notify-presets.json');
     if (fs.existsSync(presetPath)) {
         const presets = JSON.parse(fs.readFileSync(presetPath,'utf8'));
         for (const preset of presets) {
             if (store.seeded(preset.channelId)) continue;
+            // Optional server scope avoids probing channels belonging to another bot installation.
+            if (preset.guildId && !client.guilds.cache.has(preset.guildId)) continue;
             if (!/^\d{17,20}$/.test(preset.channelId) || !Array.isArray(preset.creators)) throw new Error(tr("Ongeldige notify-startinstellingen."));
             for (const creator of preset.creators) creator.account = providers.account(creator.platform,creator.account);
             const channel = await client.channels.fetch(preset.channelId).catch(() => null);
             if (stopped) return;
-            if (channel?.guild && client.guilds.cache.has(channel.guild.id)) store.seed(channel.guild.id,preset);
+            if (channel?.guild && client.guilds.cache.has(channel.guild.id) && (!preset.guildId || preset.guildId === channel.guild.id)) store.seed(channel.guild.id,preset);
             else if (!failures.has('preset:'+preset.channelId)) {
-                logger.warn('Notify-startinstellingen: opgegeven kanaal niet bereikbaar. Controleer of deze bot toegang tot het kanaal heeft.');
+                logger.warn(`Notify-startinstellingen [kanaal: ${preset.channelId}]: kanaal niet bereikbaar of verkeerde server. Controleer de eigen data/notify-presets.json en kanaaltoegang.`);
                 failures.set('preset:'+preset.channelId,{});
             }
         }

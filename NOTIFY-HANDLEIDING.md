@@ -18,7 +18,7 @@ De bot controleert iedere vijf minuten nieuwe YouTube- en TikTok-video’s en ac
 
 ## Jouw accounts
 
-Het updatepakket bevat `data/notify-presets.json`, met jouw YouTube- en TikTokaccount en het afgesproken kanaal. Kopieer ook dit bestand naar de bot. Zodra de bot het kanaal kan bereiken, worden beide accounts eenmalig ingesteld, alleen in de server van dat kanaal. Reeds aanwezige koppelingen worden niet overschreven. Latere wijzigingen en verwijderingen via Discord blijven behouden, ook na herstart.
+Vanaf 3.6.2 bevat `data/notify-presets.json` standaard alleen `[]`. Openbare installaties bevatten geen persoonlijke accounts of kanalen. Stel creators in met `/notify toevoegen`. Bestaande koppelingen in de database blijven behouden bij deze update. Voor eigen eenmalige imports kun je presets gebruiken met `channelId`, `creators` en optioneel `guildId`. Een bot die niet in die `guildId` zit, slaat de preset over. Zonder `guildId` blijft de bestaande kanaalcontrole gelden.
 
 YouTube probeert de @handle automatisch naar het vaste kanaal-ID te vertalen. Als YouTube dat tegenhoudt, toont `/notify lijst` wat er ontbreekt. Gebruik dan `/notify youtube-id id:<nummer> kanaal-id:<UC-ID>`. Het kanaal-ID vind je als eigenaar bij de geavanceerde accountinstellingen van YouTube. Hiervoor hoeft geen YouTube API-key ingesteld te worden.
 
