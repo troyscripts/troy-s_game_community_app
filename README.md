@@ -1,8 +1,21 @@
-# Troy’s Game Community Bot — 3.7.0
+# Troy’s Game Community Bot — 3.7.1
+
+## Documentatie en /help
+
+Alle handleidingen, update-instructies en de changelog staan in [`docs/`](docs/). Alleen deze README staat in de hoofdmap.
+
+- `/help`: de standaardhandleiding volgens je taalvoorkeur.
+- `/help taal:English`: de Engelse handleiding.
+- `/help document:overzicht`: de volledige documentenlijst als bijlage.
+- `/help document:NOTIFY-HUB.md`: één gekozen document als bijlage. Typ een deel van de naam om te zoeken.
+
+Nieuwe `.md`, `.txt`, `.pdf` en `.docx`-documenten in `docs` verschijnen automatisch, ook in submappen. Andere documenten worden in hun oorspronkelijke taal verstuurd; `taal` selecteert alleen de standaardhandleiding. Alle documenten in deze map zijn via `/help` openbaar opvraagbaar.
+
+Bij deze update ook de volledige map `docs` uploaden. Oude documentkopieën in de hoofdmap mogen daarna weg; behoud `README.md`, `.env`, database en eigen configuratie.
 
 ## Update 3.5.1 — leesbare transcripten
 
-Transcripten tonen een gesprek met namen, Nederlandse tijdstippen en opgemaakte embeds. De laatst bewaarde inhoud staat direct in beeld; oudere versies en technische IDs zijn uitklapbaar. Verwijdermarkeringen en bijlagen blijven behouden. Exporteer een bestaand ticket opnieuw voor de nieuwe opmaak; eerder gedownloade HTML-bestanden veranderen niet. Zie [TICKETARCHIEF.md](TICKETARCHIEF.md).
+Transcripten tonen een gesprek met namen, Nederlandse tijdstippen en opgemaakte embeds. De laatst bewaarde inhoud staat direct in beeld; oudere versies en technische IDs zijn uitklapbaar. Verwijdermarkeringen en bijlagen blijven behouden. Exporteer een bestaand ticket opnieuw voor de nieuwe opmaak; eerder gedownloade HTML-bestanden veranderen niet. Zie [TICKETARCHIEF.md](docs/TICKETARCHIEF.md).
 
 ## Eigen stafftickets (3.5.0)
 
@@ -10,7 +23,7 @@ Staff kan het eigen supportticket claimen en beheren. Voeg de benodigde persoon 
 
 ## Update 3.5.0 — blijvend ticketarchief
 
-Hoofd- en overheidstickets worden via kanaal-ID gevolgd, ook na verplaatsen. Ontvangen berichtversies, verwijdermeldingen en bijlagekopieën blijven in SQLite bewaard en staan duidelijk gemarkeerd in het transcript. Bestaande zichtbare geschiedenis wordt bij opstarten ingelezen. Eerder verdwenen of niet ontvangen inhoud is niet herstelbaar. Zie [TICKETARCHIEF.md](TICKETARCHIEF.md) voor rechten, opstartscan, opslag, exportgrenzen en back-ups. Node 24.x blijft vereist.
+Hoofd- en overheidstickets worden via kanaal-ID gevolgd, ook na verplaatsen. Ontvangen berichtversies, verwijdermeldingen en bijlagekopieën blijven in SQLite bewaard en staan duidelijk gemarkeerd in het transcript. Bestaande zichtbare geschiedenis wordt bij opstarten ingelezen. Eerder verdwenen of niet ontvangen inhoud is niet herstelbaar. Zie [TICKETARCHIEF.md](docs/TICKETARCHIEF.md) voor rechten, opstartscan, opslag, exportgrenzen en back-ups. Node 24.x blijft vereist.
 
 ## Update 3.4.3 — hoofdtickets sluiten en verwijderen
 
@@ -18,27 +31,27 @@ Ook de Sluiten-knop en `/ticket-close` van het hoofdticketsysteem vragen bevesti
 
 ## Update 3.4.2 — overheidstickets sluiten en verwijderen
 
-Na bevestiging stuurt de bot het transcript naar het bestaande `Tickets.LogChannel` van deze server en verwijdert daarna direct het ticketkanaal. Bij een mislukte export of aflevering blijft het kanaal behouden. Geen nieuw logkanaal nodig; zie [OVERHEID-TICKETS.md](OVERHEID-TICKETS.md).
+Na bevestiging stuurt de bot het transcript naar het bestaande `Tickets.LogChannel` van deze server en verwijdert daarna direct het ticketkanaal. Bij een mislukte export of aflevering blijft het kanaal behouden. Geen nieuw logkanaal nodig; zie [OVERHEID-TICKETS.md](docs/OVERHEID-TICKETS.md).
 
 ## Actuele release 3.4.0 — Node 24 en overheidstickets
 
-**Node.js 24.x is vereist.** Node 22 wordt niet meer ondersteund door deze bot. Zet eerst je hostingprofiel op Node 24, neem `.npmrc` en beide packagebestanden over en voer `npm ci --no-audit --no-fund` uit. Bewaar je `.env`, database, eigen configuratie en privébestanden. Zie [UPDATE-3.4.0.md](UPDATE-3.4.0.md).
+**Node.js 24.x is vereist.** Node 22 wordt niet meer ondersteund door deze bot. Zet eerst je hostingprofiel op Node 24, neem `.npmrc` en beide packagebestanden over en voer `npm ci --no-audit --no-fund` uit. Bewaar je `.env`, database, eigen configuratie en privébestanden. Zie [UPDATE-3.4.0.md](docs/UPDATE-3.4.0.md).
 
-De bot bevat vijf aparte ticketpanelen: `/politie`, `/ambulance`, `/pechhulp`, `/brandweer` en `/overheidscoordinator`. Kies met `instellen` een afdeling, koppel Discord-rollen/verantwoordelijken en een categorie, activeer en plaats daarna het paneel met het command zonder opties. Instellen vereist Head Admin of hoger; behandelen vereist uitsluitend de ingestelde afdelingsrechten. Nieuwe tabellen worden automatisch aangemaakt. Zie [OVERHEID-TICKETS.md](OVERHEID-TICKETS.md).
+De bot bevat vijf aparte ticketpanelen: `/politie`, `/ambulance`, `/pechhulp`, `/brandweer` en `/overheidscoordinator`. Kies met `instellen` een afdeling, koppel Discord-rollen/verantwoordelijken en een categorie, activeer en plaats daarna het paneel met het command zonder opties. Instellen vereist Head Admin of hoger; behandelen vereist uitsluitend de ingestelde afdelingsrechten. Nieuwe tabellen worden automatisch aangemaakt. Zie [OVERHEID-TICKETS.md](docs/OVERHEID-TICKETS.md).
 
 Oudere releasehoofdstukken hieronder zijn historische informatie. Voor installatie, Node-ondersteuning en nieuwe commands gelden de instructies voor 3.4.0 hierboven.
 
 ## Overheidstickets (3.3.1)
 
-Apart ticketsysteem voor politie, ambulance, pechhulp, brandweer en de overheidscoördinator. Instellen en panelen plaatsen met `/politie`, `/ambulance`, `/pechhulp`, `/brandweer` en `/overheidscoordinator`. Zie [OVERHEID-TICKETS.md](OVERHEID-TICKETS.md).
+Apart ticketsysteem voor politie, ambulance, pechhulp, brandweer en de overheidscoördinator. Instellen en panelen plaatsen met `/politie`, `/ambulance`, `/pechhulp`, `/brandweer` en `/overheidscoordinator`. Zie [OVERHEID-TICKETS.md](docs/OVERHEID-TICKETS.md).
 
 ## Update 3.2.4 — dependency-onderhoud en bedrijvenverkoop
 
-Ongebruikte glob verwijderd; `npm run dev` gebruikt de ingebouwde Node-watchmodus in plaats van nodemon. De bedrijvenverkoopfix is inbegrepen. Stop de bot, maak een back-up, vervang de bestanden met behoud van `.env` en database, voer `npm ci` uit en start opnieuw. Zie [UPDATE-3.2.4.md](UPDATE-3.2.4.md).
+Ongebruikte glob verwijderd; `npm run dev` gebruikt de ingebouwde Node-watchmodus in plaats van nodemon. De bedrijvenverkoopfix is inbegrepen. Stop de bot, maak een back-up, vervang de bestanden met behoud van `.env` en database, voer `npm ci` uit en start opnieuw. Zie [UPDATE-3.2.4.md](docs/UPDATE-3.2.4.md).
 
 ## Update 3.2.3 — berichtlogfilters en logreparaties
 
-Zie [Changelog 3.2.3](CHANGELOG.md) voor installatie, voorbeelden van de nieuwe `/config`-filters, YouTube-API-fallback en verbindingsdiagnose. Bestaande instellingen blijven bewaard. Radio, TikTok en afsluitgedrag zijn niet gewijzigd.
+Zie [Changelog 3.2.3](docs/CHANGELOG.md) voor installatie, voorbeelden van de nieuwe `/config`-filters, YouTube-API-fallback en verbindingsdiagnose. Bestaande instellingen blijven bewaard. Radio, TikTok en afsluitgedrag zijn niet gewijzigd.
 
 Versieafspraak: na 3.1.9 volgt 3.2.0; elk volgnummer telt tot en met 9.
 
@@ -46,7 +59,7 @@ Versieafspraak: na 3.1.9 volgt 3.2.0; elk volgnummer telt tot en met 9.
 
 Volledig pakket, inclusief `/say` vanaf Admin en het eigenaarscommand `/botbericht`. De optionele koppeling gebruikt bot **1486317240319082597** als centraal meldpunt. Alleen gebruiker **709486570293559356** mag publiceren, via het command van die centrale bot. Ontvangers halen meldingen uit de centrale SQLite-wachtrij op; er is geen extra betaalde database nodig.
 
-**Begin bij [BOTBERICHT-KOPPELING.md](BOTBERICHT-KOPPELING.md).** Daar staan de complete vervangstappen, de extra poort en de instellingen per installatie. `.env.example` bevat alle nieuwe velden met uitleg. Vul de twee andere bot-ID's, een zelf gegenereerde gedeelde sleutel en je eigen hostingadres/poort in. Zonder die instellingen is de koppeling standaard uitgeschakeld en werkt het command lokaal.
+**Begin bij [BOTBERICHT-KOPPELING.md](docs/BOTBERICHT-KOPPELING.md).** Daar staan de complete vervangstappen, de extra poort en de instellingen per installatie. `.env.example` bevat alle nieuwe velden met uitleg. Vul de twee andere bot-ID's, een zelf gegenereerde gedeelde sleutel en je eigen hostingadres/poort in. Zonder die instellingen is de koppeling standaard uitgeschakeld en werkt het command lokaal.
 
 **Maak per bot eerst een back-up van `.env`, de database en eigen `data/`-bestanden.** Vervang de code, behoud de eigen gegevens, draai `npm ci`, werk de commands bij met `npm run deploy` en herstart. Geen nieuwe npm-dependencies. De opstartcontrole blijft het aantal servers van iedere bot afzonderlijk tonen; de centrale wachtrij telt unieke bestemmingen van alle gekoppelde bots.
 
@@ -70,7 +83,7 @@ Radio meldt pas ‘gestart’ wanneer FFmpeg gedecodeerde audiogegevens heeft ge
 
 De standaardzenders en jouw opgeslagen stream-URL's zijn niet gewijzigd. Gebruik de werkende originele Veronica-zender uit het paneel. Deze wijziging repareert geen externe TLS- of netwerkstoring.
 
-**Vanaf 3.1.9 bijwerken:** stop de bot, vervang de gewijzigde bestanden op dezelfde paden en herstart. Neem ook het nieuwe `utils/logNames.js` mee. Dependencies, configvelden en commands zijn niet gewijzigd; opnieuw registreren is niet nodig. Bewaar `.env`, database en eigen `data/`-bestanden. Zie [Changelog 3.2.0](CHANGELOG.md). Oudere release-instructies hieronder beschrijven eerdere versies.
+**Vanaf 3.1.9 bijwerken:** stop de bot, vervang de gewijzigde bestanden op dezelfde paden en herstart. Neem ook het nieuwe `utils/logNames.js` mee. Dependencies, configvelden en commands zijn niet gewijzigd; opnieuw registreren is niet nodig. Bewaar `.env`, database en eigen `data/`-bestanden. Zie [Changelog 3.2.0](docs/CHANGELOG.md). Oudere release-instructies hieronder beschrijven eerdere versies.
 
 ## Versie 3.1.9: installatie, radio en creatormeldingen
 
@@ -80,12 +93,12 @@ De installatie met Node.js 22/npm 10 is hersteld. Radio wisselt binnen hetzelfde
 
 | Handleiding | Inhoud |
 | --- | --- |
-| [HANDLEIDING.md](HANDLEIDING.md) / [MANUAL-EN.md](MANUAL-EN.md) | Nederlands en Engels; ook gebruikt door `/help` |
-| [RADIO-HANDLEIDING.md](RADIO-HANDLEIDING.md) | Paneel, zenders, volume, stoppen en streamfouten |
-| [NOTIFY-HANDLEIDING.md](NOTIFY-HANDLEIDING.md) / [TWITCH-HANDLEIDING.md](TWITCH-HANDLEIDING.md) | Creators, koppelingen en foutdiagnose |
-| [LOGGING-HANDLEIDING.md](LOGGING-HANDLEIDING.md) / [SOFTMODERATIE.md](SOFTMODERATIE.md) | Discordlogs, 18+-controle en staffbeoordeling |
-| [INSTALLATIE.md](INSTALLATIE.md) / [GITHUB-INSTALLATIE.md](GITHUB-INSTALLATIE.md) | Installatie en publicatie |
-| [CONTROLES.md](CONTROLES.md) / [Changelog 3.1.9](CHANGELOG.md) | Testresultaten, grenzen en update-instructies |
+| [HANDLEIDING.md](docs/HANDLEIDING.md) / [MANUAL-EN.md](docs/MANUAL-EN.md) | Nederlands en Engels; ook gebruikt door `/help` |
+| [RADIO-HANDLEIDING.md](docs/RADIO-HANDLEIDING.md) | Paneel, zenders, volume, stoppen en streamfouten |
+| [NOTIFY-HANDLEIDING.md](docs/NOTIFY-HANDLEIDING.md) / [TWITCH-HANDLEIDING.md](docs/TWITCH-HANDLEIDING.md) | Creators, koppelingen en foutdiagnose |
+| [LOGGING-HANDLEIDING.md](docs/LOGGING-HANDLEIDING.md) / [SOFTMODERATIE.md](docs/SOFTMODERATIE.md) | Discordlogs, 18+-controle en staffbeoordeling |
+| [INSTALLATIE.md](docs/INSTALLATIE.md) / [GITHUB-INSTALLATIE.md](docs/GITHUB-INSTALLATIE.md) | Installatie en publicatie |
+| [CONTROLES.md](docs/CONTROLES.md) / [Changelog 3.1.9](docs/CHANGELOG.md) | Testresultaten, grenzen en update-instructies |
 
 De onderstaande oudere releasehoofdstukken beschrijven wanneer functies zijn toegevoegd. Gebruik voor de huidige installatie de instructies hierboven.
 
@@ -118,7 +131,7 @@ GitHub Actions controleert iedere push en pull request op Node.js 24: schone ins
 
 ## Nieuw in 3.1.3: softmoderatie
 
-Alle kanalen, uitzondering voor staffrollen, waarschuwing en 24 uur time-out bij herhaling. Staff kan beoordelen en een Nederlandse einddatum/tijd invoeren. Activeer per server volgens [SOFTMODERATIE.md](SOFTMODERATIE.md).
+Alle kanalen, uitzondering voor staffrollen, waarschuwing en 24 uur time-out bij herhaling. Staff kan beoordelen en een Nederlandse einddatum/tijd invoeren. Activeer per server volgens [SOFTMODERATIE.md](docs/SOFTMODERATIE.md).
 
 ## Nieuw in 3.1.2: beveiligingsupdate
 
@@ -302,7 +315,7 @@ Iedere upgrade verhoogt de woningwaarde met 25%, samengesteld: `aankoopprijs × 
 
 Upgrades zijn alleen beschikbaar voor koopwoningen. Ze blijven behouden na herstart en bij economy-/voortgangsresets. Bij verkoop of verhuizing verdwijnen de upgrades van de oude woning; de volgende woning begint op niveau 0/0. Huurwoningen kunnen niet worden geüpgraded.
 
-**Bijwerken vanaf 3.0.4:** stop de bot, maak een back-up van bestanden en database en plaats de gewijzigde bestanden op dezelfde paden. Voer `npm run deploy` uit om de nieuwe makelaaropties te registreren en start met `npm start`. De database wordt automatisch uitgebreid; bestaande woningen blijven behouden. Er zijn geen nieuwe dependencies. Zie [CHANGELOG.md](CHANGELOG.md).
+**Bijwerken vanaf 3.0.4:** stop de bot, maak een back-up van bestanden en database en plaats de gewijzigde bestanden op dezelfde paden. Voer `npm run deploy` uit om de nieuwe makelaaropties te registreren en start met `npm start`. De database wordt automatisch uitgebreid; bestaande woningen blijven behouden. Er zijn geen nieuwe dependencies. Zie [CHANGELOG.md](docs/CHANGELOG.md).
 
 ## Nieuw in 3.0.3: bedrijven, heists en bank
 
@@ -355,9 +368,9 @@ Complete Discord-bot met tickets, moderatie, XP/levels, economy, verjaardagen, s
 
 ## Handleiding
 
-**Voor het eerst gedownload? Begin bij [INSTALLATIE.md](INSTALLATIE.md).** Daarin staan Discord-app aanmaken, hosting, `.env`, opstarten en optionele GroqCloud-AI stap voor stap.
+**Voor het eerst gedownload? Begin bij [INSTALLATIE.md](docs/INSTALLATIE.md).** Daarin staan Discord-app aanmaken, hosting, `.env`, opstarten en optionele GroqCloud-AI stap voor stap.
 
-[HANDLEIDING.md](HANDLEIDING.md) bevat de slashcommando’s, instellingen en voorbeelden voor leden en beheerders. [CHANGELOG.md](CHANGELOG.md) beschrijft de wijzigingen.
+[HANDLEIDING.md](docs/HANDLEIDING.md) bevat de slashcommando’s, instellingen en voorbeelden voor leden en beheerders. [CHANGELOG.md](docs/CHANGELOG.md) beschrijft de wijzigingen.
 
 ## Nieuw in 2.9.9-beta — VIP-winkel
 
@@ -371,7 +384,7 @@ Update vanaf 2.6.1 inclusief de Engelse /help-aanvulling: stop de bot, maak een 
 
 ## Handleidingen in Nederlands en Engels
 
-Gebruik `/help taal:Nederlands` of `/help taal:English` om de gewenste handleiding in het huidige kanaal te ontvangen. Zonder taalkeuze blijft Nederlands de standaard. In een Engelstalige Discord-interface heet de optie `language`. De Engelse handleiding staat in [MANUAL-EN.md](MANUAL-EN.md).
+Gebruik `/help taal:Nederlands` of `/help taal:English` om de gewenste handleiding in het huidige kanaal te ontvangen. Zonder taalkeuze blijft Nederlands de standaard. In een Engelstalige Discord-interface heet de optie `language`. De Engelse handleiding staat in [MANUAL-EN.md](docs/MANUAL-EN.md).
 
 Herstart de bot na deze aanvulling; de taaloptie wordt automatisch geregistreerd. De taalkeuze is sinds de aanvulling op 2.6.1 beschikbaar.
 
@@ -379,7 +392,7 @@ Herstart de bot na deze aanvulling; de taaloptie wordt automatisch geregistreerd
 
 Start als staff een giveaway met `/giveaway start`: titel, tekst, einddatum (`DD-MM-JJJJ UU:MM`, Nederlandse tijd) en prijzen gescheiden door `|`. Elke prijs krijgt één unieke winnaar. Gebruik dezelfde prijs meerdere keren voor meerdere exemplaren.
 
-Leden doen mee via de knop. `/giveaway stoppen` trekt direct winnaars; `/giveaway annuleren` verwijdert een open giveaway zonder trekking. Geef bij beheer het Giveaway-ID onder het bericht op. De einddatum mag maximaal twee kalendermaanden vooruit liggen. Zie [HANDLEIDING.md](HANDLEIDING.md) voor details.
+Leden doen mee via de knop. `/giveaway stoppen` trekt direct winnaars; `/giveaway annuleren` verwijdert een open giveaway zonder trekking. Geef bij beheer het Giveaway-ID onder het bericht op. De einddatum mag maximaal twee kalendermaanden vooruit liggen. Zie [HANDLEIDING.md](docs/HANDLEIDING.md) voor details.
 
 Update vanaf 2.6.0: stop de bot, maak een back-up, plaats de gewijzigde bestanden en herstart. Geen nieuwe dependencies nodig; tabel en slashcommando’s worden automatisch aangemaakt.
 
@@ -393,7 +406,7 @@ Update vanaf 2.5.9: stop de bot, plaats de gewijzigde bestanden en herstart. Nie
 
 Maak polls met `/poll maken`, 2–10 antwoorden gescheiden door `|`, een looptijd in minuten en optioneel meerdere keuzes per persoon. Staff beheert polls via `/poll wijzigen`, `/poll stoppen` en `/poll annuleren`, met het Poll-ID onder het bericht.
 
-Vraag of antwoorden wijzigen wist bestaande stemmen; alleen de timer wijzigen behoudt ze. Polls en stemmen blijven na een herstart bewaard. Zie [HANDLEIDING.md](HANDLEIDING.md) voor voorbeelden en rechten.
+Vraag of antwoorden wijzigen wist bestaande stemmen; alleen de timer wijzigen behoudt ze. Polls en stemmen blijven na een herstart bewaard. Zie [HANDLEIDING.md](docs/HANDLEIDING.md) voor voorbeelden en rechten.
 
 Update vanaf 2.5.8: stop de bot, maak een databaseback-up, plaats de gewijzigde bestanden en herstart. Geen nieuwe dependencies nodig. De polltabel en slashcommando’s worden automatisch bijgewerkt. Oude polls met emoji-reacties worden niet omgezet.
 
@@ -409,7 +422,7 @@ Vroege interactiebevestiging voor acht economy-commando’s en verbeterde centra
 
 ## Nieuw in 2.5.6
 
-AI-chat werkt nu via GroqCloud, zonder eigen AI-host. Zie [GROQ-INSTALLATIE.md](GROQ-INSTALLATIE.md) voor installatie en testen.
+AI-chat werkt nu via GroqCloud, zonder eigen AI-host. Zie [GROQ-INSTALLATIE.md](docs/GROQ-INSTALLATIE.md) voor installatie en testen.
 
 ## Nieuw in 2.5.5
 
@@ -417,7 +430,7 @@ De vaste boteigenaar heeft in elke server toegang tot botbeheer, onafhankelijk v
 
 ## Nieuw in 2.5.4
 
-Twitch-livemeldingen via `/notify`, met kanaalkeuze en pingrollen voor iedere streamer. Zie [TWITCH-HANDLEIDING.md](TWITCH-HANDLEIDING.md) voor appgegevens en het instellen van troyenrobin.
+Twitch-livemeldingen via `/notify`, met kanaalkeuze en pingrollen voor iedere streamer. Zie [TWITCH-HANDLEIDING.md](docs/TWITCH-HANDLEIDING.md) voor appgegevens en het instellen van troyenrobin.
 
 ## Nieuw in 2.5.3
 
@@ -425,11 +438,11 @@ Robuustere YouTube- en GitHub-controles met veilige doorverwijzingen, een extra 
 
 ## Nieuw in 2.5.2
 
-Automatische YouTube- en TikTok-videomeldingen met `/notify`: vier instelbare pingrollen, een kanaal per creatoraccount, meerdere creators per server en beheer door Head Admin, Owner en Developer. TikTok vereist eenmalig accounttoestemming. Zie [NOTIFY-HANDLEIDING.md](NOTIFY-HANDLEIDING.md).
+Automatische YouTube- en TikTok-videomeldingen met `/notify`: vier instelbare pingrollen, een kanaal per creatoraccount, meerdere creators per server en beheer door Head Admin, Owner en Developer. TikTok vereist eenmalig accounttoestemming. Zie [NOTIFY-HANDLEIDING.md](docs/NOTIFY-HANDLEIDING.md).
 
 ## Nieuwe installatie
 
-1. Volg [INSTALLATIE.md](INSTALLATIE.md) en gebruik Node.js 24 LTS.
+1. Volg [INSTALLATIE.md](docs/INSTALLATIE.md) en gebruik Node.js 24 LTS.
 2. Kopieer `.env.example` naar `.env` en vul je eigen Discord-botgegevens in.
 3. Installeer de dependencies met `npm ci`.
 4. Vul voor een eerste installatie ook `GUILD_ID` in `.env` in en registreer de slashcommando’s met `npm run deploy`. De bot moet al aan die server zijn toegevoegd.
@@ -440,7 +453,7 @@ Voor welkomstberichten stel je `Welcome.Enabled` in op `ja` en `Welcome.Channel`
 
 ## Bestaande installatie bijwerken
 
-Stop de bot, maak een back-up en kopieer de bestanden uit het updatepakket naar dezelfde paden in de botmap. Voor 3.0.5 voer je daarna `npm run deploy` uit en start je de bot opnieuw; zie [CHANGELOG.md](CHANGELOG.md). Voor 2.5.7 zijn geen nieuwe dependencies of slashcommandregistraties nodig; neem de nieuwe helper `utils/deferredReply.js` mee. Voor de Groq-update naar 2.5.6 zijn geen nieuwe dependencies of slashcommandregistraties nodig. Voeg voor AI je eigen GROQ_API_KEY en GROQ_MODEL toe aan je bestaande .env; zie [GROQ-INSTALLATIE.md](GROQ-INSTALLATIE.md). De automatische changelog gebruikt de bestaande logginginstellingen.
+Stop de bot, maak een back-up en kopieer de bestanden uit het updatepakket naar dezelfde paden in de botmap. Voor 3.0.5 voer je daarna `npm run deploy` uit en start je de bot opnieuw; zie [CHANGELOG.md](docs/CHANGELOG.md). Voor 2.5.7 zijn geen nieuwe dependencies of slashcommandregistraties nodig; neem de nieuwe helper `utils/deferredReply.js` mee. Voor de Groq-update naar 2.5.6 zijn geen nieuwe dependencies of slashcommandregistraties nodig. Voeg voor AI je eigen GROQ_API_KEY en GROQ_MODEL toe aan je bestaande .env; zie [GROQ-INSTALLATIE.md](docs/GROQ-INSTALLATIE.md). De automatische changelog gebruikt de bestaande logginginstellingen.
 
 ## Instellingen en gegevens
 
@@ -457,7 +470,7 @@ https://github.com/troyscripts/troy-s_game_community_app
 
 De bot controleert bij opstarten en iedere zes uur op een nieuwere stabiele Latest-release. Updates worden niet automatisch geïnstalleerd. De automatische Discord-changelog gebruikt `Logging.Enabled` en `Logging.Channel` en verstuurt iedere versie eenmaal nadat afleveren is gelukt.
 
-Publicatie-instructies staan in [GITHUB-INSTALLATIE.md](GITHUB-INSTALLATIE.md).
+Publicatie-instructies staan in [GITHUB-INSTALLATIE.md](docs/GITHUB-INSTALLATIE.md).
 
 ## Controles
 
@@ -469,7 +482,7 @@ Publicatie-instructies staan in [GITHUB-INSTALLATIE.md](GITHUB-INSTALLATIE.md).
 Deze broncode is lokaal gecontroleerd. Er is geen live Discord-test uitgevoerd.
 
 ## Internetradio
-Gebruik `/radio paneel` in de chat van je spraakkanaal. Kies een zender in de dropdown. Zie [RADIO-HANDLEIDING.md](RADIO-HANDLEIDING.md).
+Gebruik `/radio paneel` in de chat van je spraakkanaal. Kies een zender in de dropdown. Zie [RADIO-HANDLEIDING.md](docs/RADIO-HANDLEIDING.md).
 
 ## Dependency-onderhoud (2026-11-04)
 
@@ -479,7 +492,7 @@ Na deze update: stop de bot, vervang de bestanden (behoud je eigen `.env` en dat
 
 ## Botnaam en installatie
 
-Gebruik `/gebruikersnaam naam:Mijn Bot` om de zichtbare naam binnen deze server te wijzigen en de installatie te openen. Alleen de servereigenaar en ingestelde Owner- en Developer-rollen hebben toegang. Lees [INSTALLATIEMODUS.md](INSTALLATIEMODUS.md) voor overslaan, hervatten en alle configuratiestappen.
+Gebruik `/gebruikersnaam naam:Mijn Bot` om de zichtbare naam binnen deze server te wijzigen en de installatie te openen. Alleen de servereigenaar en ingestelde Owner- en Developer-rollen hebben toegang. Lees [INSTALLATIEMODUS.md](docs/INSTALLATIEMODUS.md) voor overslaan, hervatten en alle configuratiestappen.
 
 ## Bannen via Discord-ID
 
@@ -487,4 +500,4 @@ Gebruik `/gebruikersnaam naam:Mijn Bot` om de zichtbare naam binnen deze server 
 
 ## Gedeelde notify-hub
 
-Vanaf 3.7.0 gebruiken gekoppelde bots standaard de bestaande hubverbinding voor creators en aflevercontrole. Iedere server kan `/notify toevoegen` blijven gebruiken; bestaande creators worden hergebruikt. Kanalen, pingrollen en teksten blijven per server. Zie [NOTIFY-HUB.md](NOTIFY-HUB.md) voor de updatevolgorde en platformkoppelingen.
+Vanaf 3.7.0 gebruiken gekoppelde bots standaard de bestaande hubverbinding voor creators en aflevercontrole. Iedere server kan `/notify toevoegen` blijven gebruiken; bestaande creators worden hergebruikt. Kanalen, pingrollen en teksten blijven per server. Zie [NOTIFY-HUB.md](docs/NOTIFY-HUB.md) voor de updatevolgorde en platformkoppelingen.

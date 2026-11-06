@@ -39,7 +39,7 @@ async function checkVersions(client) {
                     if (!config.Logging?.Enabled || !config.Logging.Channel) return;
                     const previous = taskState.getLastRun(STATE_KEY, guild.id);
                     if (previous === version) return;
-                    if (markdown === undefined) markdown = fs.readFileSync(path.join(__dirname, '..', 'CHANGELOG.md'), 'utf8');
+                    if (markdown === undefined) markdown = fs.readFileSync(path.join(__dirname, '..', 'docs', 'CHANGELOG.md'), 'utf8');
                     const notes = releaseNotes(markdown, version);
                     if (!notes) {
                         logger.warn(`Changelog ${version}: versiehoofdstuk ontbreekt; nog niet als verstuurd opgeslagen.`);

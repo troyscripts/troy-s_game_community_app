@@ -53,6 +53,10 @@ for (const file of walk(path.join(root, "commands")).filter((item) => item.endsW
 }
 
 const requiredFiles = [
+    "docs/HANDLEIDING.md",
+    "docs/MANUAL-EN.md",
+    "docs/CHANGELOG.md",
+    "services/documentation.js",
     ".env.example",
     ".gitignore",
     "package-lock.json",

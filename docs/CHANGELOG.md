@@ -1,3 +1,11 @@
+## 3.7.1
+
+- Alle projectdocumentatie behalve README.md naar docs/ verplaatst.
+- `/help document` zoekt automatisch in alle documentatie; `overzicht` geeft de volledige lijst. Zonder keuze blijft de NL/EN-handleiding beschikbaar.
+- Nieuwe documenten en submappen automatisch meegenomen; bestandspaden buiten docs en symbolische links worden geweigerd.
+- Changelogmelding bij opstarten, versiecontrole, exportbestandlijst en relatieve documentatielinks aangepast.
+- Geen wijziging aan bestaande botinstellingen, databases of hubkoppelingen.
+
 ## 3.7.0
 
 - Centrale notify-creators en gedeelde platformcontroles via de bestaande hub-URL, bot-ID-lijst en BROADCAST_SECRET; geen tweede sleutel of poort.

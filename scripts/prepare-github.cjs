@@ -4,9 +4,9 @@ const fs = require('node:fs');
 const path = require('node:path');
 const root = path.resolve(__dirname, '..');
 const destination = path.join(root, `github-export-${new Date().toISOString().replace(/[:.]/g, '-')}`);
-const folders = ['buttons','commands','config','database','events','handlers','modals','scripts','selectmenus','services','utils'];
+const folders = ['buttons','commands','config','database','events','handlers','modals','scripts','selectmenus','services','utils','locales','docs'];
 const roots = ['.env.example','.gitignore','package.json','package-lock.json','index.js','deploy-commands.js',
-    'NOTIFY-HANDLEIDING.md','UPDATE-2.5.3.txt','herstel-serverconfig.cjs','README.md','HANDLEIDING.md','CHANGELOG.md','GITHUB-INSTALLATIE.md','UPGRADE-2.4.6.md','INSTALLATIE-CHANGELOG.md'];
+    '.npmrc','data/notify-presets.json','herstel-serverconfig.cjs','README.md'];
 const files = [...roots];
 function walk(folder) {
     for (const entry of fs.readdirSync(path.join(root, folder), {withFileTypes:true})) {
@@ -14,7 +14,7 @@ function walk(folder) {
         const relative = path.join(folder, entry.name);
         if (entry.isSymbolicLink()) throw new Error(`Symbolische link niet toegestaan: ${relative}`);
         if (entry.isDirectory()) walk(relative);
-        else if (/\.(?:js|cjs)$/.test(entry.name)) files.push(relative);
+        else if (/\.(?:js|cjs|json)$/.test(entry.name) || (folder.split(path.sep)[0] === 'docs' && /\.(?:md|txt|pdf|docx)$/i.test(entry.name))) files.push(relative);
     }
 }
 for (const folder of folders) walk(folder);
