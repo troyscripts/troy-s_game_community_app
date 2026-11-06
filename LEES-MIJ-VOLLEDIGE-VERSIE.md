@@ -1,4 +1,8 @@
-# Volledige bot — 3.5.0
+# Volledige bot — 3.5.1
+
+## Update 3.5.1 — leesbare transcripten
+
+Transcripten tonen een gesprek met namen, Nederlandse tijdstippen en opgemaakte embeds. De laatst bewaarde inhoud staat direct in beeld; oudere versies en technische IDs zijn uitklapbaar. Verwijdermarkeringen en bijlagen blijven behouden. Exporteer een bestaand ticket opnieuw voor de nieuwe opmaak; eerder gedownloade HTML-bestanden veranderen niet. Zie [TICKETARCHIEF.md](TICKETARCHIEF.md).
 
 ## Eigen stafftickets (3.5.0)
 

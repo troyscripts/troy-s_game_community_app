@@ -1,3 +1,11 @@
+## 3.5.1 — Leesbare tickettranscripten
+
+- Gespreksweergave met namen, tijdstippen in Europe/Amsterdam en opgemaakte embeds in plaats van ruwe JSON.
+- Bekende gebruikers-/rolmentions worden als namen getoond; technische IDs staan in uitklapbare berichtgegevens.
+- Laatst bewaarde inhoud direct zichtbaar; eerdere versies onder uitklapbare wijzigingsgeschiedenis.
+- Verwijderde berichten en bijlagen blijven duidelijk gemarkeerd en downloadbaar.
+- Verschillende embedveldvolgorde en Discordmetadata veroorzaken geen dubbele zichtbare wijzigingen meer, ook bij bestaande archieven. Echte wijzigingen en terugwijzigingen blijven behouden.
+
 ## 3.5.0 — Blijvend ticketarchief en eigen stafftickets
 
 - Staff kan het eigen supportticket claimen/beheren en via `/ticket-add gebruiker:` iemand uitnodigen.

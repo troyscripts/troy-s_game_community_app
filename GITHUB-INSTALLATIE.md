@@ -1,4 +1,8 @@
-# Versie 3.5.0 publiceren
+# Versie 3.5.1 publiceren
+
+## Update 3.5.1 — leesbare transcripten
+
+Transcripten tonen een gesprek met namen, Nederlandse tijdstippen en opgemaakte embeds. De laatst bewaarde inhoud staat direct in beeld; oudere versies en technische IDs zijn uitklapbaar. Verwijdermarkeringen en bijlagen blijven behouden. Exporteer een bestaand ticket opnieuw voor de nieuwe opmaak; eerder gedownloade HTML-bestanden veranderen niet. Zie [TICKETARCHIEF.md](TICKETARCHIEF.md).
 
 ## Eigen stafftickets (3.5.0)
 
@@ -29,7 +33,7 @@ Overheidspanelen tonen afdelingsnamen en een korte uitleg. Pas de uitleg aan met
 
 ## Controleren en publiceren
 
-Voer in een schone testkopie `npm ci --no-audit --no-fund` en `npm run ci` uit. Commit en push daarna. Controleer in GitHub Actions dat **Botcontroles / Node.js 24** slaagt. Publiceer release `v3.5.0` met het bijbehorende hoofdstuk uit [CHANGELOG.md](CHANGELOG.md).
+Voer in een schone testkopie `npm ci --no-audit --no-fund` en `npm run ci` uit. Commit en push daarna. Controleer in GitHub Actions dat **Botcontroles / Node.js 24** slaagt. Publiceer release `v3.5.1` met het bijbehorende hoofdstuk uit [CHANGELOG.md](CHANGELOG.md).
 
 De versiechecker gebruikt `package.json`; `config/defaults.js` haalt daar de botversie uit. De repository staat in `config/updates.js`. Deze download publiceert niets automatisch.
 

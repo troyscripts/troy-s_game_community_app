@@ -1,4 +1,8 @@
-# Automatische controles — 3.5.0
+# Automatische controles — 3.5.1
+
+## Aanvullende controles voor 3.5.1
+
+De volledige `npm run ci` is geslaagd op Node 24.22.1: **27/27 testbestanden**, syntax en versies. De laatste aanpassing voor letterlijke escapes is daarnaast opnieuw getest met de weergave- en archieftests. Visuele browsercontrole kon in de testomgeving niet worden uitgevoerd. Nieuwe weergavetests controleren namen bij mentions, opgemaakte embeds, Nederlandse tijd, ingeklapte geschiedenis/technische gegevens, metadata-duplicaten, echte wijzigingen en terugwijzigingen, verwijdermarkeringen, HTML-escaping en uitvoerlimieten. De opslag-, bijlage-, rechten- en sluittests blijven aanwezig.
 
 ## Aanvullende controles voor 3.5.0
 

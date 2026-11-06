@@ -1,5 +1,9 @@
 # Troy’s Game Community Bot — User Manual
 
+## Update 3.5.1 — readable transcripts
+
+Transcripts now display a clean conversation with readable embeds and known mention names. Times use Europe/Amsterdam. The latest stored content is shown immediately; earlier versions and technical IDs can be expanded. Deleted messages/files remain marked. Discord metadata and embed key ordering no longer create duplicate visible edits. Export an existing ticket again to apply the new layout; previously downloaded HTML files do not change.
+
 ## Own staff tickets (3.5.0)
 
 Staff can claim/manage their own support ticket and invite a specific person using `/ticket-add gebruiker:`. Invitees can participate, including staff of equal or higher rank. Explicit invitations persist in SQLite. Higher claims/minimum ranks still apply, and inviting higher staff does not grant permission to remove them. Ordinary ticket owners do not gain staff rights.

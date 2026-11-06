@@ -1,4 +1,4 @@
-# Ticketarchief — 3.5.0
+# Ticketarchief — 3.5.1
 
 ## Wat wordt gevolgd?
 
@@ -24,7 +24,7 @@ Deze gegevens staan in dezelfde SQLite-database als de bot. Nieuwe tabellen word
 
 **VERWIJDERDE BIJLAGE** verschijnt bij een bestand dat uit de nieuwste bewaarde berichtversie is verdwenen, of bij een bestand van een verwijderd bericht. De opgeslagen kopie blijft downloadbaar in het HTML-transcript. Download het HTML-bestand en open het in een browser; de downloadlinks bevatten de bestandsinhoud zelf. Discordvoorbeelden ondersteunen mogelijk niet alle HTML-downloadfuncties. Bestanden worden niet automatisch uitgevoerd.
 
-Alle datums in het archief zijn ISO-tijdstippen in UTC. Behoud de oorspronkelijke tijdstippen bij beoordeling.
+De gespreksweergave gebruikt Nederlandse tijdstippen (Europe/Amsterdam, met zomer-/wintertijd). Onder Berichtgegevens staan ook de oorspronkelijke ISO-tijdstippen in UTC. De opslag blijft ongewijzigd.
 
 ## Bestaande tickets en opstarten
 
@@ -49,3 +49,11 @@ Een mislukte DM aan de aanvrager blokkeert verwijderen niet als de vereiste logs
 ## Eigen stafftickets
 
 Een bevoegd stafflid kan ook het eigen supportticket claimen, sluiten en deelnemers toevoegen. Gebruik `/ticket-add gebruiker:@persoon` om iemand rechtstreeks uit te nodigen. Ook gelijk/hoger staff kan op die manier worden uitgenodigd en meepraten. Deze expliciete deelnemers worden in de ticketdatabase bewaard. Het toevoegen via een hele rol blijft aan de bestaande rangregels gebonden. Gewone niet-staffticketmakers krijgen geen beheerrechten. Hogere claims, minimumrang en bescherming tegen het verwijderen van hogere staff blijven gelden. Staffoverleg is alleen beschikbaar met de bestaande stafftoegang, ook wanneer het stafflid zelf de aanvrager is; de aparte stafflog/DM-scheiding blijft behouden.
+
+## Leesbare weergave vanaf 3.5.1
+
+De laatst bewaarde berichtinhoud staat direct in beeld. Eerdere versies staan onder **Wijzigingsgeschiedenis bekijken**; dit onderdeel is standaard ingeklapt. Gebruikers- en rolnamen worden uit opgeslagen gegevens of de Discord-cache gehaald. Is een naam onbekend, dan verschijnt bijvoorbeeld Onbekende rol; de ID blijft in de tooltip en technische gegevens beschikbaar.
+
+Embeds tonen titel, beschrijving, velden en voettekst als een berichtkaart. Interne Discordmetadata en de volgorde van JSON-velden maken geen zichtbare nieuwe versie meer. Bij bestaande archieven worden opeenvolgende inhoudelijk identieke momentopnamen samengevoegd voor de weergave; de opgeslagen brongegevens blijven behouden. Echte inhoudswijzigingen en terugwijzigingen blijven zichtbaar.
+
+Download een transcript opnieuw via de Transcript-knop om de nieuwe vormgeving te krijgen. Eerder verstuurde/gedownloade HTML-bestanden worden niet achteraf aangepast.

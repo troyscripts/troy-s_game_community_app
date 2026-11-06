@@ -1,5 +1,9 @@
 # Troy’s Game Community Bot — Gebruikershandleiding
 
+## Update 3.5.1 — leesbare transcripten
+
+Transcripten tonen een gesprek met namen, Nederlandse tijdstippen en opgemaakte embeds. De laatst bewaarde inhoud staat direct in beeld; oudere versies en technische IDs zijn uitklapbaar. Verwijdermarkeringen en bijlagen blijven behouden. Exporteer een bestaand ticket opnieuw voor de nieuwe opmaak; eerder gedownloade HTML-bestanden veranderen niet. Zie [TICKETARCHIEF.md](TICKETARCHIEF.md).
+
 ## Eigen stafftickets (3.5.0)
 
 Staff kan het eigen supportticket claimen en beheren. Voeg de benodigde persoon toe met `/ticket-add gebruiker:@persoon`. Die persoon kan meepraten, ook als het een gelijk of hoger stafflid is. Expliciete uitnodigingen blijven opgeslagen. Hogere claims/minimumrangen blijven gelden; hogere staff uitnodigen geeft geen recht om die te verwijderen. Gewone ticketmakers krijgen hiermee geen staffrechten.
