@@ -54,5 +54,28 @@ function interaction(id,user='opener',values=['0']) {
  assert.deepEqual(JSON.parse(store.ticket('guild','ticket').access),access);
  // No staff gate in ticket handling; both router adapters point to this service.
  for(const folder of ['buttons','selectmenus']) assert.equal(require('../'+folder+'/government').execute,svc.interact);
+ // Render stored role mentions as names, add useful descriptions, refresh an existing panel.
+ const {display}=require('../services/governmentLabels');
+ const roleId='1514613029256564786';
+ const namedRoles=new Collection([[roleId,{name:'Korpsleiding'}]]);
+ assert.deepEqual(display('politie','0',{label:`<@&${roleId}>`},namedRoles),{label:'Korpsleiding',description:'Neem contact op met de korpsleiding.'});
+ assert.equal(display('politie','0',{label:'<@&999999999999999999>'},namedRoles).label,'Korpsleiding');
+ assert.equal(display('politie','0',{label:'<@123456789012345678>'},namedRoles).label,'Korpsleiding');
+ assert.equal(display('politie','0',{label:'Eigen afdeling',description:'Voor jouw vraag over beleid.'},namedRoles).description,'Voor jouw vraag over beleid.');
+ const previousOwners=config.Owners;config.Owners=['setup-owner'];
+ store.save('guild','politie','0',{roles:[roleId],users:[],category:'category',enabled:true,label:`<@&${roleId}>`});
+ let edited,newPanels=0;
+ const panel={author:{id:'bot'},components:[{components:[{customId:'gov:open:politie'}]}],edit:async p=>{edited=p;}};
+ const publish=interaction('', 'setup-owner');
+ publish.options={getString:()=>null};
+ publish.guild={...guild,members:{...guild.members,fetch:async()=>member('setup-owner')},roles:{fetch:async()=>namedRoles}};
+ publish.channel={type:ChannelType.GuildText,messages:{fetch:async()=>new Collection([['panel',panel]])},send:async()=>{newPanels++;}};
+ await svc.command({user:{id:'bot'}},publish,'politie');
+ assert.equal(newPanels,0);assert.ok(edited);
+ const option=edited.components[0].toJSON().components[0].options[0];
+ assert.equal(option.label,'Korpsleiding');assert.ok(option.description);assert.equal(option.value,'0');
+ publish.channel.messages.fetch=async()=>new Collection();
+ await svc.command({user:{id:'bot'}},publish,'politie');assert.equal(newPanels,1);
+ config.Owners=previousOwners;
  console.log('PASS: government command payloads, server/department isolation, explicit ACLs, role-based nonstaff access, duplicate prevention, claim contention, closing and ACL snapshots.');
 })().catch(e=>{console.error(e);process.exitCode=1;}).finally(()=>{db.close();fs.rmSync(tmp,{recursive:true,force:true});});

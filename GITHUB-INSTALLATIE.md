@@ -1,4 +1,8 @@
-# Versie 3.4.0 publiceren
+# Versie 3.4.1 publiceren
+
+## Update 3.4.1 — leesbare ticketkeuzes
+
+Overheidspanelen tonen afdelingsnamen en een korte uitleg. Pas de uitleg aan met `omschrijving` samen met `instellen`. Gebruik het paneelcommando opnieuw in hetzelfde kanaal om een recent bestaand paneel bij te werken. Zie [OVERHEID-TICKETS.md](OVERHEID-TICKETS.md). Node 24.x blijft vereist.
 
 ## Bestanden klaarzetten
 
@@ -9,7 +13,7 @@
 
 ## Controleren en publiceren
 
-Voer in een schone testkopie `npm ci --no-audit --no-fund` en `npm run ci` uit. Commit en push daarna. Controleer in GitHub Actions dat **Botcontroles / Node.js 24** slaagt. Publiceer release `v3.4.0` met het bijbehorende hoofdstuk uit [CHANGELOG.md](CHANGELOG.md).
+Voer in een schone testkopie `npm ci --no-audit --no-fund` en `npm run ci` uit. Commit en push daarna. Controleer in GitHub Actions dat **Botcontroles / Node.js 24** slaagt. Publiceer release `v3.4.1` met het bijbehorende hoofdstuk uit [CHANGELOG.md](CHANGELOG.md).
 
 De versiechecker gebruikt `package.json`; `config/defaults.js` haalt daar de botversie uit. De repository staat in `config/updates.js`. Deze download publiceert niets automatisch.
 

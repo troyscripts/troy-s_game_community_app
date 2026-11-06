@@ -1,4 +1,8 @@
-# Volledige bot — 3.4.0
+# Volledige bot — 3.4.1
+
+## Update 3.4.1 — leesbare ticketkeuzes
+
+Overheidspanelen tonen afdelingsnamen en een korte uitleg. Pas de uitleg aan met `omschrijving` samen met `instellen`. Gebruik het paneelcommando opnieuw in hetzelfde kanaal om een recent bestaand paneel bij te werken. Zie [OVERHEID-TICKETS.md](OVERHEID-TICKETS.md). Node 24.x blijft vereist.
 
 Dit pakket bevat de volledige bot met de vijf overheidspanelen, inclusief het eigen paneel voor de overheidscoördinator. Vanaf deze versie is **Node.js 24.x verplicht**. Node 22 wordt door de bot niet meer ondersteund.
 

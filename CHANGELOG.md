@@ -1,3 +1,10 @@
+## 3.4.1 — Leesbare overheidsticketkeuzes
+
+- Rolmentions in aangepaste afdelingsnamen worden omgezet naar echte rolnamen; ontbrekende rollen vallen terug op de afdelingsnaam.
+- Elke keuze toont een korte uitleg over het doel van het ticket. Per afdeling aanpasbaar met `omschrijving`.
+- Paneelcommando's werken het meest recente eigen paneel voor die dienst binnen de laatste 100 kanaalberichten bij.
+- Ticketwelkomstberichten en instelschermen tonen dezelfde leesbare namen en uitleg.
+
 ## 3.4.0 — Node.js 24 als ondersteunde runtime
 
 - Ondersteuning voor Node 22 beëindigd; package en lockfile vereisen Node 24.x.

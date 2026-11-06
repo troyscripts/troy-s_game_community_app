@@ -1,5 +1,9 @@
 # Troy’s Game Community Bot — User Manual
 
+## Update 3.4.1 — readable ticket choices
+
+Government panels now show readable department names and short descriptions. Role mentions in custom labels resolve to role names. Use `omschrijving` together with `instellen` to customize the description. Run the panel command again in the same channel to refresh the latest matching bot panel among the last 100 messages. Node 24.x is still required.
+
 ## Current release 3.4.0 — Node 24 and government tickets
 
 **Node.js 24.x is required.** This bot no longer supports Node 22. Switch your hosting profile to Node 24 before installing. Preserve `.env`, your database, custom configuration and private data. Upload `.npmrc`, `package.json` and `package-lock.json`, then run `npm ci --no-audit --no-fund` without `--ignore-scripts`. Never copy old or Windows `node_modules`. npm rejects unsupported Node versions with `EBADENGINE`; select Node 24 instead of bypassing the check.

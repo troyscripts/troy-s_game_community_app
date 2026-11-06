@@ -1,4 +1,4 @@
-# Overheidstickets — 3.4.0
+# Overheidstickets — 3.4.1
 
 Dit is een extra systeem naast de bestaande supporttickets. De afdelingen zijn gebaseerd op de screenshots en de template GemertRP Overheid. Het systeem werkt ook op andere servers: koppel altijd de rollen en categorieën van die server. Template-ID's worden niet gebruikt.
 
@@ -31,7 +31,7 @@ Het privé-instelbericht heeft keuzelijsten voor:
 
 Selecties worden direct opgeslagen. Gebruik het optionele veld `naam` samen met `instellen` om een afdelingsnaam te wijzigen. De standaardkeuzenaam in het slashcommand blijft gelijk; de aangepaste naam verschijnt op het paneel en in tickets.
 
-Gebruik daarna bijvoorbeeld `/politie` zonder opties in het gewenste tekstkanaal. Daar verschijnt het openbare paneel met de actieve afdelingen. Plaats na een naamswijziging of het toevoegen van afdelingen een nieuw paneel en verwijder het oude bericht via Discord. Uitgeschakelde afdelingen kunnen ook via oude panelen geen nieuwe tickets ontvangen.
+Gebruik daarna bijvoorbeeld `/politie` zonder opties in het gewenste tekstkanaal. Daar verschijnt het openbare paneel met de actieve afdelingen. Gebruik na wijzigingen hetzelfde paneelcommando opnieuw in hetzelfde kanaal. De bot werkt het meest recente eigen paneel voor deze dienst binnen de laatste 100 berichten bij. Staat het oude paneel verder terug of in een ander kanaal, dan plaatst de bot een nieuw paneel; verwijder het oude in dat geval zelf via Discord. Uitgeschakelde afdelingen kunnen ook via oude panelen geen nieuwe tickets ontvangen.
 
 Brandweer is voorbereid met voorlopige afdelingen. Alles staat standaard uit; configureer en activeer deze pas zodra de Discord-rollen en categorieën klaar zijn.
 
@@ -54,3 +54,9 @@ De bot heeft in de doelcategorie nodig: Kanaal bekijken, Kanalen beheren, Rollen
 Use `/politie`, `/ambulance`, `/pechhulp` or `/brandweer` with the `instellen` option to select a department. Choose real Discord roles, responsible users and a destination category, then activate the department. Run the same command without options to publish its panel in the current text channel. Optional `naam` renames the selected department. Setup requires the existing Head Admin or higher access. Handling uses only explicitly assigned department roles/users, never bot staff membership. Settings and tickets persist in SQLite. Existing tickets retain their original role/user assignments. Closing preserves the channel as an archive; download its transcript before manual deletion. The new interface is Dutch.
 
 The government coordinator has a separate `/overheidscoordinator` panel with its own roles, responsible users and destination category. No staff membership is required to handle these tickets. Configure it using `instellen`, activate it, then run the command without options to publish.
+
+## Leesbare keuzes en uitleg (3.4.1)
+
+Elke menukeuze toont de afdelingsnaam met daaronder een korte uitleg, bijvoorbeeld Werving & selectie: Solliciteren of vragen over de selectieprocedure. Gebruik `omschrijving` (maximaal 100 tekens) samen met `instellen` om zelf de uitleg te bepalen. Het veld `naam` is voor de zichtbare afdelingsnaam; behandelrollen kies je in het instelscherm.
+
+Heb je eerder een rolmention als naam ingevoerd, dan haalt de bot de echte rolnaam op bij het plaatsen/bijwerken. Ontbreekt die rol, dan verschijnt de standaardafdelingsnaam. Dit wijzigt geen toegangsrechten. Reeds verstuurde Discord-menu's veranderen pas wanneer je het paneelcommando opnieuw uitvoert.

@@ -1,4 +1,8 @@
-# Automatische controles — 3.4.0
+# Automatische controles — 3.4.1
+
+## Aanvullende controles voor 3.4.1
+
+Gerichte overheidstests controleren dat rolmentions als echte namen verschijnen, onbekende rollen terugvallen op een afdelingsnaam, aangepaste omschrijvingen behouden blijven en een bestaand paneel wordt bijgewerkt zonder een dubbel paneel te plaatsen. De bestaande rechten- en tickettests in hetzelfde testbestand blijven slagen. Syntax, versies en de opstarttest zijn opnieuw gecontroleerd. De volledige schone-installatiecontrole hieronder hoort bij 3.4.0; dependencies en Node-vereisten zijn in 3.4.1 niet gewijzigd.
 
 ## Ondersteuning
 

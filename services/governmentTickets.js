@@ -3,6 +3,7 @@ const { ActionRowBuilder: Row, StringSelectMenuBuilder: Select, RoleSelectMenuBu
  ButtonStyle, ChannelType, MessageFlags, PermissionFlagsBits: P } = require('discord.js');
 const presets = require('../config/governmentDepartments.json');
 const store = require('../database/governmentTickets');
+const { display } = require('./governmentLabels');
 const { hasNotifyAccess } = require('../utils/permissions');
 const { canHandle } = require('./governmentAccess');
 const { createTranscript } = require('./boundedTranscript');
@@ -12,11 +13,12 @@ const button = (id,label,style=ButtonStyle.Secondary) => new Button().setCustomI
 const privateReply = (i,content) => i.reply({content,flags:MessageFlags.Ephemeral,allowedMentions:{parse:[]}});
 function configure(builder,service) {
  return builder.addStringOption(o=>o.setName('instellen').setDescription('Kies een afdeling om in te stellen; leeg laten plaatst het paneel.').addChoices(...presets[service].map((name,i)=>({name,value:String(i)}))))
- .addStringOption(o=>o.setName('naam').setDescription('Optionele aangepaste naam voor de gekozen afdeling.').setMaxLength(80));
+ .addStringOption(o=>o.setName('naam').setDescription('Optionele aangepaste naam voor de gekozen afdeling.').setMaxLength(80))
+ .addStringOption(o=>o.setName('omschrijving').setDescription('Leg uit waarvoor iemand bij deze afdeling een ticket opent.').setMaxLength(100));
 }
 function setup(i,s,d) {
- const c=store.get(i.guildId,s,d); const base=`gov:cfg:${s}:${d}:${i.user.id}`;
- return { content:`**${s} — ${c.label || presets[s][d]}**\nStatus: ${c.enabled?'actief':'uitgeschakeld'}\nCategorie: ${c.category?`<#${c.category}>`:'nog niet gekozen'}\nRollen: ${c.roles.map(x=>`<@&${x}>`).join(', ')||'geen'}\nVerantwoordelijken: ${c.users.map(x=>`<@${x}>`).join(', ')||'geen'}\nSelecties worden direct opgeslagen voor nieuwe tickets. Activeer na het instellen en plaats daarna het paneel met /${s}.`, allowedMentions:{parse:[]}, components:[
+ const c=store.get(i.guildId,s,d); const shown=display(s,d,c,i.guild.roles.cache); const base=`gov:cfg:${s}:${d}:${i.user.id}`;
+ return { content:`**${s} — ${shown.label}**\n${shown.description}\nStatus: ${c.enabled?'actief':'uitgeschakeld'}\nCategorie: ${c.category?`<#${c.category}>`:'nog niet gekozen'}\nRollen: ${c.roles.map(x=>`<@&${x}>`).join(', ')||'geen'}\nVerantwoordelijken: ${c.users.map(x=>`<@${x}>`).join(', ')||'geen'}\nSelecties worden direct opgeslagen voor nieuwe tickets. Activeer na het instellen en plaats daarna het paneel met /${s}.`, allowedMentions:{parse:[]}, components:[
  row(new Roles().setCustomId(`${base}:roles`).setPlaceholder('Behandelrollen selecteren (vervangt de lijst)').setMinValues(0).setMaxValues(10)),
  row(new Users().setCustomId(`${base}:users`).setPlaceholder('Verantwoordelijke personen (vervangt de lijst)').setMinValues(0).setMaxValues(10)),
  row(new Channels().setCustomId(`${base}:category`).setPlaceholder('Categorie voor binnenkomende tickets').setChannelTypes(ChannelType.GuildCategory).setMinValues(1).setMaxValues(1)),
@@ -26,19 +28,27 @@ function setup(i,s,d) {
 async function command(client,i,s) {
  const member=await i.guild.members.fetch({user:i.user.id,force:true});
  if (!hasNotifyAccess(member,i.user.id)) return privateReply(i,'Alleen Head Admin of hoger kan dit paneel instellen of plaatsen.');
- const d=i.options.getString('instellen'); const label=i.options.getString('naam');
+ const d=i.options.getString('instellen'); const label=i.options.getString('naam'); const description=i.options.getString('omschrijving');
  if (d !== null) {
   if (!presets[s]?.[d]) return privateReply(i,'Onbekende afdeling.');
-  if(label) { const c=store.get(i.guildId,s,d); c.label=label; store.save(i.guildId,s,d,c); }
+  await i.guild.roles.fetch();
+  if(label || description) { const c=store.get(i.guildId,s,d); if(label) c.label=label; if(description) c.description=description; store.save(i.guildId,s,d,c); }
   return i.reply({...setup(i,s,d),flags:MessageFlags.Ephemeral});
  }
- if(label) return privateReply(i,'Kies bij een aangepaste naam ook een afdeling bij instellen.');
- const options=presets[s].flatMap((name,d)=>{const c=store.get(i.guildId,s,String(d));return c.enabled?[{label:c.label||name,value:String(d)}]:[];});
- if(!options.length) return privateReply(i,`Stel eerst een afdeling in via /${s} instellen.`);
+ if(label || description) return privateReply(i,'Kies bij een aangepaste naam of omschrijving ook een afdeling bij instellen.');
  await i.deferReply({flags:MessageFlags.Ephemeral});
+ const roles=await i.guild.roles.fetch();
+ const options=presets[s].flatMap((name,d)=>{const c=store.get(i.guildId,s,String(d));return c.enabled?[{...display(s,String(d),c,roles),value:String(d)}]:[];});
+ if(!options.length) return i.editReply(`Stel eerst een afdeling in via /${s} instellen.`);
  if(i.channel.type!==ChannelType.GuildText) return i.editReply('Plaats het paneel in een normaal tekstkanaal.');
- await i.channel.send({content:`**${s.toUpperCase()} | Tickets**\nKies de afdeling waarmee je contact wilt opnemen. Je krijgt een privé-ticket.`,components:[row(new Select().setCustomId(`gov:open:${s}`).setPlaceholder('Kies een afdeling').addOptions(options))],allowedMentions:{parse:[]}});
- return i.editReply('Het ticketpaneel is in dit kanaal geplaatst.');
+ const title=s==='overheidscoordinator'?'OVERHEIDSCOÖRDINATOR':s.toUpperCase();
+ const payload={content:`**${title} | Tickets**\nKies hieronder waarvoor je contact wilt opnemen. Onder elke afdeling staat een korte uitleg. Je krijgt een privé-ticket.`,components:[row(new Select().setCustomId(`gov:open:${s}`).setPlaceholder('Kies een afdeling').addOptions(options))],allowedMentions:{parse:[]}};
+ // Refresh a recent panel instead of leaving the unreadable menu beside a new one.
+ const recent=await i.channel.messages.fetch({limit:100});
+ const existing=recent.find(m=>m.author.id===client.user.id && m.components.some(r=>r.components.some(c=>c.customId===`gov:open:${s}`)));
+ if(existing) await existing.edit(payload);
+ else await i.channel.send(payload);
+ return i.editReply(existing?'Het bestaande ticketpaneel is bijgewerkt met namen en uitleg.':'Het ticketpaneel is in dit kanaal geplaatst.');
 }
 async function interact(client,i) {
  if(!i.guild) return privateReply(i,'Dit werkt alleen in een server.');
@@ -101,7 +111,7 @@ async function interact(client,i) {
    const channel=await i.guild.channels.create({name:`${s}-${i.user.id.slice(-6)}`,type:ChannelType.GuildText,parent:cat.id,permissionOverwrites:[...overwrites.values()],reason:`Overheidsticket ${s}/${dept}`});
    try {
     store.add({channel:channel.id,guild:i.guildId,service:s,department:dept,owner:i.user.id,access:JSON.stringify({roles:c.roles,users:c.users})});
-    await channel.send({content:`<@${i.user.id}> — **${c.label||presets[s][dept]}**\nBeschrijf hieronder je vraag. Een afdelingsmedewerker helpt je verder.`,allowedMentions:{users:[i.user.id]},components:[new Row().addComponents(button('gov:claim','Claimen',ButtonStyle.Primary),button('gov:transcript','Transcript'),button('gov:close','Sluiten',ButtonStyle.Danger))]});
+    await channel.send({content:`<@${i.user.id}> — **${display(s,dept,c,roles).label}**\n${display(s,dept,c,roles).description}\nBeschrijf hieronder je vraag. Een afdelingsmedewerker helpt je verder.`,allowedMentions:{users:[i.user.id]},components:[new Row().addComponents(button('gov:claim','Claimen',ButtonStyle.Primary),button('gov:transcript','Transcript'),button('gov:close','Sluiten',ButtonStyle.Danger))]});
    } catch(e) { try {await channel.delete();store.remove(i.guildId,channel.id);} catch(cleanup) {console.error('[Overheid] Ticket bewaard na fout:',channel.id,cleanup.message);} throw e; }
    return i.editReply(`Je ticket is aangemaakt: <#${channel.id}>`);
   } finally {locks.delete(key);}

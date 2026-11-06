@@ -1,4 +1,4 @@
-# Troy’s Game Community Bot — 3.4.0
+# Troy’s Game Community Bot — 3.4.1
 
 ## Actuele release 3.4.0 — Node 24 en overheidstickets
 

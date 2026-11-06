@@ -1,5 +1,9 @@
 # Troy’s Game Community Bot — Gebruikershandleiding
 
+## Update 3.4.1 — leesbare ticketkeuzes
+
+Overheidspanelen tonen afdelingsnamen en een korte uitleg. Pas de uitleg aan met `omschrijving` samen met `instellen`. Gebruik het paneelcommando opnieuw in hetzelfde kanaal om een recent bestaand paneel bij te werken. Zie [OVERHEID-TICKETS.md](OVERHEID-TICKETS.md). Node 24.x blijft vereist.
+
 ## Actuele release 3.4.0 — Node 24 en overheidstickets
 
 **Node.js 24.x is vereist.** Node 22 wordt niet meer ondersteund door deze bot. Zet eerst je hostingprofiel op Node 24, neem `.npmrc` en beide packagebestanden over en voer `npm ci --no-audit --no-fund` uit. Bewaar je `.env`, database, eigen configuratie en privébestanden. Zie [UPDATE-3.4.0.md](UPDATE-3.4.0.md).
