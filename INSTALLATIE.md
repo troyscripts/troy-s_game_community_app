@@ -264,3 +264,13 @@ Na deze update: stop de bot, vervang de bestanden (behoud je eigen `.env` en dat
 
 `npm start` blijft de normale startopdracht. `npm run dev` gebruikt nu `node --watch index.js` in plaats van nodemon: wijzigingen in geladen modules herstarten de bot. Nieuwe bestanden kunnen een handmatige herstart vereisen. De ongebruikte dependency glob is verwijderd. De waarschuwing van prebuild-install via better-sqlite3 kan nog verschijnen.
 
+
+
+## Botnaam en begeleide installatie (3.6.0)
+
+`/gebruikersnaam naam:Mijn Bot` wijzigt de zichtbare naam op deze server en opent alle configuratiestappen. `/gebruikersnaam` hervat; `instelling` springt naar een veld. Alleen de servereigenaar en ingestelde Owner-/Developer-rollen hebben toegang. Instellingen afzonderlijk overslaan en later hervatten is mogelijk. Zie [INSTALLATIEMODUS.md](INSTALLATIEMODUS.md).
+
+
+## Ban op Discord-ID (3.6.1)
+
+Gebruik `/ban reden:Reden discord-id:123456789012345678` voor iemand die niet in de server zit. Voor aanwezige leden blijft `/ban reden:Reden gebruiker:@persoon` beschikbaar. Kies precies één doel. `dagen` is optioneel (0–7). Bestaande banrechten blijven gelden, met rolcontrole voor aanwezige leden. Een ban blokkeert toekomstige toegang tot deze server. Na updaten herstarten; zo nodig `npm run deploy` om het nieuwe command te registreren. Bewaar je .env en bestaande database.

@@ -1285,5 +1285,17 @@
   "Ticket sluiten en verwijderen? Het gesprek wordt eerst in het ticketlog opgeslagen. Aanwezig staffoverleg gaat afzonderlijk naar het staffthread-logkanaal.": "Close and delete this ticket? The conversation will first be saved to the ticket log. Any staff discussion will be saved separately to the staff thread log.",
   "Stel Tickets.LogChannel in op een apart ticketlogkanaal. Het ticket blijft behouden.": "Set Tickets.LogChannel to a separate ticket log channel. The ticket has been preserved.",
   "Het transcript kon niet naar Tickets.LogChannel worden verstuurd. Het ticket blijft behouden; controleer het logkanaal en de botrechten.": "The transcript could not be sent to Tickets.LogChannel. The ticket has been preserved; check the log channel and bot permissions.",
-  "Het ticket kon niet worden gesloten of verwijderd. Controleer het ticketlog, threadlog, bestandsopslag en botrechten en probeer opnieuw.": "The ticket could not be closed or deleted. Check the ticket log, thread log, file storage and bot permissions, then try again."
+  "Het ticket kon niet worden gesloten of verwijderd. Controleer het ticketlog, threadlog, bestandsopslag en botrechten en probeer opnieuw.": "The ticket could not be closed or deleted. Check the ticket log, thread log, file storage and bot permissions, then try again.",
+  "Wijzig de botnaam op deze server en start of hervat de installatie": "Change the bot name on this server and start or resume setup",
+  "Nieuwe zichtbare botnaam op deze server; leeg laten om te hervatten": "New visible bot name on this server; leave empty to resume",
+  "Spring rechtstreeks naar een instelling of extra installatiestap": "Jump directly to a setting or additional setup step",
+  "Discord-ID van de gebruiker, ook als die niet in de server zit.": "Discord user ID, including users who are not in the server.",
+  "❌ Kies één gebruiker óf vul één Discord-ID in.": "❌ Select one user OR enter one Discord ID.",
+  "❌ Vul een geldig Discord-gebruikers-ID in (17 tot 20 cijfers).": "❌ Enter a valid Discord user ID (17 to 20 digits).",
+  "❌ Geef een reden van 1 tot 400 tekens op.": "❌ Provide a reason of 1 to 400 characters.",
+  "❌ Kies 0 tot en met 7 dagen.": "❌ Choose 0 to 7 days.",
+  "❌ Je kunt de bot zelf niet bannen.": "❌ You cannot ban the bot itself.",
+  "❌ Je kunt de servereigenaar niet bannen.": "❌ You cannot ban the server owner.",
+  "❌ Er bestaat geen Discord-gebruiker met dit ID.": "❌ No Discord user exists with this ID.",
+  "❌ Discord weigert de ban. Controleer mijn banrechten en rolpositie.": "❌ Discord rejected the ban. Check my ban permissions and role position."
 }

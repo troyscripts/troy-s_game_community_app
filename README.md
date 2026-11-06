@@ -1,4 +1,4 @@
-# Troy’s Game Community Bot — 3.5.1
+# Troy’s Game Community Bot — 3.6.1
 
 ## Update 3.5.1 — leesbare transcripten
 
@@ -476,3 +476,11 @@ Gebruik `/radio paneel` in de chat van je spraakkanaal. Kies een zender in de dr
 Na deze update: stop de bot, vervang de bestanden (behoud je eigen `.env` en database), voer `npm ci` uit en start de bot weer. `npm ci` gebruikt de meegeleverde lockfile en verwijdert oude dependencies. Controleer daarna met `npm audit`. Gebruik geen `npm audit fix --force`.
 
 `npm start` blijft de normale startopdracht. `npm run dev` gebruikt nu `node --watch index.js` in plaats van nodemon: wijzigingen in geladen modules herstarten de bot. Nieuwe bestanden kunnen een handmatige herstart vereisen. De ongebruikte dependency glob is verwijderd. De waarschuwing van prebuild-install via better-sqlite3 kan nog verschijnen.
+
+## Botnaam en installatie
+
+Gebruik `/gebruikersnaam naam:Mijn Bot` om de zichtbare naam binnen deze server te wijzigen en de installatie te openen. Alleen de servereigenaar en ingestelde Owner- en Developer-rollen hebben toegang. Lees [INSTALLATIEMODUS.md](INSTALLATIEMODUS.md) voor overslaan, hervatten en alle configuratiestappen.
+
+## Bannen via Discord-ID
+
+`/ban reden:Reden discord-id:123456789012345678` werkt ook voor gebruikers buiten de server. Kies óf `gebruiker` óf `discord-id`. Bestaande banrechten en rolcontroles blijven gelden.
