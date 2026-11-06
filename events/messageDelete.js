@@ -1,2 +1,1 @@
-// Berichtlogging wordt centraal geregistreerd door services/discordAudit.js.
-module.exports = {name: 'messageDelete', async execute() {}};
+module.exports={name:'messageDelete',async execute(client,message){require('../services/ticketEvidence').observe(message,true);}};

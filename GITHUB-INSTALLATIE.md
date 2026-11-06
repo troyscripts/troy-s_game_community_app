@@ -1,4 +1,16 @@
-# Versie 3.4.2 publiceren
+# Versie 3.5.0 publiceren
+
+## Eigen stafftickets (3.5.0)
+
+Staff kan het eigen supportticket claimen en beheren. Voeg de benodigde persoon toe met `/ticket-add gebruiker:@persoon`. Die persoon kan meepraten, ook als het een gelijk of hoger stafflid is. Expliciete uitnodigingen blijven opgeslagen. Hogere claims/minimumrangen blijven gelden; hogere staff uitnodigen geeft geen recht om die te verwijderen. Gewone ticketmakers krijgen hiermee geen staffrechten.
+
+## Update 3.5.0 — blijvend ticketarchief
+
+Hoofd- en overheidstickets worden via kanaal-ID gevolgd, ook na verplaatsen. Ontvangen berichtversies, verwijdermeldingen en bijlagekopieën blijven in SQLite bewaard en staan duidelijk gemarkeerd in het transcript. Bestaande zichtbare geschiedenis wordt bij opstarten ingelezen. Eerder verdwenen of niet ontvangen inhoud is niet herstelbaar. Zie [TICKETARCHIEF.md](TICKETARCHIEF.md) voor rechten, opstartscan, opslag, exportgrenzen en back-ups. Node 24.x blijft vereist.
+
+## Update 3.4.3 — hoofdtickets sluiten en verwijderen
+
+Ook de Sluiten-knop en `/ticket-close` van het hoofdticketsysteem vragen bevestiging, sturen het gesprek naar `Tickets.LogChannel` en verwijderen daarna het kanaal. Aanwezig staffoverleg wordt eerst apart opgeslagen in `Tickets.ThreadLogChannel`. Bij mislukte logaflevering blijft het ticket behouden. Een mislukte DM blokkeert verwijderen niet als de logs zijn afgeleverd. Oude Verwijderen-knoppen blijven werken met dezelfde bevestiging.
 
 ## Update 3.4.2 — overheidstickets sluiten en verwijderen
 
@@ -17,7 +29,7 @@ Overheidspanelen tonen afdelingsnamen en een korte uitleg. Pas de uitleg aan met
 
 ## Controleren en publiceren
 
-Voer in een schone testkopie `npm ci --no-audit --no-fund` en `npm run ci` uit. Commit en push daarna. Controleer in GitHub Actions dat **Botcontroles / Node.js 24** slaagt. Publiceer release `v3.4.2` met het bijbehorende hoofdstuk uit [CHANGELOG.md](CHANGELOG.md).
+Voer in een schone testkopie `npm ci --no-audit --no-fund` en `npm run ci` uit. Commit en push daarna. Controleer in GitHub Actions dat **Botcontroles / Node.js 24** slaagt. Publiceer release `v3.5.0` met het bijbehorende hoofdstuk uit [CHANGELOG.md](CHANGELOG.md).
 
 De versiechecker gebruikt `package.json`; `config/defaults.js` haalt daar de botversie uit. De repository staat in `config/updates.js`. Deze download publiceert niets automatisch.
 

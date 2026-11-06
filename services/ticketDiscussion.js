@@ -16,10 +16,8 @@ function canDiscuss(ticket, member, channel) {
     if (!member || member.user?.bot) return false;
     if (!channel.permissionsFor(member)?.has(PermissionFlagsBits.ViewChannel)) return false;
     if (ticket.staff_min_rank && require('./ticketAccess').rank(member,ticket)<ticket.staff_min_rank) return false;
-    // Owners/admins can test and manage their own tickets. Regular ticket makers
-    // remain excluded even when they hold another staff role.
+    // Staff may manage their own tickets; ordinary applicants remain excluded.
     if (hasOwnerAccess(member, member.id) || member.permissions.has(PermissionFlagsBits.Administrator)) return true;
-    if (member.id === ticket.user_id) return false;
     const roles = ticket.staff_roles_json ? JSON.parse(ticket.staff_roles_json) : config.StaffRoles;
     return roles.some(id => member.roles.cache.has(id));
 }

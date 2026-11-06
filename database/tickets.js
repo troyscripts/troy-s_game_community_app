@@ -20,7 +20,8 @@ function ensureTicketSchema() {
             ['staff_thread_id', 'TEXT'],
             ['staff_roles_json', 'TEXT'],
             ['transcript_dm_sent_at', 'INTEGER'],
-            ['staff_min_rank', 'INTEGER NOT NULL DEFAULT 0']
+            ['staff_min_rank', 'INTEGER NOT NULL DEFAULT 0'],
+            ['invited_writers_json', "TEXT NOT NULL DEFAULT '[]'"]
         ]) {
             if (!columns.has(name)) db.exec(`ALTER TABLE tickets ADD COLUMN ${name} ${type}`);
         }
@@ -113,7 +114,11 @@ function assignClaim(channelId,staffId,minimumRank,previous) {
     return db.prepare(`UPDATE tickets SET claimed_by=?,staff_min_rank=?
         WHERE channel_id=? AND status='open' AND claimed_by IS ?`).run(staffId,minimumRank,channelId,previous||null);
 }
+function setInvitedWriters(channelId,ids) {
+    return db.prepare('UPDATE tickets SET invited_writers_json=? WHERE channel_id=?').run(JSON.stringify([...new Set(ids)]),channelId);
+}
 module.exports = {
+    setInvitedWriters,
     assignClaim,
     setStaffThread, markTranscriptSent,
     createTicket,

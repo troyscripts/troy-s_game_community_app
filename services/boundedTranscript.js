@@ -8,6 +8,8 @@ function fail(message) { const error = new Error(message); error.ticketInput = t
 async function createTranscript(channel, options = {}) {
     if (active) fail('Er wordt al een transcript verwerkt. Probeer het straks opnieuw. Het ticket blijft behouden.');
     active = true;
+    const evidence = require('./ticketEvidence');
+    const tracked = evidence.tracked(channel);
     try {
         const messages = [];
         let before, bytes = 0;
@@ -19,6 +21,7 @@ async function createTranscript(channel, options = {}) {
             for (const message of batch.values()) {
                 bytes += Buffer.byteLength(JSON.stringify(message.toJSON()));
                 messages.push(message);
+                if(tracked)evidence.capture(message);
                 if (messages.length > MAX_MESSAGES || bytes > MAX_SOURCE_BYTES)
                     fail('Dit ticket is te groot voor automatische export (maximaal 5000 berichten of 8 MB berichtgegevens per kanaal). Laat de beheerder het volledig archiveren. Het ticket blijft behouden.');
             }
@@ -26,7 +29,8 @@ async function createTranscript(channel, options = {}) {
             if (next === before) fail('Transcript ophalen kon niet worden afgerond. Het ticket blijft behouden.');
             before = next;
         }
-        const buffer = await transcripts.generateFromMessages(messages.reverse(), channel, {
+        if(tracked) await evidence.flush(channel,true);
+        const buffer = tracked ? evidence.render(channel,MAX_OUTPUT_BYTES) : await transcripts.generateFromMessages(messages.reverse(), channel, {
             ...options, returnType:'buffer', saveImages:false, hydrate:false
         });
         if (buffer.length > MAX_OUTPUT_BYTES) fail('Het transcriptbestand is groter dan 8 MB. Laat de beheerder het archiveren. Het ticket blijft behouden.');

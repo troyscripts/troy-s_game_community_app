@@ -75,7 +75,7 @@ async function deliverTranscript(client, channel, ticket) {
     let logged = false;
     try {
         const log = config.Tickets.LogChannel ? await channel.guild.channels.fetch(config.Tickets.LogChannel) : null;
-        if (log?.isTextBased()) {
+        if (log?.isTextBased() && log.guild?.id === ticket.guild_id && log.id !== channel.id && log.id !== ticket.staff_thread_id) {
             await sendLogMessage(log, "send", { ...payload(), content: tr("📄 Ticket <#{0}> | eigenaar <@{1}>\n{2}", channel.id, ticket.user_id, dmSent ? tr("✅ Transcript via DM afgeleverd (eventueel bij eerder sluiten).") : tr("⚠️ DM mislukt. Lokale kopie bewaard; geef het transcript handmatig aan de eigenaar.")) });
             logged = true;
         }

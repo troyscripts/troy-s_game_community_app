@@ -22,6 +22,7 @@ module.exports = {
     name: Events.MessageCreate,
 
     async execute(client, message) {
+        require("../services/ticketEvidence").observe(message);
         if (!message.guild) {
             return;
         }

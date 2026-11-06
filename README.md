@@ -1,4 +1,16 @@
-# Troy’s Game Community Bot — 3.4.2
+# Troy’s Game Community Bot — 3.5.0
+
+## Eigen stafftickets (3.5.0)
+
+Staff kan het eigen supportticket claimen en beheren. Voeg de benodigde persoon toe met `/ticket-add gebruiker:@persoon`. Die persoon kan meepraten, ook als het een gelijk of hoger stafflid is. Expliciete uitnodigingen blijven opgeslagen. Hogere claims/minimumrangen blijven gelden; hogere staff uitnodigen geeft geen recht om die te verwijderen. Gewone ticketmakers krijgen hiermee geen staffrechten.
+
+## Update 3.5.0 — blijvend ticketarchief
+
+Hoofd- en overheidstickets worden via kanaal-ID gevolgd, ook na verplaatsen. Ontvangen berichtversies, verwijdermeldingen en bijlagekopieën blijven in SQLite bewaard en staan duidelijk gemarkeerd in het transcript. Bestaande zichtbare geschiedenis wordt bij opstarten ingelezen. Eerder verdwenen of niet ontvangen inhoud is niet herstelbaar. Zie [TICKETARCHIEF.md](TICKETARCHIEF.md) voor rechten, opstartscan, opslag, exportgrenzen en back-ups. Node 24.x blijft vereist.
+
+## Update 3.4.3 — hoofdtickets sluiten en verwijderen
+
+Ook de Sluiten-knop en `/ticket-close` van het hoofdticketsysteem vragen bevestiging, sturen het gesprek naar `Tickets.LogChannel` en verwijderen daarna het kanaal. Aanwezig staffoverleg wordt eerst apart opgeslagen in `Tickets.ThreadLogChannel`. Bij mislukte logaflevering blijft het ticket behouden. Een mislukte DM blokkeert verwijderen niet als de logs zijn afgeleverd. Oude Verwijderen-knoppen blijven werken met dezelfde bevestiging.
 
 ## Update 3.4.2 — overheidstickets sluiten en verwijderen
 
@@ -128,9 +140,9 @@ Claimen en toegang wijzigen halen de volledige ledenlijst nu gepagineerd via de 
 
 ## Nieuw in 3.1.0: ticketclaims, overnemen en staffthread-log
 
-**Gewone claim:** alleen de behandelaar en ticketmaker kunnen in het ticket typen; toegevoegde niet-staffdeelnemers behouden hun deelname. Andere bevoegde staffleden blijven meelezen en kunnen via **Staffoverleg** de privéthread openen en daar schrijven. De claimknop en `/ticket-claim` werken hetzelfde.
+**Gewone claim:** alleen de behandelaar en ticketmaker kunnen in het ticket typen; toegevoegde niet-staffdeelnemers en expliciet uitgenodigde deelnemers aan eigen stafftickets behouden hun deelname. Andere bevoegde staffleden blijven meelezen en kunnen via **Staffoverleg** de privéthread openen en daar schrijven. De claimknop en `/ticket-claim` werken hetzelfde.
 
-**Overnemen:** een stafflid met een hogere staffrol kan opnieuw op **Claim** klikken of `/ticket-claim` gebruiken. De nieuwe behandelaar neemt het ticket over. Lagere staff verliest toegang tot het ticket én de bijbehorende privéthread; gelijke/hogere bevoegde staff blijft alleen meelezen. De ticketmaker blijft toegang houden. Alleen de nieuwe behandelaar kan als staff in het hoofdticket typen. De hoogste ingestelde staffrol bepaalt de rang; de Discord-serverowner en ingestelde globale botowners hebben voorrang. Een gelijk of lager stafflid kan de claim niet overnemen.
+**Overnemen:** een stafflid met een hogere staffrol kan opnieuw op **Claim** klikken of `/ticket-claim` gebruiken. De nieuwe behandelaar neemt het ticket over. Lagere staff verliest toegang tot het ticket én de bijbehorende privéthread; gelijke/hogere bevoegde staff blijft alleen meelezen. De ticketmaker blijft toegang houden. De nieuwe behandelaar en expliciet uitgenodigde staffdeelnemers die aan de minimumrang voldoen kunnen typen. De hoogste ingestelde staffrol bepaalt de rang; de Discord-serverowner en ingestelde globale botowners hebben voorrang. Een gelijk of lager stafflid kan de claim niet overnemen.
 
 **Discordbeperking:** Administrator omzeilt kanaalrechten. Geef staff geen Administrator als leesrechten strikt moeten worden afgedwongen. Overnemen wordt geweigerd als lagere staff met Administrator daardoor niet kan worden uitgesloten. Voor het ophalen van alle staffleden moet Server Members Intent ingeschakeld zijn; de bot heeft Kanaal beheren en Rollen beheren nodig om kanaalrechten te wijzigen.
 

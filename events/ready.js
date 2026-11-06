@@ -34,6 +34,7 @@ module.exports = {
 
         await require("../services/broadcastNetwork").start(client);
 
+        void require('../services/ticketEvidence').start(client).catch(error=>logger.error(`Ticketarchief: ${error.message}`));
         startVersionReporter(client);
         startConnectionMonitor(client);
         require("../services/updateChecker").startUpdateChecker();

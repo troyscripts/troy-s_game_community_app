@@ -72,8 +72,24 @@ function ui(actor,options={}){return {channel,guild,guildId:'g',user:{id:actor.i
  await assert.rejects(fetchTicketMembers(retry),/REST unavailable/);broken=false;assert.equal((await fetchTicketMembers(retry)).size,0);
  // Missing thread-log configuration is a private response, not an uncaught error.
  const close=ui(top);let deleted=false;channel.delete=async()=>{deleted=true;};
+ config.Tickets.LogChannel='ticket-log';
+ await require('../services/ticketLifecycle').requestClose(client,close);
+ assert.equal(deleted,false);assert.ok(close.response.components?.length,'Closing first asks for confirmation');
  await require('../services/ticketLifecycle').finishTicket(client,close,true);
  assert.match(close.response.content,/Tickets.ThreadLogChannel/);assert.equal(deleted,false);assert.equal(tickets.getTicket('ticket').status,'open');
+ // A staff member can claim/manage their own ticket and invite a person to speak.
+ db.db.prepare("UPDATE tickets SET user_id=?,claimed_by=NULL,staff_min_rank=0 WHERE channel_id='ticket'").run(low.id);
+ setRows([{id:'g',type:0,deny:[P.ViewChannel],allow:[]},...['low','high','top'].map(id=>({id,type:0,allow:[P.ViewChannel,P.SendMessages],deny:[]})),{id:'bot',type:1,allow:[P.ViewChannel,P.SendMessages],deny:[]}]);
+ await access.claim(null,ui(low));assert.equal(tickets.getTicket('ticket').claimed_by,low.id);
+ await access.authorizeAction(ui(low),tickets.getTicket('ticket'));
+ assert.ok(require('../services/ticketDiscussion').canDiscuss(tickets.getTicket('ticket'),low,channel));
+ await access.change(ui(low,{user:high.id}),false);
+ assert.ok(channel.permissionsFor(high).has(P.SendMessages),'Invited higher staff can participate in self-owned ticket');
+ assert.ok(JSON.parse(tickets.getTicket('ticket').invited_writers_json).includes(high.id));
+ await access.claim(null,ui(low));assert.ok(channel.permissionsFor(high).has(P.SendMessages),'Invitation survives reapplying claim permissions');
+ await access.change(ui(low,{user:'outsider'}),false);assert.ok(channel.permissionsFor(outsider).has(P.SendMessages));
+ await assert.rejects(access.authorizeAction(ui(outsider),{...tickets.getTicket('ticket'),user_id:'outsider'}),/stafftoegang/);
+ await access.change(ui(low,{user:high.id}),true);assert.ok(channel.permissionsFor(high).has(P.ViewChannel),'Higher staff remain protected against removal');
  console.log('PASS: paginated REST membership, concurrent deduplication, failure retry, missing-log private response and deletion protection.');
  console.log('PASS: failed claim rollback, claim permissions, no panel-role leak, thread access, user/role add/remove, hierarchy, takeover, persistent minimum, separate private export and fail-closed logging.');
 })().catch(e=>{console.error(e);process.exitCode=1;}).finally(()=>{db.closeDatabase();fs.rmSync(tmp,{recursive:true,force:true});fs.rmSync(path.join(__dirname,'../transcripts/g'),{recursive:true,force:true});});

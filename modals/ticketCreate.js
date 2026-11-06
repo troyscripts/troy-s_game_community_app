@@ -168,12 +168,7 @@ module.exports = {
                 .setCustomId("ticket-transcript")
                 .setLabel("Transcript")
                 .setEmoji("📄")
-                .setStyle(ButtonStyle.Secondary),
-            new ButtonBuilder()
-                .setCustomId("ticket-delete")
-                .setLabel(tr("Verwijderen"))
-                .setEmoji("🗑️")
-                .setStyle(ButtonStyle.Danger)
+                .setStyle(ButtonStyle.Secondary)
         );
 
         await send(channel, "send", {

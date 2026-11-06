@@ -1,7 +1,7 @@
 const { SlashCommandBuilder } = require('discord.js');
-const { finishTicket } = require('../../services/ticketLifecycle');
+const { requestClose } = require('../../services/ticketLifecycle');
 module.exports = {
-    data: new SlashCommandBuilder().setName('ticket-close').setDescription('Sluit het huidige ticket en stuur de eigenaar een transcript.'),
+    data: new SlashCommandBuilder().setName('ticket-close').setDescription('Sla transcripten op en verwijder het huidige ticket na bevestiging.'),
     category: 'Tickets', permissions: ['ManageChannels'], guildOnly: true,
-    execute: finishTicket
+    execute: requestClose
 };

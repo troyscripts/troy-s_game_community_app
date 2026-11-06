@@ -1,3 +1,23 @@
+## 3.5.0 — Blijvend ticketarchief en eigen stafftickets
+
+- Staff kan het eigen supportticket claimen/beheren en via `/ticket-add gebruiker:` iemand uitnodigen.
+- Expliciet uitgenodigde personen kunnen meepraten, ook als zij zelf staff zijn; de uitnodiging blijft opgeslagen. Hogere claims/minimumrang en bescherming tegen verwijderen van hogere staff blijven gelden.
+
+- Bestaande hoofd- en overheidstickets worden via hun kanaal-ID gevolgd, onafhankelijk van hun Discord-categorie. Staffthreads blijven afzonderlijk gekoppeld.
+- Berichten, ontvangen versies, verwijdermeldingen en kopieën van bijlagen worden in SQLite bewaard.
+- Bij opstarten wordt zichtbare geschiedenis van nog geregistreerde tickets ingelezen; reeds verdwenen inhoud kan niet worden hersteld.
+- Transcript toont VERWIJDERD BERICHT, GEWIJZIGD BERICHT en VERWIJDERDE BIJLAGE, met bewaarde versies en ontvangst-/wijzigingstijden.
+- Bijlagen worden in het HTML-transcript ingebed als downloadbare bestanden; verlopen Discord-links zijn voor opgeslagen kopieën niet nodig.
+- Mislukte bijlageopslag en overschreden exportlimieten blokkeren automatisch verwijderen. Hoofdtickets gebruiken ook de nieuwe sluit-en-verwijderactie uit 3.4.3.
+
+## 3.4.3 — Hoofdtickets sluiten en verwijderen
+
+- Sluiten-knop en `/ticket-close` vragen bevestiging, bewaren transcripten en verwijderen daarna direct het ticketkanaal.
+- Gewoon transcript verplicht naar `Tickets.LogChannel`; aanwezig staffoverleg afzonderlijk naar `Tickets.ThreadLogChannel`.
+- Een geslaagde DM of lokale kopie alleen is niet voldoende om te verwijderen; mislukte logaflevering behoudt het ticket.
+- Oude Verwijderen-knoppen blijven werken via dezelfde bevestiging. Nieuwe tickets hebben één sluitknop.
+- Eerder gesloten tickets kunnen eveneens worden geëxporteerd en verwijderd. Staffrechten en controle van de claimeigenaar blijven gelden.
+
 ## 3.4.2 — Overheidstickets verwijderen na transcript
 
 - Sluiten met bevestiging stuurt het HTML-transcript naar het bestaande `Tickets.LogChannel` en verwijdert daarna direct het ticketkanaal.

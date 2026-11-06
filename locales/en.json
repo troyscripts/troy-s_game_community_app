@@ -1280,5 +1280,10 @@
   "Spreekverzoek": "Request to speak",
   "Ja": "Yes",
   "Nee": "No",
-  "Voor: {0}\nNa: {1}": "Before: {0}\nAfter: {1}"
+  "Voor: {0}\nNa: {1}": "Before: {0}\nAfter: {1}",
+  "Sluiten en verwijderen bevestigen": "Confirm close and delete",
+  "Ticket sluiten en verwijderen? Het gesprek wordt eerst in het ticketlog opgeslagen. Aanwezig staffoverleg gaat afzonderlijk naar het staffthread-logkanaal.": "Close and delete this ticket? The conversation will first be saved to the ticket log. Any staff discussion will be saved separately to the staff thread log.",
+  "Stel Tickets.LogChannel in op een apart ticketlogkanaal. Het ticket blijft behouden.": "Set Tickets.LogChannel to a separate ticket log channel. The ticket has been preserved.",
+  "Het transcript kon niet naar Tickets.LogChannel worden verstuurd. Het ticket blijft behouden; controleer het logkanaal en de botrechten.": "The transcript could not be sent to Tickets.LogChannel. The ticket has been preserved; check the log channel and bot permissions.",
+  "Het ticket kon niet worden gesloten of verwijderd. Controleer het ticketlog, threadlog, bestandsopslag en botrechten en probeer opnieuw.": "The ticket could not be closed or deleted. Check the ticket log, thread log, file storage and bot permissions, then try again."
 }

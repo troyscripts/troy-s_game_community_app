@@ -1,4 +1,4 @@
-# Overheidstickets — 3.4.2
+# Overheidstickets — 3.5.0
 
 Dit is een extra systeem naast de bestaande supporttickets. De afdelingen zijn gebaseerd op de screenshots en de template GemertRP Overheid. Het systeem werkt ook op andere servers: koppel altijd de rollen en categorieën van die server. Template-ID's worden niet gebruikt.
 
@@ -64,3 +64,11 @@ The government coordinator has a separate `/overheidscoordinator` panel with its
 Elke menukeuze toont de afdelingsnaam met daaronder een korte uitleg, bijvoorbeeld Werving & selectie: Solliciteren of vragen over de selectieprocedure. Gebruik `omschrijving` (maximaal 100 tekens) samen met `instellen` om zelf de uitleg te bepalen. Het veld `naam` is voor de zichtbare afdelingsnaam; behandelrollen kies je in het instelscherm.
 
 Heb je eerder een rolmention als naam ingevoerd, dan haalt de bot de echte rolnaam op bij het plaatsen/bijwerken. Ontbreekt die rol, dan verschijnt de standaardafdelingsnaam. Dit wijzigt geen toegangsrechten. Reeds verstuurde Discord-menu's veranderen pas wanneer je het paneelcommando opnieuw uitvoert.
+
+## Hoofdtickets vanaf 3.4.3
+
+Het bestaande hoofdticketsysteem verwijdert nu eveneens na bevestiging en geslaagde logaflevering. Bij hoofdtickets blijft staffoverleg apart in Tickets.ThreadLogChannel; overheidstickets gebruiken geen staffthread. De verschillende behandelrechten blijven gescheiden.
+
+## Ticketarchief vanaf 3.5.0
+
+Ook bestaande overheidstickets blijven gevolgd na verplaatsen. Wijzigingen, verwijderingen en opgeslagen bijlagen verschijnen in het transcript met duidelijke markeringen. Zie [TICKETARCHIEF.md](TICKETARCHIEF.md) voor de werking, beperkingen en back-up van de database.

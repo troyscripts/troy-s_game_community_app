@@ -1,5 +1,17 @@
 # Troy’s Game Community Bot — User Manual
 
+## Own staff tickets (3.5.0)
+
+Staff can claim/manage their own support ticket and invite a specific person using `/ticket-add gebruiker:`. Invitees can participate, including staff of equal or higher rank. Explicit invitations persist in SQLite. Higher claims/minimum ranks still apply, and inviting higher staff does not grant permission to remove them. Ordinary ticket owners do not gain staff rights.
+
+## Update 3.5.0 — persistent ticket evidence
+
+Main and government tickets are tracked by channel ID even after a category move. Received message versions, deletion events and attachment bytes persist in SQLite and appear in transcripts with explicit deleted/edited labels. Existing visible history is scanned on startup. Earlier deleted content and events missed while offline cannot be reconstructed. Message Content Intent and channel access are required. Failed downloads or oversized exports block automatic deletion. Limits: 25 MB per attachment, 100 MB stored attachments per channel, 5000 messages and 8 MB HTML per export. Archive data is retained after closing; back up the database and monitor storage. See [TICKETARCHIEF.md](TICKETARCHIEF.md).
+
+## Update 3.4.3 — close and delete main support tickets
+
+The main ticket Close button and `/ticket-close` now ask for confirmation, save the transcript to `Tickets.LogChannel` and then delete the channel. Existing staff discussions are exported separately to `Tickets.ThreadLogChannel`. Failed log delivery preserves the ticket. A failed owner DM does not prevent deletion once logs are safely delivered. Old Delete buttons use the same confirmation flow.
+
 ## Update 3.4.2 — close and delete government tickets
 
 After confirmation, the bot uploads the transcript to the existing server-specific `Tickets.LogChannel` and immediately deletes the ticket channel. If export or delivery fails, the channel is preserved. No new log setting is needed.
@@ -794,7 +806,7 @@ View information about the current ticket. No options.
 
 ### /ticket-close
 
-Close the current ticket and send a transcript to its owner. No options.
+Confirm closing, save required transcripts to the configured log channels, then delete the ticket. The owner also receives a DM if possible. No options.
 
 ## Administrator commands
 
@@ -1041,7 +1053,7 @@ Cooldowns stay the same. Existing XP and balances are not doubled retroactively.
 
 After `/ticket-panel`, a setup screen lets you select Discord destination categories for ticket topics. `Tickets.Category` is the fallback. Minimum staff roles can be selected per topic, using configured `StaffRoles` and role order. A minimum role requires a topic name.
 
-Tickets support a separate staff thread and use `Tickets.MaxOpenPerUser`, default 5. `/ticket-close` sends the owner a transcript. Ticket logs and transcript copies use `Tickets.LogChannel` if available. A transcript is a record of the ticket conversation. Automatic closing is currently inactive; close tickets manually.
+Tickets support a separate staff thread and use `Tickets.MaxOpenPerUser`, default 5. `/ticket-close` requires successful transcript delivery to `Tickets.LogChannel` and, for staff discussion, `Tickets.ThreadLogChannel`, then deletes the ticket. A DM copy is attempted for the owner. A transcript is a record of the ticket conversation. Automatic closing is currently inactive; close tickets manually.
 
 ## Bot update notices
 

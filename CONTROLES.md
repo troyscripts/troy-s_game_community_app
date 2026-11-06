@@ -1,4 +1,12 @@
-# Automatische controles — 3.4.2
+# Automatische controles — 3.5.0
+
+## Aanvullende controles voor 3.5.0
+
+De volledige `npm run ci` is geslaagd op Node 24.22.1: syntax/bestanden, versies en **26/26 testbestanden**. De nieuwe archieftest controleert opslag van originele en gewijzigde tekst, verwijderen, verwijderde bijlagebytes, categorieverplaatsing, scheiding tussen servers en staffthreads, veilige HTML, deduplicatie, herladen, opstartscan en export/downloadfouten. Hoofdtickets gebruiken de gewijzigde sluitactie uit 3.4.3. Toegangstests controleren ook zelf claimen door staff, personen uitnodigen met blijvende schrijfrechten, bescherming van hogere staff en weigeren van gewone aanvragers. Dependencies en Node 24-vereiste zijn ongewijzigd.
+
+## Aanvullende controles voor 3.4.3
+
+De hoofdtickettests zijn aangepast aan verwijderen na sluiten. Ze controleren de bevestiging, behoud bij mislukte transcriptlog ondanks geslaagde DM, behoud bij verwijderfout en een nieuwe poging. Afzonderlijk stafflog, ontbrekende staffthread, geblokkeerde DM, exportfouten en toegangscontrole blijven getest. Node 24.x en dependencies zijn ongewijzigd.
 
 ## Aanvullende controles voor 3.4.2
 

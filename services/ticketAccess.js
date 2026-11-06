@@ -24,7 +24,6 @@ function allowedStaff(member,ticket,channel){
 async function actorFor(i,ticket){
     const actor=await i.guild.members.fetch({user:i.user.id,force:true});
     if(!allowedStaff(actor,ticket,i.channel))fail('Je hebt geen stafftoegang tot dit ticket.');
-    if(actor.id===ticket.user_id)fail('Je kunt je eigen ticket niet als staff beheren.');
     return actor;
 }
 function snapshot(channel){return [...channel.permissionOverwrites.cache.values()].map(o=>({id:o.id,type:o.type,allow:o.allow.bitfield,deny:o.deny.bitfield}));}
@@ -47,7 +46,7 @@ function enforce(plan,channel,ticket,members,botId){
         const explicit=plan.get(member.id);
         // Keep manually removed staff denied; takeover always hides lower staff.
         const removed=explicit&&new B(explicit.deny).has(P.ViewChannel);
-        editPlan(plan,member.id,1,{...(below?{ViewChannel:false}:{}),SendMessages:!below&&!removed&&member.id===ticket.claimed_by,SendMessagesInThreads:!below&&!removed,CreatePublicThreads:false,CreatePrivateThreads:false});
+        editPlan(plan,member.id,1,{...(below?{ViewChannel:false}:{}),SendMessages:!below&&!removed&&(member.id===ticket.claimed_by||JSON.parse(ticket.invited_writers_json||'[]').includes(member.id)),SendMessagesInThreads:!below&&!removed,CreatePublicThreads:false,CreatePrivateThreads:false});
     }
     editPlan(plan,ticket.user_id,1,{ViewChannel:true,ReadMessageHistory:true,SendMessages:true});
     editPlan(plan,ticket.claimed_by,1,{ViewChannel:true,ReadMessageHistory:true,SendMessages:true,SendMessagesInThreads:true});
@@ -92,6 +91,7 @@ async function claim(_client,i){return guarded(i,async(ticket,actor)=>{
 });}
 async function change(i,remove){return guarded(i,async(ticket,actor)=>{
     const user=i.options.getUser('gebruiker'),roleOption=i.options.getRole('rol');
+    const ownInvite=!remove && actor.id===ticket.user_id && Boolean(user);
     if(Boolean(user)===Boolean(roleOption))fail('Kies precies één gebruiker of rol.');
     const members=await require('./ticketMembers').fetchTicketMembers(i.guild);const me=await i.guild.members.fetchMe();
     const target=user?members.get(user.id):null;
@@ -104,19 +104,25 @@ async function change(i,remove){return guarded(i,async(ticket,actor)=>{
     for(const m of affected){
         if(!m)continue;
         if(m.user?.bot||m.id===me.id||m.id===ticket.user_id||m.id===ticket.claimed_by||m.id===actor.id)fail('De ticketmaker, behandelaar, jezelf en bots zijn beschermd tegen deze wijziging.');
-        if(isStaff(m,ticket)&&rank(m,ticket)>=rank(actor,ticket))fail('Je kunt geen gelijke of hogere staff uit een ticket halen of hun toegang wijzigen.');
+        if(!ownInvite&&isStaff(m,ticket)&&rank(m,ticket)>=rank(actor,ticket))fail('Je kunt geen gelijke of hogere staff uit een ticket halen of hun toegang wijzigen.');
         if(remove&&m.permissions.has(P.Administrator))fail('Discord laat niet toe dat kanaalrechten een administrator uitsluiten.');
         if(!remove&&isStaff(m,ticket)&&rank(m,ticket)<(ticket.staff_min_rank||0))fail('Deze staff valt onder het minimum van de overgenomen claim.');
     }
     const before=snapshot(i.channel),plan=new Map(before.map(o=>[o.id,o]));
     const id=user?.id||role.id;
     editPlan(plan,id,user?1:0,remove?{ViewChannel:false,SendMessages:false,SendMessagesInThreads:false}:{ViewChannel:true,ReadMessageHistory:true,SendMessages:true,SendMessagesInThreads:false,ManageThreads:false,CreatePublicThreads:false,CreatePrivateThreads:false});
-    enforce(plan,i.channel,ticket,members,me.id);
+    const writers=new Set(JSON.parse(ticket.invited_writers_json||'[]'));
+    if(ownInvite)writers.add(user.id);
+    if(remove)for(const member of affected)if(member)writers.delete(member.id);
+    const updated={...ticket,invited_writers_json:JSON.stringify([...writers])};
+    enforce(plan,i.channel,updated,members,me.id);
     // Role additions can allow writing to ordinary participants, but explicit
     // member denies created above keep all other staff read-only.
     if(!remove&&role){editPlan(plan,id,0,{ViewChannel:true,ReadMessageHistory:true,SendMessages:true,SendMessagesInThreads:false});for(const m of affected)if(!isStaff(m,ticket))editPlan(plan,m.id,1,{SendMessages:true,ManageThreads:false,CreatePrivateThreads:false,CreatePublicThreads:false});}
     if(remove&&role)editPlan(plan,id,0,{ViewChannel:false,SendMessages:false,SendMessagesInThreads:false});
     await i.channel.permissionOverwrites.set([...plan.values()],`Tickettoegang door ${actor.id}`);
+    try {tickets.setInvitedWriters(ticket.channel_id,[...writers]);}
+    catch(error) {await i.channel.permissionOverwrites.set(before,'Herstel mislukte deelnemersopslag');throw error;}
     const mention=user?`<@${id}>`:`<@&${id}>`;
     const text=tr('🎫 {0}: {1} in ticket <#{2}>. Uitgevoerd door <@{3}>.',remove?tr('Toegang verwijderd'):tr('Toegang toegevoegd'),mention,ticket.channel_id,actor.id);
     await log(i,text);return send(i,'editReply',{content:text,allowedMentions:{parse:[]}});
@@ -125,7 +131,7 @@ async function authorizeAction(i, ticket) {
     const actor = await i.guild.members.fetch({user:i.user.id, force:true});
     // Preserve the existing owner, developer and administrator support access.
     if (require('../utils/permissions').hasOwnerAccess(actor, actor.id) || actor.permissions.has(P.Administrator)) return actor;
-    if (!allowedStaff(actor,ticket,i.channel) || actor.id === ticket.user_id) fail('Je hebt geen stafftoegang tot dit ticket.');
+    if (!allowedStaff(actor,ticket,i.channel)) fail('Je hebt geen stafftoegang tot dit ticket.');
     if (ticket.claimed_by && ticket.claimed_by !== actor.id) {
         const claimant = await i.guild.members.fetch({user:ticket.claimed_by,force:true}).catch(error => {
             if (Number(error.code) === 10007) return null;
