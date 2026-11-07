@@ -82,6 +82,9 @@ function parseFeed(xml, expectedId) {
         return {id, title:tag(block,'title') || tr("Nieuwe video"), published, url:`https://www.youtube.com/watch?v=${id}`, image:`https://i.ytimg.com/vi/${id}/hqdefault.jpg`};
     });
 }
+// Prefer a working API fallback for one hour, then probe RSS again.
+const youtubeApiUntil = new Map();
+const YOUTUBE_API_WINDOW = 60 * 60 * 1000;
 async function youtube(row) {
     let id = row.resolved_id || (/^UC[\w-]{22}$/.test(row.account) ? row.account : null);
     if (!id) {
@@ -93,6 +96,18 @@ async function youtube(row) {
         if (!id) throw new Error(tr("YouTube-kanaal-ID niet gevonden. Gebruik /notify youtube-id met het UC-kanaal-ID uit YouTube Studio."));
     }
     if (!/^UC[\w-]{22}$/.test(id)) throw new Error(tr('Ongeldig opgeslagen YouTube-kanaal-ID. Stel het juiste UC-kanaal-ID in via /notify youtube-id.'));
+    const now = Date.now();
+    for (const [channel, until] of youtubeApiUntil) if (until <= now) youtubeApiUntil.delete(channel);
+    const hasApiKey = Boolean(process.env.YOUTUBE_API_KEY?.trim());
+    let preferredApiError;
+    if (hasApiKey && youtubeApiUntil.has(id)) {
+        try { return await require('./youtubeApi').youtubeApi(id); }
+        catch (error) {
+            // A quota/key/API failure must still allow RSS to recover.
+            preferredApiError = error;
+            youtubeApiUntil.delete(id);
+        }
+    }
     try {
         let xml;
         try { xml = await request(`https://www.youtube.com/feeds/videos.xml?channel_id=${id}`,{},false); }
@@ -102,14 +117,24 @@ async function youtube(row) {
             if (error.status !== 404 && !(error.status >= 500)) throw error;
             xml = await request(`https://youtube.com/feeds/videos.xml?channel_id=${id}`,{},false);
         }
-        return {resolvedId:id,items:parseFeed(xml,id)};
+        const items = parseFeed(xml,id);
+        youtubeApiUntil.delete(id);
+        return {resolvedId:id,items};
     } catch (error) {
-        if (process.env.YOUTUBE_API_KEY?.trim()) {
-            try { return await require('./youtubeApi').youtubeApi(id); }
+        if (hasApiKey) {
+            try {
+                if (preferredApiError) throw preferredApiError;
+                const result = await require('./youtubeApi').youtubeApi(id);
+                youtubeApiUntil.set(id, Date.now() + YOUTUBE_API_WINDOW);
+                return result;
+            }
             catch (apiError) {
                 apiError.resolvedId = id;
                 throw apiError;
             }
+        }
+        if (error.status === 404 || error.status >= 500) {
+            error.message += ' YouTube RSS kon niet worden opgehaald; dit bewijst niet dat het kanaal ontbreekt. YOUTUBE_API_KEY is niet ingesteld op deze bot/hub. Zie docs/NOTIFY-HANDLEIDING.md.';
         }
         error.resolvedId = id;
         throw error;

@@ -1,4 +1,4 @@
-# Troy’s Game Community Bot — 3.7.1
+# Troy’s Game Community Bot — 3.7.2
 
 ## Documentatie en /help
 
