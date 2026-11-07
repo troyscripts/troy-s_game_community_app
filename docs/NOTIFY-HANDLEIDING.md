@@ -131,3 +131,18 @@ Kies Twitch bij `/notify toevoegen`. Zie [TWITCH-HANDLEIDING.md](TWITCH-HANDLEID
 ## Centrale notify (3.7.0)
 
 Gekoppelde bots gebruiken dezelfde hoofd-hub en BROADCAST_SECRET voor gedeelde creators en aflevercontrole. Iedere server kan creators blijven toevoegen en behoudt zijn eigen meldingskanaal, pingrol en tekst. Werk eerst de hoofd-hub bij en zet de benodigde platformkoppelingen daar klaar; werk daarna alle ontvangende bots bij. Zie [NOTIFY-HUB.md](NOTIFY-HUB.md).
+
+## YouTube RSS blijft HTTP 404/500 geven
+
+Een RSS-fout bewijst niet dat een kanaal verdwenen is. Verwijder bestaande creators daarom niet alleen vanwege deze melding. De bot probeert beide YouTube-hostnamen en bewaart de kanaalkoppeling bij fouten.
+
+Als de feeds blijven falen, kan de bestaande officiële API-fallback worden ingesteld:
+
+1. Activeer **YouTube Data API v3** in je Google Cloud-project en maak een API-sleutel die tot deze API beperkt is.
+2. Zet `YOUTUBE_API_KEY=je_sleutel` in het `.env`-bestand van de **hoofd-hub** wanneer centrale notify aanstaat. Bij zelfstandige werking hoort de sleutel op die botinstallatie.
+3. Herstart die installatie. Bewaar de sleutel privé; stuur hem niet via Discord of GitHub.
+4. Controleer `/notify lijst` en de console. Een API-fout meldt apart problemen met toegang of quota; een sleutel garandeert geen onbeperkte beschikbaarheid.
+
+Vanaf 3.7.2 gebruikt een kanaal na een geslaagde API-fallback gedurende één uur de API. Daarna probeert de bot RSS opnieuw. Als de API tussentijds faalt, probeert hij direct weer RSS. Mislukken beide, dan blijft dit een fout: er wordt geen lege succesvolle controle opgeslagen. Zonder sleutel blijft RSS werken zodra YouTube weer antwoordt, maar is deze uitwijkmogelijkheid niet beschikbaar. De keuze voor de API wordt alleen in het geheugen bewaard en vervalt bij een herstart.
+
+Dit wijzigt geen afleverhistorie, doelkanalen of TikTok-toestemmingen. Een herstelmelding beschrijft geslaagde controles; er hoeft daarbij geen nieuwe video verstuurd te zijn.

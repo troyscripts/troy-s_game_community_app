@@ -1,3 +1,10 @@
+## 3.7.2
+
+- Na een geslaagde YouTube-API-fallback wordt per kanaal één uur de API gebruikt; daarna wordt RSS opnieuw geprobeerd.
+- Bij een API-fout wordt RSS meteen weer geprobeerd, zonder dezelfde API-aanvraag in die controle dubbel uit te voeren.
+- RSS 404/5xx zonder ingestelde API-sleutel geeft een concrete melding met verwijzing naar de handleiding; kanaalkoppelingen blijven behouden.
+- Documentatie verduidelijkt dat de API-sleutel bij centrale notify op de hoofd-hub hoort.
+
 ## 3.7.1
 
 - Alle projectdocumentatie behalve README.md naar docs/ verplaatst.
